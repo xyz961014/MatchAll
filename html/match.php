@@ -10,7 +10,6 @@ $servername = "localhost";
 $username = "root";
 $password = "961014";
 $dbname = "MANAN_1718";
-
 $conn = new mysqli($servername, $username, $password,$dbname);
 if ($conn->connect_error) {
     die("Connection failed:".$conn->connect_error);
@@ -166,11 +165,11 @@ function HSubmit() {
                     KitNumber: h_check[item],
                     Name: null,
                     Type: '首发',
-                    Time: null,
-                    StoppageTime:null
+                    Time: 0,
+                    StoppageTime: 0
                 },function (data,state) {
-                    //alert(data);
-                    //alert(state);
+                    console.log(data);
+                    console.log(state);
                     showreport();
                 });
             }
@@ -212,8 +211,8 @@ function ASubmit() {
                     KitNumber: a_check[item],
                     Name: null,
                     Type: '首发',
-                    Time: null,
-                    StoppageTime:null
+                    Time: 0,
+                    StoppageTime: 0
                 },function (data,state) {
                     //alert(data);
                     //alert(state);

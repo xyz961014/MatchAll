@@ -30,6 +30,7 @@ while ($row = $result->fetch_assoc()) {
 }
 echo $name.$extrainfo;
 $sql = "INSERT INTO ".$id." (Team, KitNumber, Name, ExtraInfo, EventType,EventTime, StoppageTime) VALUES ('".$team."','".$kitnum."','".$name."','".$extrainfo."','".$type."','".$time."','".$stptime."')";
+echo $sql;
 $conn->query($sql);
 $conn->close();
 ?>

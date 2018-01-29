@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $awayname = test_input($_POST["awayteam"]);
       $output = exec("python3 /var/www/TUFA/docreate.py $homename $awayname 2>&1",$arr,$ret);
       exec("cp $arr[1] /var/www/html/sheets/");
-      //print_r($arr); 
+     // print_r($arr); 
 }
 
 function test_input($data) {

@@ -42,7 +42,7 @@ $.get('showlist.php',{
 }, function(data,state) {
     var list = $('.list');
     list.append(data);
-    console.log('load');
+    console.log('load',data);
 })
 function onvalid(id) {
     var validcheck = document.getElementById(id);
