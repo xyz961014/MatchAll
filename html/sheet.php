@@ -1,7 +1,22 @@
-<html>
-<body>
+<!doctype html>
+<html lang="ch">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<h2>马杯男足执场单</h2>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>TUFA</title>
+  </head>
+  <body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.13.0/esm/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <h2>马杯男足执场单</h2>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> 
    主队: <select name="hometeam">
            <option>生命科学学院
@@ -120,5 +135,8 @@ echo $arr[2];
     }
 </script>
 <button class="button" id="download" onclick="goto()">download</button>
-</body>
+  </body>
 </html>
+
+
+

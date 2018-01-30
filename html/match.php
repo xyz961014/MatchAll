@@ -1,7 +1,22 @@
-<html>
-<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
-<body>
-<input id="validcheck" type="checkbox" onclick='onvalid()' />VALID
+<!doctype html>
+<html lang="ch">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>TUFA</title>
+  </head>
+  <body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.13.0/esm/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <input id="validcheck" type="checkbox" onclick='onvalid()' />VALID
 <br>
 <?php
 require 'TeamDict.php';
@@ -848,5 +863,6 @@ function check(hflist, aflist, hevent, aevent) {
 <?php
 $conn->close();
 ?>
-</body>
+  </body>
 </html>
+
