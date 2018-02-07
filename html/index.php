@@ -17,7 +17,7 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.13.0/esm/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.13.0/umd/popper.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   </body>
 </html>

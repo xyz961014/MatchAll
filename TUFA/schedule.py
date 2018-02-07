@@ -35,17 +35,19 @@ def createschedule(filename, sheetnum,level=None,group=True):
         matches[ind].append(group)
     return matches
 
-def inputschedule(matches):
+def inputschedule(matches,matchname):
     infos = []
     for m in matches:
         info = CMatch()
-        info.level = m[9]
-        if m[10] and re.search('[a-zA-Z]',m[3]):
+        info.level = m[-2]
+        if type(m[4]) != float:
+            m[-1] = False
+        if m[-1] and re.search('[a-zA-Z]',m[3]):
             info.stage = 'Group'
             info.group = m[3]
             info.round = m[4]
             hour = int(m[5] * 24)
-            minute = round((m[5]*24 - int(m[5]*24)) * 60)
+            minute = round((m[5]*24 - hour) * 60)
             if minute == 60:
                 minute = 0
                 hour = hour + 1
@@ -60,7 +62,10 @@ def inputschedule(matches):
         else:
             info.stage = m[4]
             hour = int(m[5] * 24)
-            minute = round((m[5]*24 - int(m[5]*24)) * 60)
+            minute = round((m[5]*24 - hour) * 60)
+            if minute == 60:
+                minute = 0
+                hour = hour + 1
             time = datetime.datetime(1900,1,1,hour=hour,minute=minute)
             delta = datetime.timedelta(days = m[1])
             time = time + delta
@@ -73,11 +78,12 @@ def inputschedule(matches):
     connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANAN_1718',
+                               db=matchname,
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
     try:
         for info in infos:
+            #print(info.level, info.stage, info.group,info.round, info.time,info.field, info.hometeam,info.awayteam)
             with connection.cursor() as cursor:
                 sql = "INSERT INTO `Matches` (`Level`, `Stage`, `GroupName`, `Round`, `MatchTime`, `MatchField`, `HomeTeam`, `AwayTeam`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql,(info.level, info.stage, info.group, info.round, info.time, info.field, info.hometeam, info.awayteam))
@@ -86,10 +92,13 @@ def inputschedule(matches):
         connection.close()
 
 
-mA = createschedule('Schedule.xlsx',1,level = '甲级')
-mB = createschedule('Schedule.xlsx',2,level = '乙级')
-m = mA
-for i in mB:
-    m.append(i)
-m.sort(key = lambda x:x[1] + x[5])
-inputschedule(m)
+#mA = createschedule('Schedule.xlsx',1,level = '甲级')
+#mB = createschedule('Schedule.xlsx',2,level = '乙级')
+#m = mA
+#for i in mB:
+#    m.append(i)
+#m.sort(key = lambda x:x[1] + x[5])
+#inputschedule(m)
+#mT = createschedule('tSchedule.xlsx',1)
+#mT.sort(key = lambda x:x[1] + x[5])
+#inputschedule(mT,'FRESHMANCUP_17')

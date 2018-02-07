@@ -10,7 +10,7 @@ $stptime = $_GET['StoppageTime'];
 $servername = "localhost";
 $username = "root";
 $password = "961014";
-$dbname = "MANAN_1718";
+$dbname = $_GET['dbname'];
 echo $id.$team.$kitnum.$type.$time.$stptime;
 $conn = new mysqli($servername, $username, $password,$dbname);
 mysqli_query($conn,'set names utf8');

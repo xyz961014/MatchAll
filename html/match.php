@@ -14,7 +14,7 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.13.0/esm/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.13.0/umd/popper.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <input id="validcheck" type="checkbox" onclick='onvalid()' />VALID
 <br>
@@ -24,7 +24,11 @@ $id = $_GET["id"];
 $servername = "localhost";
 $username = "root";
 $password = "961014";
-$dbname = "MANAN_1718";
+$dbname = $_GET['Match'];
+$elifile = fopen($dbname.'.json','r') or die("Unable to open file!");
+$eliinfo = json_decode(fgets($elifile));
+$eliinfo = $eliinfo[1];
+fclose($elifile);
 $conn = new mysqli($servername, $username, $password,$dbname);
 mysqli_query($conn,'set names utf8');
 if ($conn->connect_error) {
@@ -51,13 +55,20 @@ if (!$result) {
 $sql = "SELECT * FROM Matches WHERE MatchID = $id";
 $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
-     $Hometeam = $row['HomeTeam'];
-     $Awayteam = $row['AwayTeam'];
+     $hometeam = $row['HomeTeam'];
+     $awayteam = $row['AwayTeam'];
      $valid = $row['Valid'];
      $stage = $row['Stage'];
 }
-$hometeam = $dict[$Hometeam];
-$awayteam = $dict[$Awayteam];
+if ($stage != 'Group') {
+    //print_r($eliinfo->{$id});
+    $hometeam = $eliinfo->{$id}->hometeam;
+    $awayteam = $eliinfo->{$id}->awayteam;
+}
+if (preg_match('/^MA.+/', $dbname)) {
+    $hometeam = $dict[$hometeam];
+    $awayteam = $dict[$awayteam];
+}
 $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
 $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
@@ -68,10 +79,7 @@ $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
     $awayplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
 }
-$Hnum = $_POST['H'];
-?>
 
-<?php
 echo $hometeam."首发:<br>";
     for($i = 0;$i<count($homeplayers);$i++) {
         $num = $homeplayers[$i]['KitNumber'];
@@ -79,7 +87,6 @@ echo $hometeam."首发:<br>";
         echo $num."-".$homeplayers[$i]['Name'];
     }
 ?>
-<input type='button' value='Submit' onclick='HSubmit()'/>
 <?php
 echo "<br>".$awayteam."首发:<br>";
     for($i = 0;$i<count($awayplayers);$i++) {
@@ -88,7 +95,6 @@ echo "<br>".$awayteam."首发:<br>";
         echo $num."-".$awayplayers[$i]['Name'];
     }
 ?>
-<input type='button' value='Submit' onclick='ASubmit()'>
 <?php
 echo "<br>";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -117,6 +123,7 @@ function onvalid() {
         validbool = 0;
     }
     $.get('checked.php',{
+        dbname: '<?=$dbname ?>',
         MatchID: '<?=$id ?>',
         Valid: validbool
     },function(data,state) {
@@ -135,6 +142,46 @@ function homecheck(id) {
         Hinst.checked = false;
         alert('more than 11');
     }
+    else {
+        validbool = 0;
+        $.get('checked.php', {
+            dbname: '<?=$dbname ?>',
+            MatchID: '<?=$id ?>',
+            Valid: validbool
+        }, function(data, state) {
+            console.log(data);
+            if (Hinst.checked) {
+                $.get('additem.php', {
+                    dbname: '<?=$dbname ?>',
+                    MatchID: "<?='Match'.$id ?>",
+                    Team: '<?=$hometeam ?>',
+                    KitNumber: id,
+                    Name: null,
+                    Type: '首发',
+                    Time: 0,
+                    StoppageTime: 0
+            }, function(data, state) {
+                console.log(data);
+                showreport();
+            })
+            }
+            else {
+                 $.get('delitem.php', {
+                    dbname: '<?=$dbname ?>',
+                    MatchID: "<?='Match'.$id ?>",
+                    Team: '<?=$hometeam ?>',
+                    KitNumber: id,
+                    Name: null,
+                    Type: '首发',
+                    Time: 0,
+                    StoppageTime: 0
+                }, function(data, state) {
+                    console.log(data);
+                    showreport();
+                })
+            }
+        })
+    }
 }
 function awaycheck(id) {
     var Anum = $("input[name=Awaycheck]");
@@ -148,98 +195,145 @@ function awaycheck(id) {
         Ainst.checked = false;
         alert('more than 11');
     }
-}
-function HSubmit() {
-    validbool = 0;
-    $.get('checked.php',{
-        MatchID: '<?=$id ?>',
-        Valid: validbool
-    },function(data,state) {
-        console.log(data);
-        showreport();
-        var Hnum = $("input[name=Homecheck]");
-        var h_check = [];
-        for (var k in Hnum) {
-            if (Hnum[k].checked)
-                h_check.push(Hnum[k].value);
-        }
-        //alert(h_check);
-        $.get('delitem.php',{
-                MatchID: "<?='Match'.$id ?>",
-                Team: '<?=$hometeam ?>',
-                KitNumber: null,
-                Name: null,
-                Type: '首发',
-                Time: null,
-                StoppageTime:null
-        },function (data,state) {
-            //alert(data);
-            for (var item in h_check) {
-                $.get('additem.php',{
-                    MatchID: "<?='Match'.$id ?>",
-                    Team: '<?=$hometeam ?>',
-                    KitNumber: h_check[item],
-                    Name: null,
-                    Type: '首发',
-                    Time: 0,
-                    StoppageTime: 0
-                },function (data,state) {
-                    console.log(data);
-                    console.log(state);
-                    showreport();
-                });
-            }
-        });
-
-    })
-        
-}
-function ASubmit() {
-    validbool = 0;
-    $.get('checked.php',{
-        MatchID: '<?=$id ?>',
-        Valid: validbool
-    },function(data,state) {
-        console.log(data);
-        showreport();
-        var Anum = $("input[name=Awaycheck]");
-        var a_check = [];
-        for (k in Anum) {
-            if (Anum[k].checked)
-                a_check.push(Anum[k].value);
-        }
-        //alert(a_check);
-        $.get('delitem.php',{
-                MatchID: "<?='Match'.$id ?>",
-                Team: '<?=$awayteam ?>',
-                KitNumber: null,
-                Name: null,
-                Type: '首发',
-                Time: null,
-                StoppageTime:null
-
-        },function(data,state) {
-            //alert(data);
-            for (var item in a_check) {
-                $.get('additem.php',{
+    else {
+        validbool = 0;
+        $.get('checked.php', {
+            dbname: '<?=$dbname ?>',
+            MatchID: '<?=$id ?>',
+            Valid: validbool
+        }, function(data, state) {
+            console.log(data);
+            if (Ainst.checked) {
+                $.get('additem.php', {
+                    dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
                     Team: '<?=$awayteam ?>',
-                    KitNumber: a_check[item],
+                    KitNumber: id,
                     Name: null,
                     Type: '首发',
                     Time: 0,
                     StoppageTime: 0
-                },function (data,state) {
-                    //alert(data);
-                    //alert(state);
-                    showreport();
-                });
+            }, function(data, state) {
+                console.log(data);
+                showreport();
+            })
             }
-        });
+            else {
+                 $.get('delitem.php', {
+                    dbname: '<?=$dbname ?>',
+                    MatchID: "<?='Match'.$id ?>",
+                    Team: '<?=$awayteam ?>',
+                    KitNumber: id,
+                    Name: null,
+                    Type: '首发',
+                    Time: 0,
+                    StoppageTime: 0
+                }, function(data, state) {
+                    console.log(data);
+                    showreport();
+                })
+            }
+        })
+    }
 
-    })
-        
 }
+//function HSubmit() {
+//    validbool = 0;
+//    $.get('checked.php',{
+//        dbname: '<?=$dbname ?>',
+//        MatchID: '<?=$id ?>',
+//        Valid: validbool
+//    },function(data,state) {
+//        console.log(data);
+//        showreport();
+//        var Hnum = $("input[name=Homecheck]");
+//        var h_check = [];
+//        for (var k in Hnum) {
+//            if (Hnum[k].checked)
+//                h_check.push(Hnum[k].value);
+//        }
+//        //alert(h_check);
+//        $.get('delitem.php',{
+//                dbname: '<?=$dbname ?>',
+//                MatchID: "<?='Match'.$id ?>",
+//                Team: '<?=$hometeam ?>',
+//                KitNumber: null,
+//                Name: null,
+//                Type: '首发',
+//                Time: null,
+//                StoppageTime:null
+//        },function (data,state) {
+//            //alert(data);
+//            for (var item in h_check) {
+//                $.get('additem.php',{
+//                    dbname: '<?=$dbname ?>',
+//                    MatchID: "<?='Match'.$id ?>",
+//                    Team: '<?=$hometeam ?>',
+//                    KitNumber: h_check[item],
+//                    Name: null,
+//                    Type: '首发',
+//                    Time: 0,
+//                    StoppageTime: 0
+//                },function (data,state) {
+//                    console.log(data);
+//                    console.log(state);
+//                    showreport();
+//                });
+//            }
+//        });
+//
+//    })
+//        
+//}
+//function ASubmit() {
+//    validbool = 0;
+//    $.get('checked.php',{
+//        dbname: '<?=$dbname ?>',
+//        MatchID: '<?=$id ?>',
+//        Valid: validbool
+//    },function(data,state) {
+//        console.log(data);
+//        showreport();
+//        var Anum = $("input[name=Awaycheck]");
+//        var a_check = [];
+//        for (k in Anum) {
+//            if (Anum[k].checked)
+//                a_check.push(Anum[k].value);
+//        }
+//        //alert(a_check);
+//        $.get('delitem.php',{
+//                dbname: '<?=$dbname ?>',
+//                MatchID: "<?='Match'.$id ?>",
+//                Team: '<?=$awayteam ?>',
+//                KitNumber: null,
+//                Name: null,
+//                Type: '首发',
+//                Time: null,
+//                StoppageTime:null
+//
+//        },function(data,state) {
+//            //alert(data);
+//            for (var item in a_check) {
+//                $.get('additem.php',{
+//                    dbname: '<?=$dbname ?>',
+//                    MatchID: "<?='Match'.$id ?>",
+//                    Team: '<?=$awayteam ?>',
+//                    KitNumber: a_check[item],
+//                    Name: null,
+//                    Type: '首发',
+//                    Time: 0,
+//                    StoppageTime: 0
+//                },function (data,state) {
+//                    //alert(data);
+//                    //alert(state);
+//                    showreport();
+//                });
+//            }
+//        });
+//
+//    })
+//        
+//}
 </script>
 TEAM: <select name="Team">
         <option><?php echo $hometeam;?>
@@ -298,6 +392,7 @@ Kittext.keyup(function (e) {
         nametext.val("");
     } else {
         $.get('kitname.php',{
+                dbname: '<?=$dbname ?>',
                 MatchID: "<?='Match'.$id ?>",
                 Team: team,
                 KitNumber: num,
@@ -330,6 +425,7 @@ Nametext.keyup(function (e) {
         numtext.val("");
     } else {
         $.get('kitname.php',{
+                dbname: '<?=$dbname ?>',
                 MatchID: "<?='Match'.$id ?>",
                 Team: team,
                 KitNumber: null,
@@ -347,8 +443,9 @@ Nametext.keyup(function (e) {
 function PSubmit() {
     validbool = 0;
     $.get('checked.php', {
-    MatchID: '<?=$id ?>',
-    Valid: validbool
+        dbname: '<?=$dbname ?>',
+        MatchID: '<?=$id ?>',
+        Valid: validbool
     }, function(data, state) {
         console.log(data);
         showreport();
@@ -368,6 +465,7 @@ function PSubmit() {
         name = name.val();
         console.log(time,stptime,num,name,type);
         $.get('additem.php',{
+                dbname: '<?=$dbname ?>',
                 MatchID: "<?='Match'.$id ?>",
                 Team: team,
                 KitNumber: num,
@@ -387,6 +485,7 @@ function PSubmit() {
 function ESubmit() {
     validbool = 0;
     $.get('checked.php',{
+        dbname: '<?=$dbname ?>',
         MatchID: '<?=$id ?>',
         Valid: validbool
     },function(data,state) {
@@ -433,6 +532,7 @@ function ESubmit() {
         name = name.val();
         console.log(time,stptime,num,name,type);
         $.get('additem.php',{
+                dbname: '<?=$dbname ?>',
                 MatchID: "<?='Match'.$id ?>",
                 Team: team,
                 KitNumber: num,
@@ -458,6 +558,7 @@ function showreport() {
         validcheck.checked = false;
     }
     $.get('showreport.php',{
+        dbname: '<?=$dbname ?>',
         MatchID: "<?='Match'.$id ?>"
     }, function(data,state) {
         info = JSON.parse(data);
@@ -514,6 +615,8 @@ function showreport() {
         }
         //console.log(hflist,aflist,hevent,aevent);
         for (var i = 0;i < hflist.length;i++) {
+            var Hinst = document.getElementById('H'+hflist[i].kitnum); 
+            Hinst.checked = true;
             //if blank extrainfo
             var blk = /^\s+/;
             if (!blk.test(hflist[i].extrainfo) && hflist[i].extrainfo != "") {
@@ -529,6 +632,8 @@ function showreport() {
             homefirst.append(cont);
         } 
         for (var i = 0;i < aflist.length;i++) {
+            var Ainst = document.getElementById('A'+aflist[i].kitnum); 
+            Ainst.checked = true;
             //if blank extrainfo
             var blk = /^\s+/;
             if (!blk.test(aflist[i].extrainfo) && aflist[i].extrainfo != "") {
@@ -548,12 +653,14 @@ function showreport() {
             var id = id.split(".");
             validbool = 0;
             $.get('checked.php',{
+                dbname: '<?=$dbname ?>',
                 MatchID: '<?=$id ?>',
                 Valid: validbool
             },function(data,state) {
                 console.log(data);
                 //console.log(id);
                 $.get('delitem.php', {
+                    dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
                     Team: id[0],
                     KitNumber: parseInt(id[1]),
@@ -614,12 +721,14 @@ function showreport() {
             var id = id.split(".");
             validbool = 0;
             $.get('checked.php',{
+                dbname: '<?=$dbname ?>',
                 MatchID: '<?=$id ?>',
                 Valid: validbool
             },function(data,state) {
                 console.log(data);
                 console.log(id);
                 $.get('delitem.php', {
+                    dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
                     Team: id[0],
                     KitNumber: parseInt(id[1]),

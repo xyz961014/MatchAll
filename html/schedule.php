@@ -14,10 +14,11 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.13.0/esm/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.13.0/umd/popper.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <p class='list'></p>
 <?php
+$dbname = $_GET['Match'];
 //$servername = "localhost";
 //$username = "root";
 //$password = "961014";
@@ -51,13 +52,19 @@
 <script>
 //console.log('load');
 var d = new Date();
+var dbname = '<?=$dbname?>';
+$.getJSON(dbname + ".json",{
+    time:d.getTime()
+}, function(data,state) {
+    var eliinfo = data[1];
+})
 $.get('showlist.php',{
-    dbname: 'MANAN_1718',
+    dbname: '<?=$dbname ?>',
     time: d.getTime()
 }, function(data,state) {
     var list = $('.list');
     list.append(data);
-    console.log('load',data);
+    //console.log('load',data);
 })
 function onvalid(id) {
     var validcheck = document.getElementById(id);
@@ -69,6 +76,7 @@ function onvalid(id) {
         var validbool = 0;
     }
     $.get('checked.php',{
+        dbname: '<?=$dbname ?>',
         MatchID: id,
         Valid: validbool
     },function(data,state) {

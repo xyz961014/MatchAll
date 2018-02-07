@@ -2,6 +2,8 @@ import pymysql.cursors
 import re
 import TeamDict
 import sys, getopt
+import os
+import json
 
 class Player:
     def __init__(self, name, team, kitnum = None, first = True, intime = 1,onpitch = True):
@@ -54,14 +56,20 @@ class Team:
         self.yc = 0
         self.rc = 0
 
-def Stat(matchid = None, add = True):
+def Stat(matchname, matchid = None, add = True):
     connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANAN_1718',
+                               db=matchname,
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
     try:
+        EliMatches = dict()
+        if os.path.exists('../html/' + matchname + '.json'):
+            with open('../html/' + matchname + '.json') as ef:
+                deli = json.loads(ef.readline())[1]
+            for eid,eit in deli.items():
+                EliMatches[int(eid)] = Match(matchid = eit['matchid'], stage = eit['stage'], hometeam = eit['hometeam'], awayteam = eit['awayteam'])
         with connection.cursor() as cursor:
             sql = 'SELECT MatchID,Hometeam,Awayteam,Stage,Valid FROM Matches'
             if matchid != None:
@@ -74,6 +82,13 @@ def Stat(matchid = None, add = True):
             for match in matches:
                 if match['Valid'] == 1:
                     #all valid matches
+                    if not match['Stage'] == 'Group':
+                        match['Hometeam'] = EliMatches[match['MatchID']].hometeam
+                        match['Awayteam'] = EliMatches[match['MatchID']].awayteam
+
+                    if re.match('^MA.+',matchname):
+                        match['Hometeam'] = TeamDict.getfull(match['Hometeam'])
+                        match['Awayteam'] = TeamDict.getfull(match['Awayteam'])
                     Vmatch.append(Match(match['MatchID'],match['Hometeam'],match['Awayteam'],match['Stage']));
             #print(Vmatch)
             for m in Vmatch:
@@ -81,6 +96,7 @@ def Stat(matchid = None, add = True):
                 awayteam=Team(m.awayteam)
                 sql = 'SELECT * FROM Match' + str(m.matchid) + ' ORDER BY EventTime,StoppageTime'
                 cursor.execute(sql)
+                groupbool = False
                 if m.stage == 'Group':
                     groupbool = True
                 Infos = cursor.fetchall() #all events
@@ -95,7 +111,7 @@ def Stat(matchid = None, add = True):
                             players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, onpitch = False)
                             players[str(info['KitNumber']) + info['Name']].intime.remove(1)
                             players[str(info['KitNumber']) + info['Name']].yc += 1
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 hometeam.yc += 1
                             else:
                                 awayteam.yc += 1
@@ -103,14 +119,14 @@ def Stat(matchid = None, add = True):
                             players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, onpitch = False)
                             players[str(info['KitNumber']) + info['Name']].intime.remove(1)
                             players[str(info['KitNumber']) + info['Name']].rc += 1
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 hometeam.rc += 1
                             else:
                                 awayteam.rc += 1
                     else:
                         if info['EventType'] == '进球':
                             players[str(info['KitNumber']) + info['Name']].goals += 1
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 hometeam.goals += 1
                                 awayteam.concede += 1
                             else:
@@ -125,21 +141,21 @@ def Stat(matchid = None, add = True):
                             players[str(info['KitNumber']) + info['Name']].yc += 1
                             if players[str(info['KitNumber']) + info['Name']].yc == 2:
                                 players[str(info['KitNumber']) + info['Name']].outtime.append(info['EventTime'])
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 hometeam.yc += 1
                             else:
                                 awayteam.yc += 1
                         elif info['EventType'] == '红牌':
                             players[str(info['KitNumber']) + info['Name']].rc += 1
                             players[str(info['KitNumber']) + info['Name']].outtime.append(info['EventTime'])
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 hometeam.rc += 1
                             else:
                                 awayteam.rc += 1
                         elif info['EventType'] == '点球':
                             players[str(info['KitNumber']) + info['Name']].penalty += 1
                             players[str(info['KitNumber']) + info['Name']].goals += 1
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 hometeam.goals += 1
                                 hometeam.penalty += 1
                                 awayteam.concede += 1
@@ -149,7 +165,7 @@ def Stat(matchid = None, add = True):
                                 awayteam.penalty += 1
                         elif info['EventType'] == '乌龙球':
                             players[str(info['KitNumber']) + info['Name']].owngoal += 1
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 awayteam.goals += 1
                                 hometeam.concede += 1
                                 hometeam.owngoal += 1
@@ -159,24 +175,24 @@ def Stat(matchid = None, add = True):
                                 awayteam.owngoal += 1
                         elif info['EventType'] == '点球罚失':
                             players[str(info['KitNumber']) + info['Name']].penmiss += 1
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 hometeam.penmiss += 1
                             else:
                                 awayteam.penmiss += 1
                         elif info['EventType'] == '点球决胜罚进':
-                            if info['Team'] == TeamDict.getfull(m.hometeam):
+                            if info['Team'] == m.hometeam:
                                 m.homepenalty += 1
                             else:
                                 m.awaypenalty += 1
-                    if hometeam.goals > awayteam.goals:
-                        hometeam.point = 3
-                        awayteam.point = 0
-                    elif hometeam.goals < awayteam.goals:
-                        hometeam.point = 0
-                        awayteam.point = 3
-                    else:
-                        hometeam.point = 1
-                        awayteam.point = 1
+                if hometeam.goals > awayteam.goals:
+                    hometeam.point = 3
+                    awayteam.point = 0
+                elif hometeam.goals < awayteam.goals:
+                    hometeam.point = 0
+                    awayteam.point = 3
+                else:
+                    hometeam.point = 1
+                    awayteam.point = 1
                 for p in players.items():
                     p[1].getontime()
                     print(p[1].team, p[1].name,'A:',p[1].onpitch,'G:',p[1].goals,'Y:',p[1].yc,'R:',p[1].rc,'P:',p[1].penalty,'PM:',p[1].penmiss,'OG:',p[1].owngoal,'MIN:',p[1].ontime)
@@ -202,10 +218,10 @@ def Stat(matchid = None, add = True):
 
                 #update teams
                 sql = 'SELECT * FROM Teams WHERE TeamName = %s'
-                cursor.execute(sql,TeamDict.getfull(hometeam.name))
+                cursor.execute(sql,hometeam.name)
                 ht = cursor.fetchall()[0]
                 sql = 'SELECT * FROM Teams WHERE TeamName = %s'
-                cursor.execute(sql,TeamDict.getfull(awayteam.name))
+                cursor.execute(sql,awayteam.name)
                 at = cursor.fetchall()[0]
                 print(ht,at)
                 if add:
@@ -304,11 +320,11 @@ def Stat(matchid = None, add = True):
     finally:
         connection.close()
 
-def Clear():
+def Clear(dbname):
     connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANAN_1718',
+                               db=dbname,
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
     try:
@@ -328,22 +344,35 @@ def Clear():
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "hca:d:",["help", "add=", "delete=", "clear", "allvalid"])
+        opts, args = getopt.getopt(argv, "hca:d:n:",["help", "add=", "delete=", "clear", "allvalid", "matchname"])
     except getopt.GetoptError:
         print('Syntax Error. Please use -h or --help to see the usage.')
         sys.exit(2)
+    mode = ""
+    mid = ""
+    add = True
+    clear = False
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print('Usage:\n-a or --add= \t add a match into the Stats.Argument:MatchID\n-d or --delete= \t delete a match from the Stats.Argument:MatchID\n-c or --clear \t clear the Stats.Argument:None\n--allvalid \t stat all valid matches\n-h or --help \t see the help words')
+            print('Usage:\n-n or --matchname= \t input matchname\n-a or --add= \t add a match into the Stats.Argument:MatchID\n-d or --delete= \t delete a match from the Stats.Argument:MatchID\n-c or --clear \t clear the Stats.Argument:None\n--allvalid \t stat all valid matches\n-h or --help \t see the help words')
             sys.exit()
         elif opt in ("-a", "--add"):
-            Stat(matchid = arg)
+            add = True
+            mid = arg
+        elif opt in ("-n","--matchname"):
+            matchname = arg
         elif opt in ("-d", "--delete"):
-            Stat(matchid = arg, add = False)    
+            add = False
+            mid = arg
         elif opt in ("-c", "--clear"):
-            Clear()
+            clear = True
         elif opt == "--allvalid":
-            Stat() 
+            mid = None
+        if clear:
+            Clear(dbname=matchname)
+        else:
+            Stat(matchname = matchname, matchid = mid, add = add)
+
 
 
 if __name__ == "__main__":
