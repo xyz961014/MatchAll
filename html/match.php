@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+
 
     <title>TUFA</title>
   </head>
@@ -14,8 +16,7 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.13.0/umd/popper.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <input id="validcheck" type="checkbox" onclick='onvalid()' />VALID
 <br>
 <?php
@@ -626,7 +627,7 @@ function showreport() {
                 var txt = hflist[i].kitnum + "-" + hflist[i].name;
             }
             hflist[i].namestr = txt;
-            tb = " <input type='button' class='delplayer' id='"+hflist[i].team+"\."+hflist[i].kitnum.toString()+"\."+hflist[i].name+"' value='delete'>";
+            tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+hflist[i].team+"\."+hflist[i].kitnum.toString()+"\."+hflist[i].name+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
             homefirst.append(cont);
@@ -643,7 +644,7 @@ function showreport() {
                 var txt = aflist[i].kitnum + "-" + aflist[i].name;
             }
             aflist[i].namestr = txt;
-            tb = " <input type='button' class='delplayer' id='"+aflist[i].team+"\."+aflist[i].kitnum.toString()+"\."+aflist[i].name+"' value='delete'>";
+            tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+aflist[i].team+"\."+aflist[i].kitnum.toString()+"\."+aflist[i].name+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
             awayfirst.append(cont);
@@ -691,7 +692,7 @@ function showreport() {
                 var timestr = hevent[i].time.toString() + "+" + hevent[i].stptime.toString();
             hevent[i].timestr = timestr;
             var txt = hevent[i].type + "\t" + timestr + "\'\t" + namestr; 
-            tb = " <input type='button' class='delevent' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"' value='delete'>";
+            tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
             homeevent.append(cont);
@@ -711,7 +712,7 @@ function showreport() {
                 var timestr = aevent[i].time.toString() + "+" + aevent[i].stptime.toString();
             aevent[i].timestr = timestr;
             var txt = aevent[i].type + "\t" + timestr + "\'\t" + namestr; 
-            tb = " <input type='button' class='delevent' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"' value='delete'>";
+            tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
             awayevent.append(cont);

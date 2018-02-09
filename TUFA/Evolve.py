@@ -4,6 +4,7 @@ import TeamDict
 import os
 import sys, getopt
 import json
+import codecs
 
 class Team:
     def __init__(self, name, groupname, win, draw, lose, point, goals, owngoal, concede, penalty,penmiss, yc, rc):
@@ -67,8 +68,9 @@ def Evolve(matchname):
             EliMatches = dict()
             if os.path.exists('../html/' + matchname + '.json'):
                 #Get info from file
-                with open('../html/' + matchname + '.json') as rankfile:
-                    [dgroups, deli] = json.loads(rankfile.readline())
+                with codecs.open('../html/' + matchname + '.json','r','utf-8') as rankfile:
+                    line = rankfile.readline()
+                    [dgroups, deli] = json.loads(line)
                 #print(deli)
                 for gid,git in dgroups.items():
                     lt = git['teams']
@@ -78,7 +80,8 @@ def Evolve(matchname):
                     #print(git['name'], T)
                     Groups[gid] = Group(name = git['name'],teams = T)
                 for eid,eit in deli.items():
-                    EliMatches[int(eid)] = Match(matchid = eit['matchid'], stage = eit['stage'], hometeam = eit['hometeam'], awayteam = eit['awayteam'], time = eit['time'], result = eit['result'], homewin = eit['homewin'], valid = eit['valid'], todecide = eit['todecide'])
+                    if not eid == 'end':
+                        EliMatches[int(eid)] = Match(matchid = eit['matchid'], stage = eit['stage'], hometeam = eit['hometeam'], awayteam = eit['awayteam'], time = eit['time'], result = eit['result'], homewin = eit['homewin'], valid = eit['valid'], todecide = eit['todecide'])
                 #update data
                 sql = 'SELECT * FROM Teams'
                 cursor.execute(sql)

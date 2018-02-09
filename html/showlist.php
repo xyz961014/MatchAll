@@ -5,7 +5,7 @@ $password = "961014";
 $dbname = $_GET['dbname'];
 $time = $_GET['time'];
 
-$elifile = fopen($dbname.'.json','r') or die("Unable to open file!");
+$elifile = fopen($dbname.'.json','r');
 $eliinfo = json_decode(fgets($elifile));
 $eliinfo = $eliinfo[1];
 fclose($elifile);
