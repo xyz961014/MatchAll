@@ -81,22 +81,18 @@ while ($row = $res->fetch_assoc()) {
     $awayplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
 }
 
-echo $hometeam."首发:<br>";
+echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
     for($i = 0;$i<count($homeplayers);$i++) {
         $num = $homeplayers[$i]['KitNumber'];
         echo "<input type='checkbox' name='Homecheck' id='H$num' value='$num' onclick='homecheck($num)'>";
         echo $num."-".$homeplayers[$i]['Name'];
     }
-?>
-<?php
-echo "<br>".$awayteam."首发:<br>";
+echo "<br>".$awayteam."首发:<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛<br>";
     for($i = 0;$i<count($awayplayers);$i++) {
         $num = $awayplayers[$i]['KitNumber'];
         echo "<input type='checkbox' name='Awaycheck' id='A$num' value='$num' onclick='awaycheck($num)'>";
         echo $num."-".$awayplayers[$i]['Name'];
     }
-?>
-<?php
 echo "<br>";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Hnum = test_input($_POST['H']);
@@ -131,6 +127,51 @@ function onvalid() {
         console.log(data);
     })
 }
+$('.abandon').click(function () {
+    validbool = 0;
+    var id = $(this).attr('id');
+    var pid = id.split('~');
+    if (pid[0] == 'H')
+        var ateam = '<?=$hometeam?>';
+    else 
+        var ateam = '<?=$awayteam?>';
+    var Hab = document.getElementById(id);
+    $.get('checked.php', {
+            dbname: '<?=$dbname ?>',
+            MatchID: '<?=$id ?>',
+            Valid: validbool
+        }, function(data, state) {
+            if (Hab.checked) {
+                $.get('additem.php', {
+                    dbname: '<?=$dbname ?>',
+                    MatchID: "<?='Match'.$id ?>",
+                    Team: ateam,
+                    KitNumber: null,
+                    Name: null,
+                    Type: '弃赛',
+                    Time: 0,
+                    StoppageTime: 0
+                }, function(data, state) {
+                    console.log(data);
+                    showreport();
+                })
+            } else {
+                $.get('delitem.php', {
+                    dbname: '<?=$dbname ?>',
+                    MatchID: "<?='Match'.$id ?>",
+                    Team: ateam,
+                    KitNumber: null,
+                    Name: null,
+                    Type: '弃赛',
+                    Time: 0,
+                    StoppageTime: 0
+                }, function(data, state) {
+                    console.log(data);
+                    showreport();
+                })
+            }
+    })
+});
 function homecheck(id) {
     var Hnum = $("input[name=Homecheck]");
     var n = 0;
@@ -585,6 +626,9 @@ function showreport() {
             if (e.team == homename) {
                 if (e.type == "首发") {
                     hflist.push(e);
+                } else if (e.type == "弃赛") {
+                    var Hhab = document.getElementById('H~Abandon');
+                    Hhab.checked = true;
                 } else {
                     hevent.push(e);
                     if (e.type == "进球" || e.type == "点球") {
@@ -598,6 +642,9 @@ function showreport() {
             else if (e.team == awayname) {
                 if (e.type == "首发") {
                     aflist.push(e);
+                } else if (e.type == "弃赛") {
+                    var Haab = document.getElementById('A~Abandon');
+                    Haab.checked = true;
                 } else {
                     aevent.push(e);
                     if (e.type == "进球" || e.type == "点球") {

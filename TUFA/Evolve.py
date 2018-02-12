@@ -7,7 +7,7 @@ import json
 import codecs
 
 class Team:
-    def __init__(self, name, groupname, win, draw, lose, point, goals, owngoal, concede, penalty,penmiss, yc, rc):
+    def __init__(self, name, groupname, win, draw, lose, point, goals, concede):
         self.name = name
         self.groupname = groupname
         self.win = win
@@ -15,30 +15,32 @@ class Team:
         self.lose = lose
         self.point = point
         self.goals = goals
-        self.owngoal = owngoal
         self.concede = concede
-        self.penalty = penalty
-        self.penmiss = penmiss
-        self.yc = yc
-        self.rc = rc
         self.gd = goals - concede
+    def Getgd(self):
+        self.gd = self.goals - self.concede
 
 
 class Group:
     def __init__(self, name, teams = None):
         self.name = name
         self.teams = teams
-    def roughsort(self):
-        self.teams.sort(key = lambda x:(x.point, x.gd), reverse = True)
+    def roughsort(self,gd = False):
+        if gd:
+            self.teams.sort(key = lambda x:(x.point, x.gd), reverse = True)
+        else:
+            self.teams.sort(key = lambda x:x.point, reverse = True)
 
 class Match:
-    def __init__(self, matchid, stage, hometeam, awayteam, time, result, homewin = True, valid = False, todecide = False):
+    def __init__(self, matchid, stage, hometeam, awayteam, time, homegoal, awaygoal, result, homewin = True, valid = False, todecide = False):
         self.matchid = matchid
         self.stage = stage
         self.hometeam = hometeam
         self.awayteam = awayteam
         self.time = time
         self.valid = valid
+        self.homegoal = homegoal
+        self.awaygoal = awaygoal
         self.result = result
         self.homewin = homewin
         self.todecide = todecide
@@ -76,12 +78,12 @@ def Evolve(matchname):
                     lt = git['teams']
                     T = []
                     for t in lt:
-                        T.append(Team(name = t['name'], groupname = t['groupname'], win = t['win'], draw = t['draw'], lose = t['lose'], point = t['point'], goals = t['goals'], owngoal = t['owngoal'], concede = t['concede'], penalty = t['penalty'], penmiss = t['penmiss'], yc = t['yc'], rc = t['rc']))
+                        T.append(Team(name = t['name'], groupname = t['groupname'], win = t['win'], draw = t['draw'], lose = t['lose'], point = t['point'], goals = t['goals'],  concede = t['concede']))
                     #print(git['name'], T)
                     Groups[gid] = Group(name = git['name'],teams = T)
                 for eid,eit in deli.items():
                     if not eid == 'end':
-                        EliMatches[int(eid)] = Match(matchid = eit['matchid'], stage = eit['stage'], hometeam = eit['hometeam'], awayteam = eit['awayteam'], time = eit['time'], result = eit['result'], homewin = eit['homewin'], valid = eit['valid'], todecide = eit['todecide'])
+                        EliMatches[int(eid)] = Match(matchid = eit['matchid'], stage = eit['stage'], hometeam = eit['hometeam'], awayteam = eit['awayteam'], time = eit['time'], homegoal=eit['homegoal'], awaygoal=['awaygoal'], result = eit['result'], homewin = eit['homewin'], valid = eit['valid'], todecide = eit['todecide'])
                 #update data
                 sql = 'SELECT * FROM Teams'
                 cursor.execute(sql)
@@ -95,12 +97,8 @@ def Evolve(matchname):
                                 Groups[i].teams[Ti].lose = t['Lose']
                                 Groups[i].teams[Ti].point = t['Point']
                                 Groups[i].teams[Ti].goals = t['Goal']
-                                Groups[i].teams[Ti].owngoal = t['OwnGoal']
                                 Groups[i].teams[Ti].concede = t['Concede']
-                                Groups[i].teams[Ti].penalty = t['Penalty']
-                                Groups[i].teams[Ti].penmiss = t['Penaltymiss']
-                                Groups[i].teams[Ti].yc = t['YellowCard']
-                                Groups[i].teams[Ti].rc = t['RedCard']
+                                Groups[i].teams[Ti].Getgd()
                                 break
                 sql = "SELECT * FROM Matches ORDER BY MatchTime"
                 cursor.execute(sql)
@@ -125,18 +123,21 @@ def Evolve(matchname):
                                         #AWAYPENALTYWIN
                                         EliMatches[Mi].homewin = False            
                                 EliMatches[Mi].valid = m['Valid']
+                                EliMatches[Mi].homegoal = m['HomeGoal']
+                                EliMatches[Mi].awaygoal = m['AwayGoal']
                                 if not Ma.todecide:
                                     EliMatches[Mi].hometeam = m['HomeTeam']
                                     EliMatches[Mi].awayteam = m['AwayTeam']
                 for i,g in Groups.items():
                     g.roughsort()
+                    
 
             else:
                 sql = 'SELECT * FROM Teams'
                 cursor.execute(sql)
                 teams = cursor.fetchall()
                 for t in teams:
-                    T = Team(name = t['TeamName'], groupname = t['GroupName'], win = t['Win'], draw = t['Draw'], lose = t['Lose'], point = t['Point'], goals = t['Goal'], owngoal = t['OwnGoal'], concede = t['Concede'], penalty = t['Penalty'], penmiss = t['Penaltymiss'], yc = t['YellowCard'], rc = t['RedCard'])
+                    T = Team(name = t['TeamName'], groupname = t['GroupName'], win = t['Win'], draw = t['Draw'], lose = t['Lose'], point = t['Point'], goals = t['Goal'], concede = t['Concede'])
                     for i,g in Groups.items():
                         if T.groupname == g.name:
                             Groups[i].teams.append(T)
@@ -144,7 +145,7 @@ def Evolve(matchname):
                     else:
                         Groups[T.groupname] = Group(name = T.groupname, teams = [T])
                 for i,g in Groups.items():
-                    g.roughsort()
+                    g.roughsort(gd = True)
                 sql = "SELECT * FROM Matches ORDER BY MatchTime"
                 cursor.execute(sql)
                 matches = cursor.fetchall()
@@ -152,7 +153,7 @@ def Evolve(matchname):
                     resultstr = str(m['HomeGoal']) + ':' + str(m['AwayGoal'])
                     if m['PenaltyShootOut']:
                         resultstr += '(' + str(m['HomeGoal'] + m['HomePenalty']) + ':' +str(m['AwayGoal'] + m['AwayPenalty']) + ')'
-                    M = Match(matchid = m['MatchID'], stage = m['Stage'], hometeam = m['HomeTeam'],awayteam = m['AwayTeam'], time = m['MatchTime'].strftime('%Y-%m-%d %H:%M'), result = resultstr, valid = m['Valid'])
+                    M = Match(matchid = m['MatchID'], stage = m['Stage'], hometeam = m['HomeTeam'],awayteam = m['AwayTeam'], time = m['MatchTime'].strftime('%Y-%m-%d %H:%M'), homegoal = m['HomeGoal'], awaygoal = m['AwayGoal'], result = resultstr, valid = m['Valid'])
                     if not m['Stage'] == 'Group':
                         if m['Result'] == 3: #HOMEWIN
                             M.homewin = True
@@ -201,7 +202,27 @@ def Evolve(matchname):
                             EliMatches[emid].awayteam = EliMatches[amid].getWL(WL = 'L')
                 else:
                     EliMatches[emid].todecide = True
-
+                if em.valid:
+                    for i,g in Groups.items():
+                        for ti,te in enumerate(g.teams):
+                            if em.hometeam == te.name:
+                                Groups[i].teams[ti].goals -= em.homegoal
+                                Groups[i].teams[ti].concede -= em.awaygoal
+                                if em.homegoal > em.awaygoal:
+                                    Groups[i].teams[ti].win -= 1
+                                elif em.homegoal < em.awaygoal:
+                                    Groups[i].teams[ti].lose -= 1
+                                elif em.homegoal == em.awaygoal:
+                                    Groups[i].teams[ti].draw -= 1
+                            if em.awayteam == te.name:
+                                Groups[i].teams[ti].goals -= em.awaygoal
+                                Groups[i].teams[ti].concede -= em.homegoal
+                                if em.homegoal > em.awaygoal:
+                                    Groups[i].teams[ti].lose -= 1
+                                elif em.homegoal < em.awaygoal:
+                                    Groups[i].teams[ti].win -= 1
+                                elif em.homegoal == em.awaygoal:
+                                    Groups[i].teams[ti].draw -= 1
             jsonstr = json.dumps([Groups, EliMatches], default = lambda g:g.__dict__, sort_keys = True)
             #print(groupstr,elistr)
             with open('../html/' + matchname + '.json', 'w') as rankfile:

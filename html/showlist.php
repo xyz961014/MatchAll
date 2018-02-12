@@ -28,7 +28,10 @@ if($result->num_rows > 0) {
                 }
             }
         }
-        echo $row['MatchID'].$row["HomeTeam"].$row["AwayTeam"].$row["MatchTime"].$row["MatchField"];
+        if ($row['Valid'])
+            echo $row['MatchID'].$row["HomeTeam"].$row['HomeGoal'].':'.$row['AwayGoal'].$row["AwayTeam"].$row["MatchTime"].$row["MatchField"];
+        else
+            echo $row['MatchID'].$row["HomeTeam"].'VS'.$row["AwayTeam"].$row["MatchTime"].$row["MatchField"];
         $id = $row['MatchID'];
         $valid = $row['Valid'];
         if ($valid == '1')

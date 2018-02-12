@@ -25,10 +25,13 @@ if ($conn->connect_error) {
 $sql = "SELECT Name,ExtraInfo FROM Players WHERE Team = '".$team."' and Kitnumber = ".$kitnum;
 $result = $conn->query($sql);
 $extrainfo = null;
-while ($row = $result->fetch_assoc()) {
-    $name = $row['Name'];
-    $extrainfo = $row['ExtraInfo'];
+if (count($row) > 0){
+    while ($row = $result->fetch_assoc()) {
+        $name = $row['Name'];
+        $extrainfo = $row['ExtraInfo'];
+    }
 }
+
 echo $name.$extrainfo;
 $sql = "INSERT INTO ".$id." (Team, KitNumber, Name, ExtraInfo, EventType,EventTime, StoppageTime) VALUES ('".$team."','".$kitnum."','".$name."','".$extrainfo."','".$type."','".$time."','".$stptime."')";
 echo $sql;

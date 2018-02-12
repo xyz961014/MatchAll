@@ -94,15 +94,22 @@ def Stat(matchname, matchid = None, add = True):
             for m in Vmatch:
                 hometeam=Team(m.hometeam)
                 awayteam=Team(m.awayteam)
-                sql = 'SELECT * FROM Match' + str(m.matchid) + ' ORDER BY EventTime,StoppageTime'
+                sql = 'SELECT * FROM Match' + str(m.matchid) + ' ORDER BY EventTime,StoppageTime,EventType'
                 cursor.execute(sql)
                 groupbool = False
                 if m.stage == 'Group':
                     groupbool = True
                 Infos = cursor.fetchall() #all events
                 players = dict()
+                Habandon = False
+                Aabandon = False
                 for info in Infos:
-                    if not str(info['KitNumber']) + info['Name'] in players:
+                    if info['EventType'] == '弃赛':
+                        if info['Team'] == m.hometeam:
+                            Habandon = True
+                        else:
+                            Aabandon = True
+                    elif not str(info['KitNumber']) + info['Name'] in players:
                         if info['EventType'] == '首发':
                             players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'])
                         elif info['EventType'] == '换上':
@@ -184,7 +191,22 @@ def Stat(matchname, matchid = None, add = True):
                                 m.homepenalty += 1
                             else:
                                 m.awaypenalty += 1
-                if hometeam.goals > awayteam.goals:
+                if Habandon and Aabandon:
+                    hometeam.point = 0
+                    awayteam.point = 0
+                    hometeam.concede = 3
+                    awayteam.concede = 3
+                elif Habandon and not Aabandon:
+                    hometeam.point = 0
+                    awayteam.point = 3
+                    hometeam.concede = 3
+                    awayteam.goals = 3
+                elif not Habandon and Aabandon:
+                    hometeam.point = 3
+                    awayteam.point = 0
+                    hometeam.goals = 3
+                    awayteam.concede = 3
+                elif hometeam.goals > awayteam.goals:
                     hometeam.point = 3
                     awayteam.point = 0
                 elif hometeam.goals < awayteam.goals:
@@ -204,6 +226,8 @@ def Stat(matchname, matchid = None, add = True):
                     m.homegoal = hometeam.goals
                     m.awaygoal = awayteam.goals
                     m.result = hometeam.point
+                    if Habandon and Aabandon:
+                        m.result = -1
                     if m.stage != 'Group' and m.homegoal == m.awaygoal:
                         m.penaltyshootout = True
                         sql = 'UPDATE Matches SET HomeGoal = %s, AwayGoal = %s, PenaltyShootOut = %s, HomePenalty = %s, AwayPenalty = %s, Result = %s WHERE MatchID = %s'
@@ -227,13 +251,16 @@ def Stat(matchname, matchid = None, add = True):
                 if add:
                     if hometeam.point == 3:
                         ht['Win'] += 1
-                        at['Lose'] += 1
                     elif hometeam.point == 1:
                         ht['Draw'] += 1
-                        at['Draw'] += 1
                     elif hometeam.point == 0:
                         ht['Lose'] += 1
+                    if awayteam.point == 3:
                         at['Win'] += 1
+                    elif awayteam.point == 1:
+                        at['Draw'] += 1
+                    elif awayteam.point == 0:
+                        at['Lose'] += 1
                     if groupbool:
                         ht['Point'] += hometeam.point
                         at['Point'] += awayteam.point
@@ -254,13 +281,16 @@ def Stat(matchname, matchid = None, add = True):
                 else:
                     if hometeam.point == 3:
                         ht['Win'] -= 1
-                        at['Lose'] -= 1
                     elif hometeam.point == 1:
                         ht['Draw'] -= 1
-                        at['Draw'] -= 1
                     elif hometeam.point == 0:
                         ht['Lose'] -= 1
+                    if awayteam.point == 3:
                         at['Win'] -= 1
+                    elif awayteam.point == 1:
+                        at['Draw'] -= 1
+                    elif awayteam.point == 0:
+                        at['Lose'] -= 1
                     if groupbool:
                         ht['Point'] -= hometeam.point
                         at['Point'] -= awayteam.point
