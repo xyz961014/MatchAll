@@ -25,7 +25,7 @@ if ($conn->connect_error) {
 $sql = "SELECT Name,ExtraInfo FROM Players WHERE Team = '".$team."' and Kitnumber = ".$kitnum;
 $result = $conn->query($sql);
 $extrainfo = null;
-if (count($row) > 0){
+if ($type != '弃赛'){
     while ($row = $result->fetch_assoc()) {
         $name = $row['Name'];
         $extrainfo = $row['ExtraInfo'];

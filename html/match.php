@@ -9,10 +9,76 @@
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
 
+<style>
+    .glyphicon{
+        color: white;
+    }
+</style>
+    
 
     <title>TUFA</title>
   </head>
   <body>
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×            
+			    </button>
+                <h4 class="modal-title" id="addModalLabel">
+               模态框标题            
+			    </h4>
+            </div>
+            <div class="modal-body">
+                <div class="chgradio">
+			        <label class="checkbox-inline">
+     			        <input type="radio" name="chgradio" id="chgout" value="换下" checked> 换下
+    			    </label>
+   				    <label class="checkbox-inline">
+      			    	<input type="radio" name="chgradio" id="chgin" value="换上"> 换上
+                    </label>
+                </div>
+                <div class="goalradio">
+			        <label class="checkbox-inline">
+     			        <input type="radio" name="goalradio" id="goal" value="进球" checked> 进球
+    			    </label>
+   				    <label class="checkbox-inline">
+      			    	<input type="radio" name="goalradio" id="penalty" value="点球"> 点球
+                    </label>
+			        <label class="checkbox-inline">
+     			        <input type="radio" name="goalradio" id="owngoal" value="乌龙球"> 乌龙球
+    			    </label>
+			        <label class="checkbox-inline">
+     			        <input type="radio" name="goalradio" id="penmiss" value="点球罚失"> 点球罚失
+    			    </label>
+                </div>
+                <div class="rycradio">
+			        <label class="checkbox-inline">
+     			        <input type="radio" name="rycradio" id="yc" value="黄牌" checked> 黄牌
+    			    </label>
+   				    <label class="checkbox-inline">
+      			    	<input type="radio" name="rycradio" id="rc" value="红牌"> 红牌
+                    </label>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="name">时间： </label>
+                    <input type="text" class="form-control timeinput" id="name" placeholder="请输入时间，伤停补时用+号表示。多个事件用空格隔开。">
+                </div>
+		    </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭            
+			    </button>
+                <button type="button" class="btn btn-primary btnsubmit">
+                提交            
+			    </button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="container">
+        <div class="row" id="match">
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
@@ -81,18 +147,26 @@ while ($row = $res->fetch_assoc()) {
     $awayplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
 }
 
-echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
+echo "<div class='hometable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$hometeam."\t<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
+//echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
     for($i = 0;$i<count($homeplayers);$i++) {
         $num = $homeplayers[$i]['KitNumber'];
+        echo "<tr class='row".$num."'><td>".$num."</td><td>".$homeplayers[$i]['Name']."</td><td>";
         echo "<input type='checkbox' name='Homecheck' id='H$num' value='$num' onclick='homecheck($num)'>";
-        echo $num."-".$homeplayers[$i]['Name'];
+        //echo $num."-".$homeplayers[$i]['Name'];
+        echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
     }
-echo "<br>".$awayteam."首发:<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛<br>";
+echo "</tbody></table></div>";
+echo "<div class='awaytable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$awayteam."\t<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
+//echo "<br>".$awayteam."首发:<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛<br>";
     for($i = 0;$i<count($awayplayers);$i++) {
         $num = $awayplayers[$i]['KitNumber'];
+        echo "<tr class='row".$num."'><td>".$num."</td><td>".$awayplayers[$i]['Name']."</td><td>";
         echo "<input type='checkbox' name='Awaycheck' id='A$num' value='$num' onclick='awaycheck($num)'>";
-        echo $num."-".$awayplayers[$i]['Name'];
+        //echo $num."-".$awayplayers[$i]['Name'];
+        echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
     }
+echo "</tbody></table></div>";
 echo "<br>";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Hnum = test_input($_POST['H']);
@@ -105,7 +179,7 @@ function test_input($data) {
    return $data;
 }
 ?> 
-<script >
+<script>
 var validbool = '<?=$valid?>';
 var stage = '<?=$stage ?>';
 console.log(stage);
@@ -127,6 +201,96 @@ function onvalid() {
         console.log(data);
     })
 }
+$('#addModal').modal({
+    keyboard: false,
+	show: false
+});
+$('.addinfo').click(function() {
+    validbool = 0;
+    var id = $(this).attr('id');
+    var pid = id.split('~');
+    console.log(pid);
+    if (pid[0] == 'H')
+        var t = '<?=$hometeam?>';
+    else if (pid[0] == 'A')
+        var t = '<?=$awayteam?>';
+    var title = t + ' ' + pid[1] + ' ' + pid[2];
+    if (pid[3] == 'chg') {
+        $('.chgradio').show();
+        $('.goalradio').hide();
+        $('.rycradio').hide();
+        title += ' 换人';
+    } else if (pid[3] == 'goal') {
+        $('.chgradio').hide();
+        $('.goalradio').show();
+        $('.rycradio').hide();
+        title += ' 进球';
+    } else if (pid[3] == 'ryc') {
+        $('.chgradio').hide();
+        $('.goalradio').hide();
+        $('.rycradio').show();
+        title += ' 红黄牌';
+    }
+    $('.modal-title').text(title);     
+    $('.timeinput').val("");
+    $('#addModal').modal('show');
+})
+$('.btnsubmit').click(function() {
+    var title = $('.modal-title').text();
+    var pt = title.split(/\s+/);
+    console.log(pt);
+    if (pt[3] == '换人')
+        var type = $('input[name=chgradio]:checked').val();
+    else if (pt[3] == '进球')
+        var type = $('input[name=goalradio]:checked').val();
+    else if (pt[3] == '红黄牌')
+        var type = $('input[name=rycradio]:checked').val();
+    console.log(type);
+    var inputtxt = $('.timeinput').val();
+    var input = inputtxt.split(/\s+/);
+    console.log(input);
+    validbool = 0;
+    $.get('checked.php',{
+        dbname: '<?=$dbname ?>',
+        MatchID: '<?=$id ?>',
+        Valid: validbool
+    },function(data,state) {
+        console.log(data);
+        //showreport();
+        var team = pt[0];
+        var num = parseInt(pt[1]);
+        var name = pt[2];
+        for (var i = 0;i < input.length;i++) {
+            if (/\+/.test(input[i])) {
+                var parsetime = input[i].split("+");
+                var time = parseInt(parsetime[0]);
+                var stptime = parseInt(parsetime[1]);
+            } else {
+                var time = parseInt(input[i]);
+                var stptime = 0;
+            }
+            console.log(time,stptime,num,team,name,type);
+            $.get('additem.php',{
+                    dbname: '<?=$dbname ?>',
+                    MatchID: "<?='Match'.$id ?>",
+                    Team: team,
+                    KitNumber: num,
+                    Name: name,
+                    Type: type,
+                    Time: time,
+                    StoppageTime: stptime
+            }, function(data, state) {
+                console.log(data);
+            })
+        }
+        window.setTimeout(function() {
+            showreport();
+        },200*input.length);
+
+    })
+    $('#addModal').modal('hide');
+    })
+
 $('.abandon').click(function () {
     validbool = 0;
     var id = $(this).attr('id');
@@ -377,42 +541,56 @@ function awaycheck(id) {
 //        
 //}
 </script>
-TEAM: <select name="Team">
-        <option><?php echo $hometeam;?>
-        <option><?php echo $awayteam;?>
-      </select>
-<br>
-TIME: <input type="text" name="Time" value=0>
-STOPPAGETIME: <input type="text" name="StoppageTime" value=0>
-<br>
-KITNUM: <input title='event' type="text" name="KitNumber">
-NAME: <input title='event' type="text" name="Name">
-EVENTTYPE: <select title='event' name="EventType">
-        <option> 进球
-        <option> 换下
-        <option> 换上
-        <option> 黄牌
-        <option> 红牌
-        <option> 点球
-        <option> 乌龙球
-        <option> 点球罚失
-           </select>
-<input title='event' type='button' value='Submit' onclick='ESubmit()'/>
-<br>
-<p class="penalty"> PENALTYSHOOTOUT: </p> 
-<p class="penalty"> KITNUM: </p> 
-<input title='penalty' class='penalty' type="text" name="KitNumber">
-<p class="penalty"> NAME: </p>
-<input title='penalty' class='penalty' type="text" name="Name">
-<p class="penalty"> EVENTTYPE: </p> 
-           <select title='penalty' class='penalty' name="PenaltyType">
-        <option> 点球决胜罚进
-        <option> 点球决胜罚失
-           </select>
-
-<input title='penalty' class='penalty' type='button' value='Submit' onclick='PSubmit()'/>
- 
+<div class='input col-xs-12 penalty'>
+    
+    <div class='event form-group'>
+    TIME: <input type="text" name="Time" value=0>
+    STOPPAGETIME: <input type="text" name="StoppageTime" value=0>
+    <br>
+    KITNUM: <input title='event' type="text" name="KitNumber">
+    NAME: <input title='event' type="text" name="Name">
+    EVENTTYPE: <select title='event' name="EventType">
+            <option> 进球
+            <option> 换下
+            <option> 换上
+            <option> 黄牌
+            <option> 红牌
+            <option> 点球
+            <option> 乌龙球
+            <option> 点球罚失
+               </select>
+    <input title='event' type='button' value='Submit' onclick='ESubmit()'/>
+    <br>
+    </div>
+    <div class='penalty form-group'>
+    <h4> 点球决胜  </h4> 
+    <label>球队：</label> 
+        <select name="Team">
+            <option><?php echo $hometeam;?>
+            <option><?php echo $awayteam;?>
+        </select>
+    <br>
+    <div>
+    <label> 号码： </label> 
+    <input title='penalty' class='penalty' type="text" name="KitNumber">
+    </div>
+    <div>
+    <label> 姓名： </label>
+    <input title='penalty' class='penalty' type="text" name="Name">
+    </div>
+    <div>
+    <label> 事件： </label> 
+               <select title='penalty' class='penalty' name="PenaltyType">
+            <option> 点球决胜罚进
+            <option> 点球决胜罚失
+               </select>
+    </div>
+    
+    <input title='penalty' class='penalty' type='button' value='Submit' onclick='PSubmit()'/>
+    </div>
+</div>
 <script>
+$('.event').hide();
 var Kittext = $("input[name=KitNumber]");
 var Nametext = $("input[name=Name]");
 Kittext.keyup(function (e) {
@@ -599,6 +777,8 @@ function showreport() {
     } else {
         validcheck.checked = false;
     }
+    $('.tbl').remove();
+    $(".eventdisplay").remove();
     $.get('showreport.php',{
         dbname: '<?=$dbname ?>',
         MatchID: "<?='Match'.$id ?>"
@@ -615,8 +795,10 @@ function showreport() {
         var awayevent = $(".awayevent");
         homefirst.text(homename + "首发：");
         awayfirst.text(awayname + "首发：");
-        homeevent.text(homename + "事件：");
-        awayevent.text(awayname + "事件：");
+        homefirst.hide();
+        awayfirst.hide();
+        homeevent.append($("<h4 class='eventdisplay'></h4>").text(homename + "点球决胜："));
+        awayevent.append($("<h4 class='eventdisplay'></h4>").text(awayname + "点球决胜："));
         var hflist = [];
         var aflist = [];
         var hevent = [];
@@ -661,6 +843,8 @@ function showreport() {
         } else {
             $(".penalty").hide();
         }
+        //hevent.reverse();
+        //aevent.reverse();
         //console.log(hflist,aflist,hevent,aevent);
         for (var i = 0;i < hflist.length;i++) {
             var Hinst = document.getElementById('H'+hflist[i].kitnum); 
@@ -677,7 +861,7 @@ function showreport() {
             tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+hflist[i].team+"\."+hflist[i].kitnum.toString()+"\."+hflist[i].name+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
-            homefirst.append(cont);
+            //homefirst.append(cont);
         } 
         for (var i = 0;i < aflist.length;i++) {
             var Ainst = document.getElementById('A'+aflist[i].kitnum); 
@@ -694,7 +878,7 @@ function showreport() {
             tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+aflist[i].team+"\."+aflist[i].kitnum.toString()+"\."+aflist[i].name+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
-            awayfirst.append(cont);
+            //awayfirst.append(cont);
         }
         $(".delplayer").click(function() {
             var id = $(this).attr('id');
@@ -738,11 +922,51 @@ function showreport() {
             else 
                 var timestr = hevent[i].time.toString() + "+" + hevent[i].stptime.toString();
             hevent[i].timestr = timestr;
-            var txt = hevent[i].type + "\t" + timestr + "\'\t" + namestr; 
-            tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"' value='delete'>";
-            var cont = $("<p></p>").text(txt); 
-            cont.append(tb);
-            homeevent.append(cont);
+            var tb = " <a class='delevent' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
+            if (hevent[i].type == '进球' || hevent[i].type == '点球' || hevent[i].type == '乌龙球' || hevent[i].type == '点球罚失' ) {
+                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + ' .goal');
+                if (hevent[i].type == '进球') {
+                    var lbl = "<span class='tbl label label-primary'>"+hevent[i].timestr+tb+"</span> ";
+                }
+                if (hevent[i].type == '点球') {
+                    var lbl = "<span class='tbl label label-success'>点"+hevent[i].timestr+tb+"</span> ";
+                }
+                if (hevent[i].type == '乌龙球') {
+                    var lbl = "<span class='tbl label label-danger'>乌龙"+hevent[i].timestr+tb+"</span> ";
+                }
+                if (hevent[i].type == '点球罚失') {
+                    var lbl = "<span class='tbl label label-warning'>点失"+hevent[i].timestr+tb+"</span> ";
+                }
+                Hcell.append(lbl);
+            }
+            if (hevent[i].type == '换下' || hevent[i].type == '换上') {
+                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + ' .chg');
+                if (hevent[i].type == '换下') {
+                    var lbl = "<span class='tbl label label-danger'><span class='glyphicon glyphicon-arrow-down'></span>"+hevent[i].timestr+tb+"</span> ";
+                }
+                if (hevent[i].type == '换上') {
+                    var lbl = "<span class='tbl label label-success'><span class='glyphicon glyphicon-arrow-up'></span>"+hevent[i].timestr+tb+"</span> ";
+                }
+                Hcell.append(lbl);
+            }
+            if (hevent[i].type == '黄牌' || hevent[i].type == '红牌') {
+                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + ' .ryc');
+                if (hevent[i].type == '黄牌') {
+                    var lbl = "<span class='tbl label label-warning'>"+hevent[i].timestr+tb+"</span> ";
+                }
+                if (hevent[i].type == '红牌') {
+                    var lbl = "<span class='tbl label label-danger'>"+hevent[i].timestr+tb+"</span> ";
+                }
+                Hcell.append(lbl);
+            }
+            if (hevent[i].type == '点球决胜罚进' || hevent[i].type == '点球决胜罚失') {
+                var txt = hevent[i].type + "\t" + timestr + "\'\t" + namestr; 
+                tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"' value='delete'>";
+                var cont = $("<p class='eventdisplay'></p>").text(txt); 
+                cont.append(tb);
+                homeevent.append(cont);
+
+            }
         }
         for (var i = 0;i < aevent.length;i++) {
             var blk = /^\s+/;
@@ -758,11 +982,51 @@ function showreport() {
             else 
                 var timestr = aevent[i].time.toString() + "+" + aevent[i].stptime.toString();
             aevent[i].timestr = timestr;
-            var txt = aevent[i].type + "\t" + timestr + "\'\t" + namestr; 
-            tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"' value='delete'>";
-            var cont = $("<p></p>").text(txt); 
-            cont.append(tb);
-            awayevent.append(cont);
+            var tb = " <a class='delevent' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
+            if (aevent[i].type == '进球' || aevent[i].type == '点球' || aevent[i].type == '乌龙球' || aevent[i].type == '点球罚失' ) {
+                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + ' .goal');
+                if (aevent[i].type == '进球') {
+                    var lbl = "<span class='tbl label label-primary'>"+aevent[i].timestr+tb+"</span> ";
+                }
+                if (aevent[i].type == '点球') {
+                    var lbl = "<span class='tbl label label-success'>点"+aevent[i].timestr+tb+"</span> ";
+                }
+                if (aevent[i].type == '乌龙球') {
+                    var lbl = "<span class='tbl label label-danger'>乌龙"+aevent[i].timestr+tb+"</span> ";
+                }
+                if (aevent[i].type == '点球罚失') {
+                    var lbl = "<span class='tbl label label-warning'>点失"+aevent[i].timestr+tb+"</span> ";
+                }
+                Hcell.append(lbl);
+            }
+            if (aevent[i].type == '换下' || aevent[i].type == '换上') {
+                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + ' .chg');
+                if (aevent[i].type == '换下') {
+                    var lbl = "<span class='tbl label label-danger'><span class='glyphicon glyphicon-arrow-down'></span>"+aevent[i].timestr+tb+"</span> ";
+                }
+                if (aevent[i].type == '换上') {
+                    var lbl = "<span class='tbl label label-success'><span class='glyphicon glyphicon-arrow-up'></span>"+aevent[i].timestr+tb+"</span> ";
+                }
+                Hcell.append(lbl);
+            }
+            if (aevent[i].type == '黄牌' || aevent[i].type == '红牌') {
+                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + ' .ryc');
+                if (aevent[i].type == '黄牌') {
+                    var lbl = "<span class='tbl label label-warning'>"+aevent[i].timestr+tb+"</span> ";
+                }
+                if (aevent[i].type == '红牌') {
+                    var lbl = "<span class='tbl label label-danger'>"+aevent[i].timestr+tb+"</span> ";
+                }
+                Hcell.append(lbl);
+            }
+            if (aevent[i].type == '点球决胜罚进' || aevent[i].type == '点球决胜罚失') {
+                var txt = aevent[i].type + "\t" + timestr + "\'\t" + namestr; 
+                tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"' value='delete'>";
+                var cont = $("<p class='eventdisplay'></p>").text(txt); 
+                cont.append(tb);
+                awayevent.append(cont);
+
+            }
         }
         $(".delevent").click(function() {
             var id = $(this).attr('id');
@@ -1013,13 +1277,21 @@ function check(hflist, aflist, hevent, aevent) {
     };
 }
 </script>
-<p class="homefirst">content</p>
-<p class="awayfirst">content</p>
-<p class="homeevent">content</p>
-<p class="awayevent">content</p>
+<div class='display col-xs-12 penalty'>
+    <div class='homedisplay col-xs-6'>
+        <div class="homefirst"></div>
+        <div class="homeevent"></div>
+    </div>
+    <div class='awaydisplay col-xs-6'>
+        <div class="awayfirst"></div>
+        <div class="awayevent"></div>
+    </div>
+</div>
 <?php
 $conn->close();
 ?>
+        </div>
+     </div>
   </body>
 </html>
 
