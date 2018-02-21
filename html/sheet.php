@@ -70,7 +70,7 @@ while ($row = $res->fetch_assoc()) {
                     dbname: '<?=$dbname ?>'
                 }, function(data,state) {
                     console.log(data);
-                    $("h3").after($("<p></p>").text(data));
+                    $(".filename").text(data);
                     url = "sheets/" + data;
                     $("#download").attr('href',url);
                     $("#download").attr('disabled',false);
@@ -98,6 +98,7 @@ while ($row = $res->fetch_assoc()) {
 ?>
 
 <h3>下载:</h3>
+<p class='filename'></p>
 <a class="btn btn-default" id="download" href="" disabled="true">下载</a>
   </body>
 </html>
