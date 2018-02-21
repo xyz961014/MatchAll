@@ -13,129 +13,92 @@
     <title>TUFA</title>
   </head>
   <body>
+    <a href="index.php">返回</a>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <h2>马杯男足执场单</h2>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> 
-   主队: <select name="hometeam">
-           <option>生命科学学院
-           <option>微纳电子系
-           <option>数学科学系
-           <option>软件学院
-           <option>地球系统科学系
-           <option>土木建管系
-           <option>美术学院
-           <option>法学院
-           <option>新闻与传播学院
-           <option>水利水电工程系
-           <option>化学系
-           <option>新雅书院
-           <option>电机系
-           <option>医学院
-           <option>公共管理学院
-           <option>社会科学学院
-           <option>环境学院
-           <option>核研院
-           <option>五道口金融学院
-           <option>热能工程系
-           <option>交叉信息院
-           <option>物理系
-           <option>工程物理系
-           <option>航天航空学院
-           <option>电子工程系
-           <option>机械工程系
-           <option>经济管理学院
-           <option>工业工程系
-           <option>建筑学院
-           <option>人文学院
-           <option>苏世民书院
-           <option>化学工程系
-           <option>精密仪器系
-           <option>计算机系
-           <option>自动化系
-           <option>材料学院
-           <option>汽车工程系
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "961014";
+$dbname = $_GET['Match'];
+$conn = new mysqli($servername, $username, $password,$dbname);
+mysqli_query($conn,'set names utf8');
+if ($conn->connect_error) {
+    die("Connection failed:".$conn->connect_error);
+}
+if (preg_match('/^MANAN.+/', $dbname)) {
+    $title = "马杯男足执场单";
+}
+if (preg_match('/^MANYU.+/', $dbname)) {
+    $title = "马杯女足执场单";
+}
+echo "<h2>".$title."</h2>";
+$sql = "SELECT TeamName FROM Teams";
+$res = $conn->query($sql);
+while ($row = $res->fetch_assoc()) {
+    $teams[] = $row['TeamName'];
+}
+?>
+    主队: <select name="hometeam">
+        <?php 
+            for ($i = 0;$i < count($teams);$i++) {
+                echo "<option>".$teams[$i];
+            }
+        ?>
          </select>
-   <br>
-   客队: <select name="awayteam">
-           <option>生命科学学院
-           <option>微纳电子系
-           <option>数学科学系
-           <option>软件学院
-           <option>地球系统科学系
-           <option>土木建管系
-           <option>美术学院
-           <option>法学院
-           <option>新闻与传播学院
-           <option>水利水电工程系
-           <option>化学系
-           <option>新雅书院
-           <option>电机系
-           <option>医学院
-           <option>公共管理学院
-           <option>社会科学学院
-           <option>环境学院
-           <option>核研院
-           <option>五道口金融学院
-           <option>热能工程系
-           <option>交叉信息院
-           <option>物理系
-           <option>工程物理系
-           <option>航天航空学院
-           <option>电子工程系
-           <option>机械工程系
-           <option>经济管理学院
-           <option>工业工程系
-           <option>建筑学院
-           <option>人文学院
-           <option>苏世民书院
-           <option>化学工程系
-           <option>精密仪器系
-           <option>计算机系
-           <option>自动化系
-           <option>材料学院
-           <option>汽车工程系
+    <br>
+    客队: <select name="awayteam">
+        <?php 
+            for ($i = 0;$i < count($teams);$i++) {
+                echo "<option>".$teams[$i];
+            }
+        ?>
          </select>
 
 
-   <input type="submit" name="submit" value="Submit"> 
-</form>
+   <input type="submit" name="submit" value="Submit" onclick="Submit()"> 
+            <script>
+            function Submit() {
+                var ht = $("[name=hometeam]").val();
+                var at = $("[name=awayteam]").val();
+                console.log(ht,at);
+                $.get("creatsheet.php", {
+                    hometeam: ht,
+                    awayteam: at,
+                    dbname: '<?=$dbname ?>'
+                }, function(data,state) {
+                    console.log(data);
+                    $("h3").after($("<p></p>").text(data));
+                    url = "sheets/" + data;
+                    $("#download").attr('href',url);
+                    $("#download").attr('disabled',false);
+                })
+            }
+            </script>
 <?php
 // 定义变量并默认设为空值
-$homename = $awayname = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-      $homename = test_input($_POST["hometeam"]);
-      $awayname = test_input($_POST["awayteam"]);
-      $output = exec("python3 /var/www/TUFA/docreate.py $homename $awayname 2>&1",$arr,$ret);
-      exec("cp $arr[1] /var/www/html/sheets/");
-     // print_r($arr); 
-}
-
-function test_input($data) {
-   $data = trim($data);
-   $data = stripslashes($data);
-   $data = htmlspecialchars($data);
-   return $data;
-}
+//$homename = $awayname = "";
+//
+//if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//      $homename = test_input($_POST["hometeam"]);
+//      $awayname = test_input($_POST["awayteam"]);
+//      $output = exec("python3 /var/www/TUFA/docreate.py $homename $awayname 2>&1",$arr,$ret);
+//      exec("cp $arr[1] /var/www/html/sheets/");
+//     // print_r($arr); 
+//}
+//
+//function test_input($data) {
+//   $data = trim($data);
+//   $data = stripslashes($data);
+//   $data = htmlspecialchars($data);
+//   return $data;
+//}
 ?>
 
-<?php
-echo "<h2>下载:</h2>";
-echo $arr[2];
-?>
-<?php $url = 'sheets/'.$arr[2]; ?>
-<script type="text/javascript">
-    function goto()
-    {
-        if ('<?=$arr[2]?>' != '') {
-            window.location.href = '<?=$url ?>';
-        }
-    }
-</script>
-<button class="button" id="download" onclick="goto()">download</button>
+<h3>下载:</h3>
+<a class="btn btn-default" id="download" href="" disabled="true">下载</a>
   </body>
 </html>
 

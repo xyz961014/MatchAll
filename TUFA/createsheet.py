@@ -5,7 +5,7 @@ import pymysql.cursors
 import re
 import TeamDict
 
-def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大学马约翰学生运动会'):
+def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大学马约翰学生运动会',matchdb = 'MANAN_1718'):
   filename = '/var/www/TUFA/sheettemplate.docx'
   doc = Document(filename)
   paras = doc.paragraphs
@@ -31,7 +31,7 @@ def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大�
   connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANAN_1718',
+                               db=matchdb,
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
   try:
@@ -66,7 +66,8 @@ def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大�
   tables[16].rows[0].cells[0].paragraphs[0].runs[0].text = homeinfo[0]['TeamName']
   tables[16].rows[0].cells[3].paragraphs[0].runs[1].text += homeinfo[0]['KitColor']
   tables[0].rows[32].cells[2].paragraphs[0].runs[0].text = homeleaders[0]['Name']
-  tables[0].rows[32].cells[5].paragraphs[0].runs[0].text = homeleaders[1]['Name']
+  if len(homeleaders) > 1:
+    tables[0].rows[32].cells[5].paragraphs[0].runs[0].text = homeleaders[1]['Name']
   lenhc = len(tables[0].rows[0].cells[4].paragraphs[0].runs[0].text) + len(tables[0].rows[0].cells[4].paragraphs[0].runs[1].text)
   if lenhc >= 10:
     tables[0].rows[0].cells[4].paragraphs[0].runs[0].font.size = Pt(110/lenhc)
@@ -101,7 +102,8 @@ def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大�
   tables[16].rows[0].cells[6].paragraphs[0].runs[0].text = awayinfo[0]['TeamName']
   tables[16].rows[0].cells[9].paragraphs[0].runs[1].text += awayinfo[0]['KitColor']
   tables[8].rows[32].cells[2].paragraphs[0].runs[0].text = awayleaders[0]['Name']
-  tables[8].rows[32].cells[5].paragraphs[0].runs[0].text = awayleaders[1]['Name']
+  if len(awayleaders) > 1:
+    tables[8].rows[32].cells[5].paragraphs[0].runs[0].text = awayleaders[1]['Name']
   lenac = len(tables[8].rows[0].cells[4].paragraphs[0].runs[0].text) + len(tables[8].rows[0].cells[4].paragraphs[0].runs[1].text)
   if lenac >= 10:
     tables[8].rows[0].cells[4].paragraphs[0].runs[0].font.size = Pt(110/lenac)

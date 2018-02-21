@@ -13,6 +13,7 @@
     <title>TUFA</title>
   </head>
   <body>
+    <a href="index.php">返回</a>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>

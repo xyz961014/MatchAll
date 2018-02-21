@@ -27,6 +27,11 @@ def Suspension():
                                    cursorclass=pymysql.cursors.DictCursor)
     try:
         with connection.cursor() as cursor:
+            #初始化
+            sql = 'UPDATE Players SET Suspension = 0'
+            cursor.execute(sql)
+            #额外的附加停赛
+            #...
             sql = 'SELECT MatchID, HomeTeam, AwayTeam, Stage, MatchTime FROM Matches WHERE Valid = 1 ORDER BY MatchTime'
             cursor.execute(sql) #取出所有生效比赛
             matches = cursor.fetchall()

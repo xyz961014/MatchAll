@@ -13,6 +13,7 @@
   </head>
   <body>
     <div class="container">
+        <a href="index.php">返回</a>
         <div class="row" id="grouprank">
         </div>
         <div class="row" id="eliinfo">

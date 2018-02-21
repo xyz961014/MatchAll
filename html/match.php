@@ -78,12 +78,12 @@
 </div>
     <div class="container">
         <div class="row" id="match">
-
+        
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <input id="validcheck" type="checkbox" onclick='onvalid()' />VALID
+    <input id="validcheck" type="checkbox" onclick='onvalid()' />有效
 <br>
 <?php
 require 'TeamDict.php';
@@ -92,6 +92,7 @@ $servername = "localhost";
 $username = "root";
 $password = "961014";
 $dbname = $_GET['Match'];
+echo "<a href='schedule.php?Match=$dbname'>返回</a>";
 $elifile = fopen($dbname.'.json','r') or die("Unable to open file!");
 $eliinfo = json_decode(fgets($elifile));
 $eliinfo = $eliinfo[1];
