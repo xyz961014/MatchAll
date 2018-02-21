@@ -9,7 +9,10 @@
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
 
-
+    <link href="https://cdn.bootcss.com/Ladda/1.0.6/ladda-themeless.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/Ladda/1.0.6/spin.min.js"></script>
+    <script src="https://cdn.bootcss.com/Ladda/1.0.6/ladda.min.js"></script>
+    
     <title>TUFA</title>
   </head>
   <body>
@@ -58,8 +61,11 @@ while ($row = $res->fetch_assoc()) {
          </select>
 
 
-   <input type="submit" name="submit" value="Submit" onclick="Submit()"> 
+    <button class="btn btn-primary ladda-button submit" data-style="expand-right" name="submit" onclick="Submit()">
+        <span class="ladda-label">提交</span>
+    </button>
             <script>
+            Ladda.bind('.submit');
             function Submit() {
                 var ht = $("[name=hometeam]").val();
                 var at = $("[name=awayteam]").val();
@@ -74,6 +80,8 @@ while ($row = $res->fetch_assoc()) {
                     url = "sheets/" + data;
                     $("#download").attr('href',url);
                     $("#download").attr('disabled',false);
+                    var btn = Ladda.create(document.querySelector(".submit"));
+                    btn.stop();
                 })
             }
             </script>
