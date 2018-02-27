@@ -18,11 +18,11 @@ class Match:
         self.stage = stage
         self.matchtime = matchtime
 
-def Suspension():
+def Suspension(dbname):
     connection = pymysql.connect(host='localhost',
                                    user='root',
                                    password='961014',
-                                   db='MANAN_1718',
+                                   db=dbname,
                                    charset='utf8mb4',
                                    cursorclass=pymysql.cursors.DictCursor)
     try:
@@ -84,4 +84,8 @@ def Suspension():
     finally:
         connection.close()
 
-Suspension()
+def main(argv):
+    Suspension(argv[0])
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

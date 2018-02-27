@@ -12,17 +12,86 @@
     <title>TUFA</title>
   </head>
   <body>
-    <div class="container">
-        <a href="index.php">返回</a>
-        <div class="row" id="grouprank">
-        </div>
-        <div class="row" id="eliinfo">
-        </div>
-     </div>
-    <!-- Optional JavaScript -->
+        <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <a href="index.php">返回</a>
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#pt" data-toggle="tab">积分表</a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                   球员数据<b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                   <li><a href="#pgoal" data-toggle="tab">进球</a></li>
+                   <li><a href="#pyc" data-toggle="tab">黄牌</a></li>
+                   <li><a href="#prc" data-toggle="tab">红牌</a></li>
+                   <li><a href="#ppen" data-toggle="tab">点球</a></li>
+                   <li><a href="#papp" data-toggle="tab">出场次数</a></li>
+                   <li><a href="#pmin" data-toggle="tab">出场时间</a></li>
+                   <li><a href="#ppenmiss" data-toggle="tab">点球罚失</a></li>
+                   <li><a href="#pog" data-toggle="tab">乌龙球</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                   球队数据<b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                   <li><a href="#tgoal" data-toggle="tab">进球</a></li>
+                   <li><a href="#tconcede" data-toggle="tab">失球</a></li>
+                   <li><a href="#tpen" data-toggle="tab">点球</a></li>
+                   <li><a href="#tyc" data-toggle="tab">黄牌</a></li>
+                   <li><a href="#trc" data-toggle="tab">红牌</a></li>
+                   <li><a href="#tpenmiss" data-toggle="tab">点球罚失</a></li>
+                   <li><a href="#tog" data-toggle="tab">乌龙球</a></li>
+                </ul>
+            </li> 
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="pt">
+                <div class="row" id="grouprank">
+                </div>
+                <div class="row" id="eliinfo">
+                </div>
+            </div>
+            <div class="tab-pane fade" id="papp">
+            </div>
+            <div class="tab-pane fade" id="pmin">
+            </div>
+            <div class="tab-pane fade" id="pgoal">
+            </div>
+            <div class="tab-pane fade" id="pyc">
+            </div>
+            <div class="tab-pane fade" id="prc">
+            </div>
+            <div class="tab-pane fade" id="ppen">
+            </div>
+            <div class="tab-pane fade" id="ppenmiss">
+            </div>
+            <div class="tab-pane fade" id="pog">
+            </div>
+            <div class="tab-pane fade" id="tgoal">
+            </div>
+            <div class="tab-pane fade" id="tconcede">
+            </div>
+            <div class="tab-pane fade" id="tpen">
+            </div>
+            <div class="tab-pane fade" id="tyc">
+            </div>
+            <div class="tab-pane fade" id="trc">
+            </div>
+            <div class="tab-pane fade" id="tpenmiss">
+            </div>
+            <div class="tab-pane fade" id="tog">
+            </div>
+        </div>
+     </div>
+
 <?php
 $dbname = $_GET['Match'];
 exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$arr,$ret);
@@ -32,6 +101,50 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
 
 var dbname = '<?=$dbname?>';
 var d = new Date();
+Getrank(dbname,d.getTime(),'Players', 'Appearances', 'papp', '出场次数');
+Getrank(dbname,d.getTime(),'Players', 'Minutes', 'pmin', '出场时间');
+Getrank(dbname,d.getTime(),'Players', 'Goals', 'pgoal', '进球',asort='Penalties');
+Getrank(dbname,d.getTime(),'Players', 'YellowCards', 'pyc', '黄牌');
+Getrank(dbname,d.getTime(),'Players', 'RedCards', 'prc', '红牌');
+Getrank(dbname,d.getTime(),'Players', 'Penalties', 'ppen', '点球');
+Getrank(dbname,d.getTime(),'Players', 'Penaltymiss', 'ppenmiss', '点球罚失');
+Getrank(dbname,d.getTime(),'Players', 'OwnGoals', 'pog', '乌龙球');
+Getrank(dbname,d.getTime(),'Teams', 'Goal', 'tgoal', '进球',asort='Penalty',isteam=true);
+Getrank(dbname,d.getTime(),'Teams', 'Concede', 'tconcede', '失球',null,isteam=true);
+Getrank(dbname,d.getTime(),'Teams', 'Penalty', 'tpen', '点球',null,isteam=true);
+Getrank(dbname,d.getTime(),'Teams', 'YellowCard', 'tyc', '黄牌',null,isteam=true);
+Getrank(dbname,d.getTime(),'Teams', 'RedCard', 'trc', '红牌',null,isteam=true);
+Getrank(dbname,d.getTime(),'Teams', 'Penaltymiss', 'tpenmiss', '点球',null,isteam=true);
+Getrank(dbname,d.getTime(),'Teams', 'OwnGoal', 'tog', '乌龙球',null,isteam=true);
+function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false) {
+    $.get("getrank.php", {
+        table: table,
+        sort: sort,
+        asort: asort,
+        time: time,
+        dbname: dbname
+}, function(data,state) {
+    var tableinfo = JSON.parse(data);
+    console.log(tableinfo);
+    if (isteam) {
+        var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>"+divname+"</caption><thead><tr><th>#</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
+        for (var i = 0;i < tableinfo.length;i++) {
+            var t = tableinfo[i];
+            var tml = "<tr><td>"+(i+1).toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"</td></tr>";
+            tableml += tml;
+        }
+    } else {
+        var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>"+divname+"</caption><thead><tr><th>#</th><th>球员</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
+        for (var i = 0;i < tableinfo.length;i++) {
+            var t = tableinfo[i];
+            var tml = "<tr><td>"+(i+1).toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"</td></tr>";
+            tableml += tml;
+        }
+    }
+    tableml += "</tbody></table></div>";
+    $('#'+divid).append(tableml);
+})
+}
 Refresh(dbname,d.getTime());
 function Refresh(dbname,time) {
     $('.ranktable').remove();

@@ -31,5 +31,5 @@ $ans['kitnum'] = $kitnum;
 $ans['name'] = $name;
 $ans['extrainfo'] = $extrainfo;
 echo json_encode($ans);
-$conn->query($sql);
+$conn->close();
 ?>
