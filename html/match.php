@@ -81,6 +81,7 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/jcanvas/21.0.0/min/jcanvas.min.js"></script>
     <div class="container">
             <input id="validcheck" type="checkbox" onclick='onvalid()' />有效
 <br>
@@ -127,6 +128,7 @@ while ($row = $res->fetch_assoc()) {
      $awayteam = $row['AwayTeam'];
      $valid = $row['Valid'];
      $stage = $row['Stage'];
+     $mtime = $row['MatchTime'];
 }
 if ($stage != 'Group') {
     //print_r($eliinfo->{$id});
@@ -590,7 +592,24 @@ function awaycheck(id) {
     <input title='penalty' class='penalty' type='button' value='Submit' onclick='PSubmit()'/>
     </div>
 </div>
+<a hred="" class="col-lg-12 btn btn-default" id="pngdown">PNGDOWN</a>
+<br>
+<canvas id="canvas"></canvas>
 <script>
+$('canvas').drawText({
+  fillStyle: '#9cf',
+  strokeStyle: '#25a',
+  strokeWidth: 2,
+  x: 60, y: 60,
+  fontSize: 48,
+  fontFamily: 'Verdana, sans-serif',
+  text: 'Hello'
+});
+var canvas = document.getElementById('canvas');
+var a = document.getElementById('pngdown');
+a.href = canvas.toDataURL('image/png');  //将画布内的信息导出为png图片数据
+a.download = "<?=$hometeam ?>" + "<?=$awayteam ?>" + "<?=$mtime ?>";  //设定下载名称
+
 $('.event').hide();
 var Kittext = $("input[name=KitNumber]");
 var Nametext = $("input[name=Name]");

@@ -83,7 +83,7 @@ def Evolve(matchname):
                     Groups[gid] = Group(name = git['name'],teams = T)
                 for eid,eit in deli.items():
                     if not eid == 'end':
-                        EliMatches[int(eid)] = Match(matchid = eit['matchid'], stage = eit['stage'], hometeam = eit['hometeam'], awayteam = eit['awayteam'], time = eit['time'], homegoal=eit['homegoal'], awaygoal=['awaygoal'], result = eit['result'], homewin = eit['homewin'], valid = eit['valid'], todecide = eit['todecide'])
+                        EliMatches[int(eid)] = Match(matchid = eit['matchid'], stage = eit['stage'], hometeam = eit['hometeam'], awayteam = eit['awayteam'], time = eit['time'], homegoal = eit['homegoal'], awaygoal = eit['awaygoal'], result = eit['result'], homewin = eit['homewin'], valid = eit['valid'], todecide = eit['todecide'])
                 #update data
                 sql = 'SELECT * FROM Teams'
                 cursor.execute(sql)
@@ -107,16 +107,16 @@ def Evolve(matchname):
                     if not m['Stage'] == 'Group':
                         resultstr = str(m['HomeGoal']) + ':' + str(m['AwayGoal'])
                         if m['PenaltyShootOut']:
-                            resultstr += '(' + str(m['HomeGoal'] + m['HomePenalty']) + ':' +str(m['AwayGoal'] + m['AwayPenalty']) + ')'
+                            resultstr += '(' + str(int(m['HomeGoal']) + int(m['HomePenalty'])) + ':' +str(int(m['AwayGoal']) + int(m['AwayPenalty'])) + ')'
                         for Mi,Ma in EliMatches.items():
                             if m['MatchID'] == Ma.matchid:
                                 EliMatches[Mi].result = resultstr
-                                if m['Result'] == 3: #HOMEWIN
+                                if m['Result'] == '3': #HOMEWIN
                                     EliMatches[Mi].homewin = True
-                                elif m['Result'] == 0: #AWAYWIN
+                                elif m['Result'] == '0': #AWAYWIN
                                     EliMatches[Mi].homewin = False
-                                elif m['Result'] == 1: #PENALTY
-                                    if m['HomePenalty'] > m['AwayPenlaty']:
+                                elif m['Result'] == '1': #PENALTY
+                                    if int(m['HomePenalty']) > int(m['AwayPenalty']):
                                         #HOMWPENALTYWIN
                                         EliMatches[Mi].homewin = True
                                     else:
@@ -152,15 +152,15 @@ def Evolve(matchname):
                 for m in matches:
                     resultstr = str(m['HomeGoal']) + ':' + str(m['AwayGoal'])
                     if m['PenaltyShootOut']:
-                        resultstr += '(' + str(m['HomeGoal'] + m['HomePenalty']) + ':' +str(m['AwayGoal'] + m['AwayPenalty']) + ')'
+                        resultstr += '(' + str(int(m['HomeGoal']) + int(m['HomePenalty'])) + ':' +str(int(m['AwayGoal']) + int(m['AwayPenalty'])) + ')'
                     M = Match(matchid = m['MatchID'], stage = m['Stage'], hometeam = m['HomeTeam'],awayteam = m['AwayTeam'], time = m['MatchTime'].strftime('%Y-%m-%d %H:%M'), homegoal = m['HomeGoal'], awaygoal = m['AwayGoal'], result = resultstr, valid = m['Valid'])
                     if not m['Stage'] == 'Group':
-                        if m['Result'] == 3: #HOMEWIN
+                        if m['Result'] == '3': #HOMEWIN
                             M.homewin = True
-                        elif m['Result'] == 0: #AWAYWIN
+                        elif m['Result'] == '0': #AWAYWIN
                             M.homewin = False
-                        elif m['Result'] == 1: #PENALTY
-                            if m['HomePenalty'] > m['AwayPenlaty']:
+                        elif m['Result'] == '1': #PENALTY
+                            if int(m['HomePenalty']) > int(m['AwayPenalty']):
                                 #HOMWPENALTYWIN
                                 M.homewin = True
                             else:

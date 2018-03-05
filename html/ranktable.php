@@ -222,6 +222,7 @@ function Refresh(dbname,time) {
                     }
                     eliml += "</tbody></table></div>"; 
                     mlist = [];
+                    $("#eliinfo").append(eliml);
                 }
                 stage = eliinfo[id].stage;
                 mlist.push(eliinfo[id]);
@@ -230,7 +231,6 @@ function Refresh(dbname,time) {
                 mlist.push(eliinfo[id]);
             }
             console.log(eliinfo[id]);
-            $("#eliinfo").append(eliml);
         }
         $('.eliedit').click(function() {
             var id = $(this).attr('id');
