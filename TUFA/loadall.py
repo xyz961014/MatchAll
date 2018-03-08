@@ -21,11 +21,20 @@ import loadinfo
 #        loadinfo.loadinfofreshman(fname)
 #        print('complete')  
 
-rootdir="女足报名18"  
+#rootdir="女足报名18"  
+#fname = ''
+#for parent,dirnames,filenames in os.walk(rootdir):  
+#    for filename in filenames:    
+#        fname = os.path.join(parent, filename)
+#        print('loading:',fname)
+#        loadinfo.loadinfomanyu(fname)
+#        print('complete') 
+
+rootdir="男足补报名18"  
 fname = ''
 for parent,dirnames,filenames in os.walk(rootdir):  
     for filename in filenames:    
         fname = os.path.join(parent, filename)
         print('loading:',fname)
-        loadinfo.loadinfomanyu(fname)
+        loadinfo.loadinfobubaoming(fname)
         print('complete') 

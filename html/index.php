@@ -32,6 +32,11 @@
         </div>
         <div class="tab-pane fade" id="MANYU">
             <a href="sheet.php?Match=MANYU_18">马杯女足执场单</a>
+            <br>
+            <a href="schedule.php?Match=MANYU_18">马杯女足赛程</a>
+            <br>
+            <a href="ranktable.php?Match=MANYU_18">马杯女足积分表</a>
+
         </div>
     <div>
 </div>

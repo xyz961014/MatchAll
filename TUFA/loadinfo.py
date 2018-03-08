@@ -194,6 +194,7 @@ def loadinfobubaoming(filename):
             sql = 'SELECT * FROM Players WHERE Team = %s'
             cursor.execute(sql,teamname)
             tp = cursor.fetchall()
+            nums = [i['KitNumber'] for i in tp]
             numtp = len(tp)
             for p in tb[0].rows[1:]:
                 if not (re.match('\s+', p.cells[0].text) or p.cells[0].text == ''):
@@ -230,6 +231,10 @@ def loadinfobubaoming(filename):
             kitnumber = p.cells[5].text
             extrainfo = p.cells[6].text
             if not (re.match('\s+', name) or name == ''):
+                if int(kitnumber) in nums:
+                    raise NameError("有重复的球员号码")
+                else:
+                    nums.append(int(kitnumber))
                 kitnumber = int(kitnumber)
                 if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
                     idnumber = None
@@ -283,6 +288,7 @@ def loadinfomanyu(filename):
         with connection.cursor() as cursor:
             sql = "INSERT INTO `Teams` (`TeamName`, `KitColor`) VALUES (%s, %s)"
             cursor.execute(sql,(teamname,teamcolor))
+        kitnums = []
         for p in tb[1].rows[1:]:
             name = p.cells[2].text
             class1 = p.cells[3].text
@@ -291,6 +297,10 @@ def loadinfomanyu(filename):
             kitnumber = p.cells[1].text
             extrainfo = p.cells[6].text
             if not (re.match('\s+', name) or name == ''):
+                if int(kitnumber) in kitnums:
+                    raise NameError('有重复的球员号码')
+                else:
+                    kitnums.append(int(kitnumber))
                 kitnumber = int(kitnumber)
                 print(name,class1,idnumber,phonenumber,kitnumber,extrainfo)
                 if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
@@ -302,12 +312,12 @@ def loadinfomanyu(filename):
 
         # connection is not autocommit by default. So you must commit to save
         # your changes.
-        connection.commit()
+        #connection.commit()
 
     finally:
         connection.close()
 
 
 #loadinfofreshman('./新生杯队伍报名表/新生杯清北人叉队报名表.docx')
-#loadinfobubaoming('./男足补报名18/template.docx')
+#loadinfobubaoming('./男足补报名18/电机系马杯男足补报名表.docx')
 #loadinfomanyu('./女足报名18/template.docx')

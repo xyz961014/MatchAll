@@ -19,10 +19,11 @@ $sql = "UPDATE Matches SET Valid = ".$vbool." WHERE MatchID = ".$id;
 echo $sql;
 $conn->query($sql);
 $conn->close();
-exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$arr,$ret);
-exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Suspension.py ".$dbname." 2>&1",$arr,$ret);
 if ($vbool) {
     $output = exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Stat.py -n ".$dbname." -a ".$id." 2>&1",$arr,$ret);
     print_r($arr);
 }
+exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$arr,$ret);
+exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Suspension.py ".$dbname." 2>&1",$arr,$ret);
+$conn->close();
 ?>

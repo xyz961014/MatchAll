@@ -116,7 +116,7 @@ if (!$result) {
       `StoppageTime` int(11) DEFAULT NULL
     )";
     if ($conn->query($sql0) === TRUE) {
-        echo "Table$id created"."<br>";
+        echo "";
     } else {
         echo "Error creating table:".$conn->error;
     }
@@ -128,16 +128,27 @@ while ($row = $res->fetch_assoc()) {
      $awayteam = $row['AwayTeam'];
      $valid = $row['Valid'];
      $stage = $row['Stage'];
+     $group = $row['GroupName'];
+     $round = $row['Round'];
      $mtime = $row['MatchTime'];
 }
 if ($stage != 'Group') {
     //print_r($eliinfo->{$id});
     $hometeam = $eliinfo->{$id}->hometeam;
     $awayteam = $eliinfo->{$id}->awayteam;
+    $subtitie = $stage;
+} else {
+    $subtitie = "小组赛".$group."组第".$round."轮";
 }
 if (preg_match('/^MA.+/', $dbname)) {
     $hometeam = $dict[$hometeam];
     $awayteam = $dict[$awayteam];
+    if (preg_match('/^MANAN.+/', $dbname)) {
+        $subtitie = "马杯男足".$subtitie;
+    } 
+    if (preg_match('/^MANYU.+/', $dbname)) {
+        $subtitie = "马杯女足".$subtitie;
+    } 
 }
 $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
 $res = $conn->query($sql);
@@ -592,23 +603,10 @@ function awaycheck(id) {
     <input title='penalty' class='penalty' type='button' value='Submit' onclick='PSubmit()'/>
     </div>
 </div>
-<a hred="" class="col-lg-12 btn btn-default" id="pngdown">PNGDOWN</a>
+<a hred="" class="btn btn-default" id="pngdown">PNGDOWN</a>
 <br>
 <canvas id="canvas"></canvas>
 <script>
-$('canvas').drawText({
-  fillStyle: '#9cf',
-  strokeStyle: '#25a',
-  strokeWidth: 2,
-  x: 60, y: 60,
-  fontSize: 48,
-  fontFamily: 'Verdana, sans-serif',
-  text: 'Hello'
-});
-var canvas = document.getElementById('canvas');
-var a = document.getElementById('pngdown');
-a.href = canvas.toDataURL('image/png');  //将画布内的信息导出为png图片数据
-a.download = "<?=$hometeam ?>" + "<?=$awayteam ?>" + "<?=$mtime ?>";  //设定下载名称
 
 $('.event').hide();
 var Kittext = $("input[name=KitNumber]");
@@ -808,11 +806,14 @@ function showreport() {
         var hg = 0;
         var ag = 0;
         var homename = "<?=$hometeam ?>";
+        var HomeName = "<?=$dict2[$hometeam] ?>";
         var awayname = "<?=$awayteam ?>";
+        var AwayName = "<?=$dict2[$awayteam] ?>";
         var homefirst = $(".homefirst");
         var awayfirst = $(".awayfirst");
         var homeevent = $(".homeevent");
         var awayevent = $(".awayevent");
+        
         homefirst.text(homename + "首发：");
         awayfirst.text(awayname + "首发：");
         homefirst.hide();
@@ -863,9 +864,6 @@ function showreport() {
         } else {
             $(".penalty").hide();
         }
-        //hevent.reverse();
-        //aevent.reverse();
-        //console.log(hflist,aflist,hevent,aevent);
         for (var i = 0;i < hflist.length;i++) {
             var Hinst = document.getElementById('H'+hflist[i].kitnum); 
             Hinst.checked = true;
@@ -1076,6 +1074,94 @@ function showreport() {
             })
             
         });
+        //console.log(hflist,aflist,hevent,aevent);
+        //REPORT PNG
+        var curY = 50;
+        $('canvas').attr("width", 1600);
+        $('canvas').attr("height", 5000);
+        $('canvas').drawText({
+            fillStyle: '#000',
+            fontStyle: 'bold',
+            name: 'homename',
+            x: 400, y: 50,
+            fontSize: 50,
+            fontFamily: 'simHei',
+            text: HomeName
+        });
+        $('canvas').drawText({
+            fillStyle: '#000',
+            fontStyle: 'bold',
+            name: 'awayname',
+            x: 1200, y: 50,
+            fontSize: 50,
+            fontFamily: 'simHei',
+            text: AwayName
+        });
+        curY += $('canvas').measureText('homename').height + 60; 
+        var subtitie = "<?=$subtitie ?>";
+        $('canvas').drawText({
+            fillStyle: '#000',
+            name: 'subtitie',
+            x: 800, y: curY,
+            fontSize: 25,
+            fontFamily: 'simHei',
+            text: subtitie
+        });
+        curY += $('canvas').measureText('subtitie').height + 30; 
+        var hfstr = '';
+        var afstr = '';
+        for (var i = 0;i < hflist.length;i++) {
+            hfstr += hflist[i].namestr + '    ';
+        }
+        for (var i = 0;i < aflist.length;i++) {
+            afstr += aflist[i].namestr + '    ';
+        }
+        $('canvas').drawText({
+            fillStyle: '#000',
+            fontFamily: 'Trebuchet MS',
+            fontSize: 36,
+            name: 'homefirst',
+            text: hfstr,
+            fromCenter: false,
+            x: 0, y: curY,
+            align: 'left',
+            maxWidth: 600
+        });
+        $('canvas').drawText({
+            fillStyle: '#000',
+            fontFamily: 'Trebuchet MS',
+            fontSize: 36,
+            text: afstr,
+            name: 'awayfirst',
+            fromCenter: false,
+            x: 1000, y: curY,
+            align: 'left',
+            maxWidth: 600
+        });
+        curY += $('canvas').measureText('homefirst').height; 
+        $('canvas').drawText({
+            fillStyle: '#000',
+            fontFamily: 'Trebuchet MS',
+            fontSize: 38,
+            text: "首发阵容",
+            x: 800, y: curY,
+        });
+        curY += $('canvas').measureText('subtitie').height + 30; 
+        $('canvas').drawImage({
+            source: 'ReportElements/START.png',
+            x: 800, y: curY,
+        });
+        curY += 30;
+        $('canvas').drawArc({
+            fillStyle: 'black',
+            x: 800, y: curY,
+            radius: 8
+        });
+
+        //
+        var a = document.getElementById('pngdown');
+        a.href = $('canvas').getCanvasImage(); 
+        a.download = "<?=$hometeam ?>" + "<?=$awayteam ?>" + "<?=$mtime ?>";  //设定下载名称
         var che = check(hflist, aflist,hevent,aevent);
         console.log(che);
     });
