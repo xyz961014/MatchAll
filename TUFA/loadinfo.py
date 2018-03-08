@@ -215,6 +215,7 @@ def loadinfobubaoming(filename):
             extrainfo = p.cells[6].text
             if not (re.match('\s+', name) or name == ''):
                 kitnumber = int(kitnumber)
+                nums.remove(kitnumber)
                 if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
                     idnumber = None
                 print(name,class1,idnumber,phonenumber,kitnumber,extrainfo)
@@ -242,7 +243,7 @@ def loadinfobubaoming(filename):
                 with connection.cursor() as cursor:
                     sql = "INSERT INTO `Players` (`Team`, `Name`,`Class`,`IDNumber`,`PhoneNumber`,`KitNumber`,`ExtraInfo`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                     cursor.execute(sql, (teamname, name, class1, idnumber, phonenumber, kitnumber, extrainfo))
-        #connection.commit()
+        connection.commit()
     finally:
         connection.close()
 
@@ -312,7 +313,7 @@ def loadinfomanyu(filename):
 
         # connection is not autocommit by default. So you must commit to save
         # your changes.
-        #connection.commit()
+        connection.commit()
 
     finally:
         connection.close()

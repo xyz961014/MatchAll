@@ -1,11 +1,15 @@
 import createsheet
 import sys
+import re
 
 def main(argv):
     matchdb = 'MANAN_1718'
+    subtitle = '男子足球执场单'
     if len(argv) > 2:
         matchdb = argv[2]
-    fname = createsheet.createmanansheet(argv[0],argv[1],matchdb=matchdb)
+        if re.match('MANYU',matchdb):
+            subtitle = '女子足球执场单'
+    fname = createsheet.createmanansheet(argv[0],argv[1],matchdb=matchdb,subtitle=subtitle)
     print('completed')
     print(fname[0])
     print(fname[1])

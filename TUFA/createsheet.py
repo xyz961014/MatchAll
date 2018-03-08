@@ -5,7 +5,7 @@ import pymysql.cursors
 import re
 import TeamDict
 
-def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大学马约翰学生运动会',matchdb = 'MANAN_1718'):
+def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大学马约翰学生运动会',matchdb = 'MANAN_1718',subtitle = '男子足球执场单'):
   filename = '/var/www/TUFA/sheettemplate.docx'
   doc = Document(filename)
   paras = doc.paragraphs
@@ -21,6 +21,31 @@ def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大�
   paras[26].runs[0].text = title
   for rest in paras[26].runs[1:]:
     rest.text = ''
+
+  paras[1].runs[0].text =subtitle
+  for rest in paras[1].runs[1:]:
+    rest.text = ''
+  paras[14].runs[0].text = subtitle
+  for rest in paras[14].runs[1:]:
+    rest.text = ''
+  paras[27].runs[0].text = subtitle
+  for rest in paras[27].runs[1:]:
+    rest.text = ''
+  
+  homeplayers = []
+  awayplayers = []
+  homeleaders = []
+  awayleaders = []
+  homeinfo = []
+  awayinfo = []
+  connection = pymysql.connect(host='localhost',
+                               user='root',
+                               password='961014',
+                               db=matchdb,
+                               charset='utf8mb4',
+                               cursorclass=pymysql.cursors.DictCursor)
+  
+
   
   homeplayers = []
   awayplayers = []
