@@ -6,20 +6,20 @@ import os
 import json
 
 class Player:
-    def __init__(self, name, team, kitnum = None, first = True, intime = 1,onpitch = True):
+    def __init__(self, name, team, kitnum = None, first = True, intime = 1, outtime = 81, onpitch = True):
         self.onpitch = onpitch
         self.name = name
         self.team = team
         self.kitnum = kitnum
         self.intime = [intime]
-        self.outtime = [81]
+        self.outtime = [outtime]
         self.goals = 0
         self.owngoal = 0
         self.yc = 0
         self.rc = 0
         self.penalty = 0
         self.penmiss = 0
-        self.ontime = 80
+        self.ontime = outtime - intime
     def getontime(self):
         if self.onpitch:
             self.intime.sort()
@@ -64,6 +64,9 @@ def Stat(matchname, matchid = None, add = True):
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
     try:
+        outtime = 81
+        if re.match('MANYU',matchname):
+            outtime = 61
         EliMatches = dict()
         if os.path.exists('../html/' + matchname + '.json'):
             with open('../html/' + matchname + '.json') as ef:
@@ -111,11 +114,11 @@ def Stat(matchname, matchid = None, add = True):
                             Aabandon = True
                     elif not str(info['KitNumber']) + info['Name'] in players:
                         if info['EventType'] == '首发':
-                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'])
+                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], outtime = outtime)
                         elif info['EventType'] == '换上':
-                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, intime = info['EventTime'])
+                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, intime = info['EventTime'], outtime = outtime)
                         elif info['EventType'] == '黄牌':
-                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, onpitch = False)
+                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, onpitch = False, outtime = outtime)
                             players[str(info['KitNumber']) + info['Name']].intime.remove(1)
                             players[str(info['KitNumber']) + info['Name']].yc += 1
                             if info['Team'] == m.hometeam:
@@ -123,7 +126,7 @@ def Stat(matchname, matchid = None, add = True):
                             else:
                                 awayteam.yc += 1
                         elif info['EventType'] == '红牌':
-                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, onpitch = False)
+                            players[str(info['KitNumber']) + info['Name']] = Player(name = info['Name'], team = info['Team'], kitnum = info['KitNumber'], first = False, onpitch = False, outtime = outtime)
                             players[str(info['KitNumber']) + info['Name']].intime.remove(1)
                             players[str(info['KitNumber']) + info['Name']].rc += 1
                             if info['Team'] == m.hometeam:
