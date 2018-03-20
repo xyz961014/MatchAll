@@ -1576,7 +1576,7 @@ function showreport() {
             }
             curY += halfh + 40;
         }
-        if (hg == ag) { //点球决胜
+        if (hg == ag && stage != 'Group') { //点球决胜
             var phg = hg;
             var pag = ag;
             for (var i = 0;i < revents.length;i++) {
