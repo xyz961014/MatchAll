@@ -604,8 +604,18 @@ function awaycheck(id) {
     <input title='penalty' class='penalty' type='button' value='Submit' onclick='PSubmit()'/>
     </div>
 </div>
-<a hred="" class="btn btn-default" id="pngdown">PNGDOWN</a>
 <br>
+<div class='display col-xs-12 penalty'>
+    <div class='homedisplay col-xs-6'>
+        <div class="homefirst"></div>
+        <div class="homeevent"></div>
+    </div>
+    <div class='awaydisplay col-xs-6'>
+        <div class="awayfirst"></div>
+        <div class="awayevent"></div>
+    </div>
+</div>
+
 <canvas id="canvas"></canvas>
 <script>
 
@@ -863,6 +873,7 @@ function showreport() {
                 }
             }
         }
+        console.log(events);
         if (stage != 'Group' && hg == ag) {
             $(".penalty").show();
         } else {
@@ -872,8 +883,8 @@ function showreport() {
             var Hinst = document.getElementById('H'+hflist[i].kitnum); 
             Hinst.checked = true;
             //if blank extrainfo
-            var blk = /^\s+/;
-            if (!blk.test(hflist[i].extrainfo) && hflist[i].extrainfo != "") {
+            var ptn = /(校友|教工|足特)/;
+            if (ptn.test(hflist[i].extrainfo)) {
                 var txt = hflist[i].kitnum + "-" + hflist[i].name + "(" + hflist[i].extrainfo + ")";
             }
             else {
@@ -889,8 +900,8 @@ function showreport() {
             var Ainst = document.getElementById('A'+aflist[i].kitnum); 
             Ainst.checked = true;
             //if blank extrainfo
-            var blk = /^\s+/;
-            if (!blk.test(aflist[i].extrainfo) && aflist[i].extrainfo != "") {
+            var ptn = /(校友|教工|足特)/;
+            if (ptn.test(aflist[i].extrainfo)) {
                 var txt = aflist[i].kitnum + "-" + aflist[i].name + "(" + aflist[i].extrainfo + ")";
             }
             else {
@@ -931,8 +942,8 @@ function showreport() {
             })
                     });
         for (var i = 0;i < hevent.length;i++) {
-            var blk = /^\s+/;
-            if (!blk.test(hevent[i].extrainfo) && hevent[i].extrainfo != "") {
+            var ptn = /(校友|教工|足特)/;
+            if (ptn.test(hevent[i].extrainfo)) {
                 var namestr = hevent[i].kitnum + "-" + hevent[i].name + "(" + hevent[i].extrainfo + ")";
             }
             else {
@@ -991,8 +1002,8 @@ function showreport() {
             }
         }
         for (var i = 0;i < aevent.length;i++) {
-            var blk = /^\s+/;
-            if (!blk.test(aevent[i].extrainfo) && aevent[i].extrainfo != "") {
+            var ptn = /(校友|教工|足特)/;
+            if (ptn.test(aevent[i].extrainfo)) {
                 var namestr = aevent[i].kitnum + "-" + aevent[i].name + "(" + aevent[i].extrainfo + ")";
             }
             else {
@@ -1082,9 +1093,78 @@ function showreport() {
         console.log(che);
         //console.log(hflist,aflist,hevent,aevent);
         //REPORT PNG
+        var revents = [];
+        var simul = [events[0]];
+        for (var i = 1;i < events.length;i++) {
+            if (simul.length == 0 || events[i].timestr == simul[0].timestr) {
+                simul.push(events[i]);
+            } else {
+                revents.push(simul);
+                simul = [events[i]];
+            }
+        } 
+        revents.push(simul);
+        console.log("re",revents);
+
         var curY = 50;
+        var hy = 200;
         $('canvas').attr("width", 1600);
-        $('canvas').attr("height", 5000);
+        for (var i = 0;i < revents.length;i++) {
+            var hside = [];
+            var aside = [];
+            for (var j = 0;j < revents[i].length;j++) {
+                if (hg == ag) {
+                    if (revents[i][j].team == homename) {
+                        hside.push(revents[i][j]);
+                    }
+                    else if (revents[i][j].team == awayname) {
+                        aside.push(revents[i][j]);
+                    }
+                } else {
+                    if (revents[i][j].team == homename && !revents[i][j].type.match(/点球决胜/)) {
+                        hside.push(revents[i][j]);
+                    }
+                    else if (revents[i][j].team == awayname && !revents[i][j].type.match(/点球决胜/)) {
+                        aside.push(revents[i][j]);
+                    }
+                }
+                
+            }
+            var halfh = Math.max(hside.length, aside.length) * 45 / 2 + 10;
+            if (hside.length == 0 && aside.length == 0)
+                halfh = -20;
+            hy += 2 * halfh + 40;
+        }
+        var hfstr = '';
+        var afstr = '';
+        for (var i = 0;i < hflist.length;i++) {
+            hfstr += hflist[i].namestr + '    ';
+        }
+        for (var i = 0;i < aflist.length;i++) {
+            afstr += aflist[i].namestr + '    ';
+        }
+        if (hfstr.length > afstr.length)
+            var mstr = hfstr;
+        else
+            var mstr = afstr;
+        $('canvas').drawText({
+            layer: true,
+            fillStyle: 'rgba(0, 0, 0, 0)',
+            fontFamily: 'Trebuchet MS',
+            fontSize: 36,
+            name: 'measurefirst',
+            text: mstr,
+            fromCenter: false,
+            x: 0, y: curY,
+            align: 'left',
+            maxWidth: 600
+        });
+        hy += Math.max($('canvas').measureText('measurefirst').height / 2, 70) + $('canvas').measureText('measurefirst').height / 2;
+        hy += 70;
+        if (stage != 'Group')
+            hy += 80;
+        $('canvas').attr("height", hy);
+
         $('canvas').drawText({
             layer: true,
             fillStyle: '#000',
@@ -1106,6 +1186,8 @@ function showreport() {
             text: AwayName
         });
         curY += $('canvas').measureText('homename').height + 10; 
+        if (stage != 'Group' && hg == ag)
+            curY += 80;
         var subtitle = "<?=$subtitle ?>";
         $('canvas').drawText({
             layer: true,
@@ -1116,15 +1198,7 @@ function showreport() {
             fontFamily: 'simHei',
             text: subtitle
         })
-        curY += $('canvas').measureText('subtitle').height + 10; 
-        var hfstr = '';
-        var afstr = '';
-        for (var i = 0;i < hflist.length;i++) {
-            hfstr += hflist[i].namestr + '    ';
-        }
-        for (var i = 0;i < aflist.length;i++) {
-            afstr += aflist[i].namestr + '    ';
-        }
+        curY += $('canvas').measureText('subtitle').height + 20; 
         $('canvas').drawText({
             layer: true,
             fillStyle: '#000',
@@ -1137,7 +1211,6 @@ function showreport() {
             align: 'left',
             maxWidth: 600
         });
-        console.log($('canvas').measureText("subtitle")); 
         $('canvas').drawText({
             layer: true,
             fillStyle: '#000',
@@ -1150,8 +1223,8 @@ function showreport() {
             align: 'left',
             maxWidth: 600
         });
-        curY += $('canvas').measureText('homefirst').height / 2 - 30; 
-        console.log($('canvas').measureText('homefirst')); 
+        var firstheight = Math.max($('canvas').measureText('homefirst').height, $('canvas').measureText('awayfirst').height);
+        curY += firstheight / 2 - 10; 
         $('canvas').drawText({
             layer: true,
             name: 'First',
@@ -1161,48 +1234,43 @@ function showreport() {
             text: "首发阵容",
             x: 800, y: curY,
         });
-        curY += $('canvas').measureText('First').height + 30; 
+        curY += Math.max($('canvas').measureText('First').height + 30, firstheight / 2); 
         $('canvas').drawImage({
+            layer: true,
+            name: 'starticon',
             source: 'ReportElements/START.png',
             x: 800, y: curY,
         });
         curY += 30;
         $('canvas').drawArc({
+            layer: true,
+            name: 'startpoint',
             fillStyle: 'black',
             x: 800, y: curY,
             radius: 8
         });
         var startY = curY;
         curY += 50;
-        console.log(events);
-        var revents = [];
-        var simul = [events[0]];
-        for (var i = 1;i < events.length;i++) {
-            if (simul.length == 0 || events[i].timestr == simul[0].timestr) {
-                simul.push(events[i]);
-            } else {
-                revents.push(simul);
-                simul = [events[i]];
-            }
-        } 
-        revents.push(simul);
-        console.log("re",revents);
         for (var i = 0;i < revents.length;i++) {
             var hside = [];
             var aside = [];
             for (var j = 0;j < revents[i].length;j++) {
-                if (revents[i][j].team == homename) {
+                if (revents[i][j].team == homename && !revents[i][j].type.match(/点球决胜/)) {
                     hside.push(revents[i][j]);
                 }
-                else if (revents[i][j].team == awayname) {
+                else if (revents[i][j].team == awayname && !revents[i][j].type.match(/点球决胜/)) {
                     aside.push(revents[i][j]);
                 }
             }
             var halfh = Math.max(hside.length, aside.length) * 45 / 2 + 10;
+            if (hside.length == 0 && aside.length == 0)
+                halfh = -20;
             console.log(halfh);
             curY += halfh;
             if (hside.length != 0) {
                 $('canvas').drawLine({
+                    layer: true,
+                    name: 'htimeline' + i.toString(),
                     strokeStyle: '#000',
                     strokeWidth: 3,
                     rounded: true,
@@ -1211,10 +1279,10 @@ function showreport() {
                 });
                 $('canvas').drawText({
                     layer: true,
-                    name: 'time',
+                    name: 'htime' + i.toString(),
                     fillStyle: '#000',
                     fontFamily: 'Trebuchet MS',
-                    fontSize: 38,
+                    fontSize: 36,
                     text: hside[0].timestr,
                     x: 750, y: curY - 20,
                 })
@@ -1223,17 +1291,19 @@ function showreport() {
                 for (var k = 0;k < hside.length;k++) {
                     $('canvas').drawText({
                         layer: true,
-                        name: hside[k].namestr,
+                        name: 'measure' + hside[k].namestr,
                         fillStyle: 'rgba(0, 0, 0, 0)',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: hside[k].namestr,
                         x: 800, y: 0,
                     });
-                    rectwidth = Math.max(rectwidth, $('canvas').measureText(hside[k].namestr).width);
+                    rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + hside[k].namestr).width);
                 }
                 rectwidth += 100;
                 $('canvas').drawRect({
+                    layer: true,
+                    name: 'hrect' + i.toString(),
                     strokeStyle: '#000',
                     strokeWidth: 3,
                     x: 700 - rectwidth / 2, y: curY,
@@ -1245,19 +1315,25 @@ function showreport() {
                 for (var k = 0;k < hside.length;k++) {
                     if (hside[k].type == "进球") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'hG' + i.toString() + k.toString(),
                             source: 'ReportElements/G.png',
                             x: 700 - rectwidth + 20, y: ey,
                             fromCenter: false
                         });
                     } else if (hside[k].type == "点球") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'hPG' + i.toString() + k.toString(),
                             source: 'ReportElements/PG.png',
                             x: 700 - rectwidth + 20, y: ey,
                             fromCenter: false
                         });
-
+                    
                     } else if (hside[k].type == "点球罚失") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'hPM' + i.toString() + k.toString(),
                             source: 'ReportElements/PM.png',
                             x: 700 - rectwidth + 20, y: ey,
                             fromCenter: false
@@ -1265,6 +1341,8 @@ function showreport() {
 
                     } else if (hside[k].type == "乌龙球") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'hOG' + i.toString() + k.toString(),
                             source: 'ReportElements/OG.png',
                             x: 700 - rectwidth + 20, y: ey,
                             fromCenter: false
@@ -1272,6 +1350,8 @@ function showreport() {
 
                     } else if (hside[k].type == "换下") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'hSO' + i.toString() + k.toString(),
                             source: 'ReportElements/SO.png',
                             x: 700 - rectwidth + 20, y: ey,
                             fromCenter: false
@@ -1279,6 +1359,8 @@ function showreport() {
 
                     } else if (hside[k].type == "换上") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'hSI' + i.toString() + k.toString(),
                             source: 'ReportElements/SI.png',
                             x: 700 - rectwidth + 20, y: ey,
                             fromCenter: false
@@ -1297,6 +1379,8 @@ function showreport() {
                         }
                         if (y2c) {
                             $('canvas').drawImage({
+                                layer: true,
+                                name: 'hY2C' + i.toString() + k.toString(),
                                 source: 'ReportElements/Y2C.png',
                                 x: 700 - rectwidth + 20, y: ey,
                                 fromCenter: false
@@ -1304,6 +1388,8 @@ function showreport() {
 
                         } else {
                             $('canvas').drawImage({
+                                layer: true,
+                                name: 'hYC' + i.toString() + k.toString(),
                                 source: 'ReportElements/YC.png',
                                 x: 700 - rectwidth + 20, y: ey,
                                 fromCenter: false
@@ -1313,6 +1399,8 @@ function showreport() {
 
                     } else if (hside[k].type == "红牌") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'hRC' + i.toString() + k.toString(),
                             source: 'ReportElements/RC.png',
                             x: 700 - rectwidth + 20, y: ey,
                             fromCenter: false
@@ -1321,7 +1409,7 @@ function showreport() {
                     }
                     $('canvas').drawText({
                         layer: true,
-                        name: hside[k].namestr,
+                        name: hside[k].namestr + i.toString() + k.toString(),
                         fillStyle: '#000',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
@@ -1335,6 +1423,8 @@ function showreport() {
             } 
             if (aside.length != 0) {
                 $('canvas').drawLine({
+                    layer: true,
+                    name: 'atimeline' + i.toString(),
                     strokeStyle: '#000',
                     strokeWidth: 3,
                     rounded: true,
@@ -1343,10 +1433,10 @@ function showreport() {
                 });
                 $('canvas').drawText({
                     layer: true,
-                    name: 'time',
+                    name: 'atime' + i.toString(),
                     fillStyle: '#000',
                     fontFamily: 'Trebuchet MS',
-                    fontSize: 38,
+                    fontSize: 36,
                     text: aside[0].timestr,
                     x: 850, y: curY - 20,
                 })
@@ -1355,17 +1445,19 @@ function showreport() {
                 for (var k = 0;k < aside.length;k++) {
                     $('canvas').drawText({
                         layer: true,
-                        name: aside[k].namestr,
+                        name: 'measure' + aside[k].namestr,
                         fillStyle: 'rgba(0, 0, 0, 0)',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: aside[k].namestr,
                         x: 800, y: 0,
                     });
-                    rectwidth = Math.max(rectwidth, $('canvas').measureText(aside[k].namestr).width);
+                    rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + aside[k].namestr).width);
                 }
                 rectwidth += 100;
                 $('canvas').drawRect({
+                    layer: true,
+                    name: 'arect' + i.toString(),
                     strokeStyle: '#000',
                     strokeWidth: 3,
                     x: 900 + rectwidth / 2, y: curY,
@@ -1377,12 +1469,16 @@ function showreport() {
                 for (var k = 0;k < aside.length;k++) {
                      if (aside[k].type == "进球") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'aG' + i.toString() + k.toString(),
                             source: 'ReportElements/G.png',
                             x: 900 + 20, y: ey,
                             fromCenter: false
                         });
                     } else if (aside[k].type == "点球") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'aPG' + i.toString() + k.toString(),
                             source: 'ReportElements/PG.png',
                             x: 900 + 20, y: ey,
                             fromCenter: false
@@ -1390,6 +1486,8 @@ function showreport() {
 
                     } else if (aside[k].type == "点球罚失") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'aPM' + i.toString() + k.toString(),
                             source: 'ReportElements/PM.png',
                             x: 900 + 20, y: ey,
                             fromCenter: false
@@ -1397,6 +1495,8 @@ function showreport() {
 
                     } else if (aside[k].type == "乌龙球") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'aOG' + i.toString() + k.toString(),
                             source: 'ReportElements/OG.png',
                             x: 900 + 20, y: ey,
                             fromCenter: false
@@ -1404,6 +1504,8 @@ function showreport() {
 
                     } else if (aside[k].type == "换下") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'aSO' + i.toString() + k.toString(),
                             source: 'ReportElements/SO.png',
                             x: 900 + 20, y: ey,
                             fromCenter: false
@@ -1411,6 +1513,8 @@ function showreport() {
 
                     } else if (aside[k].type == "换上") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'aSI' + i.toString() + k.toString(),
                             source: 'ReportElements/SI.png',
                             x: 900 + 20, y: ey,
                             fromCenter: false
@@ -1429,6 +1533,8 @@ function showreport() {
                         }
                         if (y2c) {
                             $('canvas').drawImage({
+                                layer: true,
+                                name: 'aY2C' + i.toString() + k.toString(),
                                 source: 'ReportElements/Y2C.png',
                                 x: 900 + 20, y: ey,
                                 fromCenter: false
@@ -1436,6 +1542,8 @@ function showreport() {
 
                         } else {
                             $('canvas').drawImage({
+                                layer: true,
+                                name: 'aYC' + i.toString() + k.toString(),
                                 source: 'ReportElements/YC.png',
                                 x: 900 + 20, y: ey,
                                 fromCenter: false
@@ -1445,6 +1553,8 @@ function showreport() {
 
                     } else if (aside[k].type == "红牌") {
                         $('canvas').drawImage({
+                            layer: true,
+                            name: 'aRC' + i.toString() + k.toString(),
                             source: 'ReportElements/RC.png',
                             x: 900 + 20, y: ey,
                             fromCenter: false
@@ -1453,20 +1563,213 @@ function showreport() {
                     }
                     $('canvas').drawText({
                         layer: true,
-                        name: aside[k].namestr,
+                        name: aside[k].namestr + i.toString() + k.toString(),
                         fillStyle: '#000',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: aside[k].namestr,
                         fromCenter: false,
-                        x: 980, y: ey,
+                        x: 970, y: ey,
                     });
                     ey += 50;
                 }
             }
             curY += halfh + 40;
         }
+        if (hg == ag) { //点球决胜
+            var phg = hg;
+            var pag = ag;
+            for (var i = 0;i < revents.length;i++) {
+            var hside = [];
+            var aside = [];
+            for (var j = 0;j < revents[i].length;j++) {
+                if (revents[i][j].team == homename && revents[i][j].type.match(/点球决胜/)) {
+                    hside.push(revents[i][j]);
+                }
+                else if (revents[i][j].team == awayname && revents[i][j].type.match(/点球决胜/)) {
+                    aside.push(revents[i][j]);
+                }
+            }
+            var halfh = Math.max(hside.length, aside.length) * 45 / 2 + 10;
+            if (hside.length == 0 && aside.length == 0)
+                halfh = -20;
+            curY += halfh;
+            if (hside.length != 0) {
+                $('canvas').drawLine({
+                    layer: true,
+                    name: 'phtimeline',
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    rounded: true,
+                    x1: 700, y1: curY,
+                    x2: 800, y2: curY,
+                });
+                $('canvas').drawText({
+                    layer: true,
+                    name: 'phtime',
+                    fillStyle: '#000',
+                    fontFamily: 'Trebuchet MS',
+                    fontSize: 36,
+                    text: hside[0].timestr,
+                    x: 750, y: curY - 20,
+                })
+                var rectwidth = 0;
+                var rectheight = hside.length * 50 + 10;
+                for (var k = 0;k < hside.length;k++) {
+                    $('canvas').drawText({
+                        layer: true,
+                        name: 'measure' + hside[k].namestr,
+                        fillStyle: 'rgba(0, 0, 0, 0)',
+                        fontFamily: 'Trebuchet MS',
+                        fontSize: 40,
+                        text: hside[k].namestr,
+                        x: 800, y: 0,
+                    });
+                    rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + hside[k].namestr).width);
+                }
+                rectwidth += 100;
+                $('canvas').drawRect({
+                    layer: true,
+                    name: 'phrect',
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    x: 700 - rectwidth / 2, y: curY,
+                    width: rectwidth,
+                    height: rectheight,
+                    cornerRadius: 10
+                });
+                var ey = curY - rectheight / 2 + 10;
+                for (var k = 0;k < hside.length;k++) {
+                    if (hside[k].type == "点球决胜罚进") {
+                        phg++;
+                        $('canvas').drawImage({
+                            layer: true,
+                            name: 'phPG' + i.toString() + k.toString(),
+                            source: 'ReportElements/PG.png',
+                            x: 700 - rectwidth + 20, y: ey,
+                            fromCenter: false
+                        });
+                    } else if (hside[k].type == "点球决胜罚失") {
+                        $('canvas').drawImage({
+                            layer: true,
+                            name: 'phPM' + i.toString() + k.toString(),
+                            source: 'ReportElements/PM.png',
+                            x: 700 - rectwidth + 20, y: ey,
+                            fromCenter: false
+                        });
+
+                    }                    
+                    $('canvas').drawText({
+                        layer: true,
+                        name: 'p' + hside[k].namestr + i.toString() + k.toString(),
+                        fillStyle: '#000',
+                        fontFamily: 'Trebuchet MS',
+                        fontSize: 40,
+                        text: hside[k].namestr,
+                        fromCenter: false,
+                        x: 700 - rectwidth + 70, y: ey,
+                    });
+                    ey += 50;
+                }
+
+            } 
+            if (aside.length != 0) {
+                $('canvas').drawLine({
+                    layer: true,
+                    name: 'patimeline',
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    rounded: true,
+                    x1: 800, y1: curY,
+                    x2: 900, y2: curY,
+                });
+                $('canvas').drawText({
+                    layer: true,
+                    name: 'patime',
+                    fillStyle: '#000',
+                    fontFamily: 'Trebuchet MS',
+                    fontSize: 36,
+                    text: aside[0].timestr,
+                    x: 850, y: curY - 20,
+                })
+                var rectwidth = 0;
+                var rectheight = aside.length * 50 + 10;
+                for (var k = 0;k < aside.length;k++) {
+                    $('canvas').drawText({
+                        layer: true,
+                        name: 'measure' + aside[k].namestr,
+                        fillStyle: 'rgba(0, 0, 0, 0)',
+                        fontFamily: 'Trebuchet MS',
+                        fontSize: 40,
+                        text: aside[k].namestr,
+                        x: 800, y: 0,
+                    });
+                    rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + aside[k].namestr).width);
+                }
+                rectwidth += 100;
+                $('canvas').drawRect({
+                    layer: true,
+                    name: 'parect',
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    x: 900 + rectwidth / 2, y: curY,
+                    width: rectwidth,
+                    height: rectheight,
+                    cornerRadius: 10
+                });
+                var ey = curY - rectheight / 2 + 10;
+                for (var k = 0;k < aside.length;k++) {
+                    if (aside[k].type == "点球决胜罚进") {
+                        pag++;
+                        $('canvas').drawImage({
+                            layer: true,
+                            name: 'paPG' + i.toString() + k.toString(),
+                            source: 'ReportElements/PG.png',
+                            x: 900 + 20, y: ey,
+                            fromCenter: false
+                        });
+
+                    } else if (aside[k].type == "点球决胜罚失") {
+                        $('canvas').drawImage({
+                            layer: true,
+                            name: 'paPM' + i.toString() + k.toString(),
+                            source: 'ReportElements/PM.png',
+                            x: 900 + 20, y: ey,
+                            fromCenter: false
+                        });
+
+                    }                     
+                    $('canvas').drawText({
+                        layer: true,
+                        name: 'p' + aside[k].namestr + i.toString() + k.toString(),
+                        fillStyle: '#000',
+                        fontFamily: 'Trebuchet MS',
+                        fontSize: 40,
+                        text: aside[k].namestr,
+                        fromCenter: false,
+                        x: 970, y: ey,
+                    });
+                    ey += 50;
+                }
+            }
+            curY += halfh + 40;
+        }
+            var pscore = "(" + phg.toString() + ":" + pag.toString() + ")";
+            $('canvas').drawText({
+                layer: true,
+                fillStyle: '#000',
+                fontStyle: 'bold',
+                name: 'pscore',
+                x: 800, y: 120,
+                fontSize: 60,
+                fontFamily: 'simHei',
+                text: pscore
+            });
+        }
+        
         $('canvas').drawLine({
+            layer: true,
+            name: 'timeline',
             strokeStyle: '#000',
             strokeWidth: 6,
             rounded: true,
@@ -1474,21 +1777,34 @@ function showreport() {
             x2: 800, y2: curY,
         });
         $('canvas').drawArc({
+            layer: true,
+            name: 'endpoint',
             fillStyle: 'black',
             x: 800, y: curY,
             radius: 8
         });
         curY += 20;
         $('canvas').drawImage({
+            layer: true,
+            name: 'endicon',
             source: 'ReportElements/END.png',
             x: 800, y: curY,
         });
+        var score = hg.toString() + ":" + ag.toString();
+        $('canvas').drawText({
+            layer: true,
+            fillStyle: '#000',
+            fontStyle: 'bold',
+            name: 'score',
+            x: 800, y: 50,
+            fontSize: 60,
+            fontFamily: 'simHei',
+            text: score
+        });
+        //$('canvas').attr("height", curY + 50);
 
 
         //
-        var a = document.getElementById('pngdown');
-        a.href = $('canvas').getCanvasImage(); 
-        a.download = "<?=$hometeam ?>" + "<?=$awayteam ?>" + "<?=$mtime ?>";  //设定下载名称
     });
 }
 showreport();
@@ -1708,16 +2024,6 @@ function check(hflist, aflist, hevent, aevent) {
     };
 }
 </script>
-<div class='display col-xs-12 penalty'>
-    <div class='homedisplay col-xs-6'>
-        <div class="homefirst"></div>
-        <div class="homeevent"></div>
-    </div>
-    <div class='awaydisplay col-xs-6'>
-        <div class="awayfirst"></div>
-        <div class="awayevent"></div>
-    </div>
-</div>
 <?php
 $conn->close();
 ?>
