@@ -152,12 +152,12 @@ def getfull(teamabbr,full=False):
         return Teamfull[teamabbr][1]
     else:
         return Teamfull[teamabbr][0]
-fp = open('TeamDict.php','w')
-fp.write('<?php\n$dict = array(')
-for key,value in Teamfull.items():
-    fp.write('\"' + str(key) + '\"=>'+'\"'+str(value[0])+'\",')
-fp.write(');\n$dict2 = array(')
-for key,value in Teamfull.items():
-    fp.write('\"' + str(key) + '\"=>'+'\"'+str(value[1])+'\",')
-fp.write(');\n?>')
-fp.close()
+#fp = open('TeamDict.php','w')
+#fp.write('<?php\n$dict = array(')
+#for key,value in Teamfull.items():
+#    fp.write('\"' + str(key) + '\"=>'+'\"'+str(value[0])+'\",')
+#fp.write(');\n$dict2 = array(')
+#for key,value in Teamfull.items():
+#    fp.write('\"' + str(key) + '\"=>'+'\"'+str(value[1])+'\",')
+#fp.write(');\n?>')
+#fp.close()
