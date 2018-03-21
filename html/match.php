@@ -1107,7 +1107,7 @@ function showreport() {
         console.log("re",revents);
 
         var curY = 50;
-        var hy = 200;
+        var hy = 240;
         $('canvas').attr("width", 1600);
         for (var i = 0;i < revents.length;i++) {
             var hside = [];
@@ -1409,13 +1409,43 @@ function showreport() {
                     }
                     $('canvas').drawText({
                         layer: true,
-                        name: hside[k].namestr + i.toString() + k.toString(),
+                        name: hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: hside[k].namestr,
                         fromCenter: false,
                         x: 700 - rectwidth + 70, y: ey,
+                        dblclick: function(layer) {
+                            var item = layer.name.split("~");
+                            console.log(item);
+                            $.get('delitem.php', {
+                               dbname: '<?=$dbname ?>',
+                               MatchID: "<?='Match'.$id ?>",
+                               Team: item[0],
+                               KitNumber: parseInt(item[1]),
+                               Name: item[2],
+                               Type: item[3],
+                               Time: item[4],
+                               StoppageTime: item[5]
+                            }, function(data,state) {
+                                console.log(data,state);
+                                $.get('additem.php', {
+                                    dbname: '<?=$dbname ?>',
+                                    MatchID: "<?='Match'.$id ?>",
+                                    Team: item[0],
+                                    KitNumber: parseInt(item[1]),
+                                    Name: item[2],
+                                    Type: item[3],
+                                    Time: item[4],
+                                    StoppageTime: item[5]
+                                }, function(data,state) {
+                                    console.log(data,state);
+                                    location.reload();
+                                });
+
+                            });
+                        }
                     });
                     ey += 50;
                 }
@@ -1563,13 +1593,43 @@ function showreport() {
                     }
                     $('canvas').drawText({
                         layer: true,
-                        name: aside[k].namestr + i.toString() + k.toString(),
+                        name: aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: aside[k].namestr,
                         fromCenter: false,
                         x: 970, y: ey,
+                        dblclick: function(layer) {
+                            var item = layer.name.split("~");
+                            console.log(item);
+                            $.get('delitem.php', {
+                               dbname: '<?=$dbname ?>',
+                               MatchID: "<?='Match'.$id ?>",
+                               Team: item[0],
+                               KitNumber: parseInt(item[1]),
+                               Name: item[2],
+                               Type: item[3],
+                               Time: item[4],
+                               StoppageTime: item[5]
+                            }, function(data,state) {
+                                console.log(data,state);
+                                $.get('additem.php', {
+                                    dbname: '<?=$dbname ?>',
+                                    MatchID: "<?='Match'.$id ?>",
+                                    Team: item[0],
+                                    KitNumber: parseInt(item[1]),
+                                    Name: item[2],
+                                    Type: item[3],
+                                    Time: item[4],
+                                    StoppageTime: item[5]
+                                }, function(data,state) {
+                                    console.log(data,state);
+                                    location.reload();
+                                });
+
+                            });
+                        }
                     });
                     ey += 50;
                 }
@@ -1661,13 +1721,43 @@ function showreport() {
                     }                    
                     $('canvas').drawText({
                         layer: true,
-                        name: 'p' + hside[k].namestr + i.toString() + k.toString(),
+                        name: hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: hside[k].namestr,
                         fromCenter: false,
                         x: 700 - rectwidth + 70, y: ey,
+                        dblclick: function(layer) {
+                            var item = layer.name.split("~");
+                            console.log(item);
+                            $.get('delitem.php', {
+                               dbname: '<?=$dbname ?>',
+                               MatchID: "<?='Match'.$id ?>",
+                               Team: item[0],
+                               KitNumber: parseInt(item[1]),
+                               Name: item[2],
+                               Type: item[3],
+                               Time: item[4],
+                               StoppageTime: item[5]
+                            }, function(data,state) {
+                                console.log(data,state);
+                                $.get('additem.php', {
+                                    dbname: '<?=$dbname ?>',
+                                    MatchID: "<?='Match'.$id ?>",
+                                    Team: item[0],
+                                    KitNumber: parseInt(item[1]),
+                                    Name: item[2],
+                                    Type: item[3],
+                                    Time: item[4],
+                                    StoppageTime: item[5]
+                                }, function(data,state) {
+                                    console.log(data,state);
+                                    location.reload();
+                                });
+
+                            });
+                        }
                     });
                     ey += 50;
                 }
@@ -1702,7 +1792,7 @@ function showreport() {
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: aside[k].namestr,
-                        x: 800, y: 0,
+                        x: 800, y: 0
                     });
                     rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + aside[k].namestr).width);
                 }
@@ -1741,13 +1831,44 @@ function showreport() {
                     }                     
                     $('canvas').drawText({
                         layer: true,
-                        name: 'p' + aside[k].namestr + i.toString() + k.toString(),
+                        name: aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
                         fontFamily: 'Trebuchet MS',
                         fontSize: 40,
                         text: aside[k].namestr,
                         fromCenter: false,
                         x: 970, y: ey,
+                        dblclick: function(layer) {
+                            var item = layer.name.split("~");
+                            console.log(item);
+                            $.get('delitem.php', {
+                               dbname: '<?=$dbname ?>',
+                               MatchID: "<?='Match'.$id ?>",
+                               Team: item[0],
+                               KitNumber: parseInt(item[1]),
+                               Name: item[2],
+                               Type: item[3],
+                               Time: item[4],
+                               StoppageTime: item[5]
+                            }, function(data,state) {
+                                console.log(data,state);
+                                $.get('additem.php', {
+                                    dbname: '<?=$dbname ?>',
+                                    MatchID: "<?='Match'.$id ?>",
+                                    Team: item[0],
+                                    KitNumber: parseInt(item[1]),
+                                    Name: item[2],
+                                    Type: item[3],
+                                    Time: item[4],
+                                    StoppageTime: item[5]
+                                }, function(data,state) {
+                                    console.log(data,state);
+                                    location.reload();
+                                });
+
+                            });
+                        }
+
                     });
                     ey += 50;
                 }
@@ -1790,6 +1911,67 @@ function showreport() {
             source: 'ReportElements/END.png',
             x: 800, y: curY,
         });
+        curY += 40;
+        $('canvas').drawImage({
+            layer: true,
+            name: 'goalimage',
+            source: 'ReportElements/icon_goal.png',
+            x: 600, y: curY
+        });
+        $('canvas').drawImage({
+            layer: true,
+            name: 'pgimage',
+            source: 'ReportElements/icon_point.png',
+            x: 700, y: curY
+        });
+        $('canvas').drawImage({
+            layer: true,
+            name: 'pmimage',
+            source: 'ReportElements/icon_point_1.png',
+            x: 800, y: curY
+        });
+        $('canvas').drawImage({
+            layer: true,
+            name: 'ogimage',
+            source: 'ReportElements/icon_w.png',
+            x: 950, y: curY
+        });
+        $('canvas').drawText({
+            layer: true,
+            name: 'goaltext',
+            fillStyle: '#111',
+            x: 645, y: curY,
+            fontSize: 24,
+            fontFamily: 'ubuntu',
+            text: "进球"
+        })
+        $('canvas').drawText({
+            layer: true,
+            name: 'pgtext',
+            fillStyle: '#111',
+            x: 745, y: curY,
+            fontSize: 24,
+            fontFamily: 'ubuntu',
+            text: "点球"
+        })
+        $('canvas').drawText({
+            layer: true,
+            name: 'pmext',
+            fillStyle: '#111',
+            x: 870, y: curY,
+            fontSize: 24,
+            fontFamily: 'ubuntu',
+            text: "点球罚失"
+        })
+        $('canvas').drawText({
+            layer: true,
+            name: 'ogtext',
+            fillStyle: '#111',
+            x: 1005, y: curY,
+            fontSize: 24,
+            fontFamily: 'ubuntu',
+            text: "乌龙球"
+        })
         var score = hg.toString() + ":" + ag.toString();
         $('canvas').drawText({
             layer: true,
