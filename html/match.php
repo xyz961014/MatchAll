@@ -220,6 +220,11 @@ $('#addModal').modal({
     keyboard: false,
 	show: false
 });
+$('.timeinput').keydown(function(e) {
+    if(e.keyCode==13){
+        $(".btnsubmit").click();
+    }
+})
 $('.addinfo').click(function() {
     validbool = 0;
     var id = $(this).attr('id');
@@ -698,7 +703,11 @@ function PSubmit() {
     }, function(data, state) {
         console.log(data);
         showreport();
-        var time = 110;
+        var dbstr = '<?=$dbname ?>';
+        if (dbstr.match("MANAN"))
+            var time = 110;
+        else if (dbstr.match("MANYU"))
+            var time = 60;
         var stptime = 0;
         var team = $("select[name=Team]");
         var num = $("input[name=KitNumber][title=penalty]");
@@ -874,7 +883,7 @@ function showreport() {
             }
         }
         console.log(events);
-        if (stage != 'Group' && hg == ag) {
+        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag) {
             $(".penalty").show();
         } else {
             $(".penalty").hide();
@@ -1150,7 +1159,7 @@ function showreport() {
         $('canvas').drawText({
             layer: true,
             fillStyle: 'rgba(0, 0, 0, 0)',
-            fontFamily: 'Trebuchet MS',
+            fontFamily: 'WenQuanYi Micro Hei',
             fontSize: 36,
             name: 'measurefirst',
             text: mstr,
@@ -1161,7 +1170,7 @@ function showreport() {
         });
         hy += Math.max($('canvas').measureText('measurefirst').height / 2, 70) + $('canvas').measureText('measurefirst').height / 2;
         hy += 70;
-        if (stage != 'Group')
+        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
             hy += 80;
         $('canvas').attr("height", hy);
 
@@ -1186,7 +1195,7 @@ function showreport() {
             text: AwayName
         });
         curY += $('canvas').measureText('homename').height + 10; 
-        if (stage != 'Group' && hg == ag)
+        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
             curY += 80;
         var subtitle = "<?=$subtitle ?>";
         $('canvas').drawText({
@@ -1202,7 +1211,7 @@ function showreport() {
         $('canvas').drawText({
             layer: true,
             fillStyle: '#000',
-            fontFamily: 'Trebuchet MS',
+            fontFamily: 'WenQuanYi Micro Hei',
             fontSize: 36,
             name: 'homefirst',
             text: hfstr,
@@ -1214,7 +1223,7 @@ function showreport() {
         $('canvas').drawText({
             layer: true,
             fillStyle: '#000',
-            fontFamily: 'Trebuchet MS',
+            fontFamily: 'WenQuanYi Micro Hei',
             fontSize: 36,
             text: afstr,
             name: 'awayfirst',
@@ -1229,7 +1238,7 @@ function showreport() {
             layer: true,
             name: 'First',
             fillStyle: '#000',
-            fontFamily: 'Trebuchet MS',
+            fontFamily: 'simHei',
             fontSize: 38,
             text: "首发阵容",
             x: 800, y: curY,
@@ -1293,7 +1302,7 @@ function showreport() {
                         layer: true,
                         name: 'measure' + hside[k].namestr,
                         fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: hside[k].namestr,
                         x: 800, y: 0,
@@ -1411,7 +1420,7 @@ function showreport() {
                         layer: true,
                         name: hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: hside[k].namestr,
                         fromCenter: false,
@@ -1477,7 +1486,7 @@ function showreport() {
                         layer: true,
                         name: 'measure' + aside[k].namestr,
                         fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: aside[k].namestr,
                         x: 800, y: 0,
@@ -1595,7 +1604,7 @@ function showreport() {
                         layer: true,
                         name: aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: aside[k].namestr,
                         fromCenter: false,
@@ -1636,7 +1645,7 @@ function showreport() {
             }
             curY += halfh + 40;
         }
-        if (hg == ag && stage != 'Group') { //点球决胜
+        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag) { //点球决胜
             var phg = hg;
             var pag = ag;
             for (var i = 0;i < revents.length;i++) {
@@ -1680,7 +1689,7 @@ function showreport() {
                         layer: true,
                         name: 'measure' + hside[k].namestr,
                         fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: hside[k].namestr,
                         x: 800, y: 0,
@@ -1723,7 +1732,7 @@ function showreport() {
                         layer: true,
                         name: hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: hside[k].namestr,
                         fromCenter: false,
@@ -1789,7 +1798,7 @@ function showreport() {
                         layer: true,
                         name: 'measure' + aside[k].namestr,
                         fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: aside[k].namestr,
                         x: 800, y: 0
@@ -1833,7 +1842,7 @@ function showreport() {
                         layer: true,
                         name: aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(),
                         fillStyle: '#000',
-                        fontFamily: 'Trebuchet MS',
+                        fontFamily: 'WenQuanYi Micro Hei',
                         fontSize: 40,
                         text: aside[k].namestr,
                         fromCenter: false,
@@ -1942,7 +1951,7 @@ function showreport() {
             fillStyle: '#111',
             x: 645, y: curY,
             fontSize: 24,
-            fontFamily: 'ubuntu',
+            fontFamily: 'simHei',
             text: "进球"
         })
         $('canvas').drawText({
@@ -1951,7 +1960,7 @@ function showreport() {
             fillStyle: '#111',
             x: 745, y: curY,
             fontSize: 24,
-            fontFamily: 'ubuntu',
+            fontFamily: 'simHei',
             text: "点球"
         })
         $('canvas').drawText({
@@ -1960,7 +1969,7 @@ function showreport() {
             fillStyle: '#111',
             x: 870, y: curY,
             fontSize: 24,
-            fontFamily: 'ubuntu',
+            fontFamily: 'simHei',
             text: "点球罚失"
         })
         $('canvas').drawText({
@@ -1969,7 +1978,7 @@ function showreport() {
             fillStyle: '#111',
             x: 1005, y: curY,
             fontSize: 24,
-            fontFamily: 'ubuntu',
+            fontFamily: 'simHei',
             text: "乌龙球"
         })
         var score = hg.toString() + ":" + ag.toString();
@@ -1980,7 +1989,7 @@ function showreport() {
             name: 'score',
             x: 800, y: 50,
             fontSize: 60,
-            fontFamily: 'simHei',
+            fontFamily: 'Trebuchet MS',
             text: score
         });
         //$('canvas').attr("height", curY + 50);
