@@ -620,7 +620,9 @@ function awaycheck(id) {
         <div class="awayevent"></div>
     </div>
 </div>
-
+<div class="col-xs-12">
+<a class="btn btn-default" id="pngdown">下载图片</a>
+</div>
 <canvas id="canvas"></canvas>
 <script>
 
@@ -1996,8 +1998,23 @@ function showreport() {
 
 
         //
-    });
+        window.setTimeout(function() {
+            var pngdown = $('canvas').getCanvasImage('png');
+            var pngbtn = document.getElementById("pngdown");
+            pngbtn.href = pngdown;
+            pngbtn.download = subtitle + HomeName + score + AwayName +".png";
+        },500);
+            callback(subtitle, HomeName, score, AwayName);
+        });
 }
+//function getpng(subtitle, HomeName, score, AwayName) {
+//    window.setTimeout(function() {
+//        var pngdown = $('canvas').getCanvasImage('png');
+//        var pngbtn = document.getElementById("pngdown");
+//        pngbtn.href = pngdown;
+//        pngbtn.download = subtitle + HomeName + score + AwayName +".png";
+//    },200);
+//}
 showreport();
 function check(hflist, aflist, hevent, aevent) {
     class Player {
