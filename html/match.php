@@ -1894,7 +1894,7 @@ function showreport() {
                 name: 'pscore',
                 x: 800, y: 120,
                 fontSize: 60,
-                fontFamily: 'simHei',
+                fontFamily: 'Trebuchet MS',
                 text: pscore
             });
         }

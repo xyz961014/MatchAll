@@ -126,18 +126,47 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false) {
 }, function(data,state) {
     var tableinfo = JSON.parse(data);
     console.log(tableinfo);
+    var j = 1;
     if (isteam) {
         var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>"+divname+"</caption><thead><tr><th>#</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
         for (var i = 0;i < tableinfo.length;i++) {
             var t = tableinfo[i];
-            var tml = "<tr><td>"+(i+1).toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"</td></tr>";
+            if (i > 0){
+                if (asort) {
+                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) <parseInt(tableinfo[i-1][asort])) 
+                        j = i + 1;
+                }
+                else {
+                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort])) 
+                        j = i + 1;
+                }
+            }
+            if (asort && t[asort] != "0") {
+                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"("+t[asort]+")</td></tr>";
+            }
+            else
+                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"</td></tr>";
             tableml += tml;
         }
     } else {
         var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>"+divname+"</caption><thead><tr><th>#</th><th>球员</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
         for (var i = 0;i < tableinfo.length;i++) {
             var t = tableinfo[i];
-            var tml = "<tr><td>"+(i+1).toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"</td></tr>";
+            if (i > 0){
+                if (asort) {
+                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) >parseInt(tableinfo[i-1][asort])) 
+                        j = i + 1;
+                }
+                else {
+                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort])) 
+                        j = i + 1;
+                }
+            }
+            if (asort && t[asort] != "0")
+                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"("+t[asort]+")</td></tr>";
+            else
+                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"</td></tr>";
+
             tableml += tml;
         }
     }
