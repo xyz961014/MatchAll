@@ -133,7 +133,7 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false) {
             var t = tableinfo[i];
             if (i > 0){
                 if (asort) {
-                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) <parseInt(tableinfo[i-1][asort])) 
+                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) > parseInt(tableinfo[i-1][asort])) 
                         j = i + 1;
                 }
                 else {
