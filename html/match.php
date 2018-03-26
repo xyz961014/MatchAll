@@ -1105,7 +1105,9 @@ function showreport() {
         //console.log(hflist,aflist,hevent,aevent);
         //REPORT PNG
         var revents = [];
-        var simul = [events[0]];
+        var simul = [];
+        if (events.length > 0)
+            simul = [events[0]];
         for (var i = 1;i < events.length;i++) {
             if (simul.length == 0 || events[i].timestr == simul[0].timestr) {
                 simul.push(events[i]);
@@ -2004,7 +2006,7 @@ function showreport() {
             pngbtn.href = pngdown;
             pngbtn.download = subtitle + HomeName + score + AwayName +".png";
         },500);
-            callback(subtitle, HomeName, score, AwayName);
+            //callback(subtitle, HomeName, score, AwayName);
         });
 }
 //function getpng(subtitle, HomeName, score, AwayName) {

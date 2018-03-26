@@ -103,6 +103,23 @@ def Stat(matchname, matchid = None, add = True):
                 if m.stage == 'Group':
                     groupbool = True
                 Infos = cursor.fetchall() #all events
+                if re.match("MANAN", matchname) and not groupbool:
+                    ohg = 0
+                    oag = 0
+                    for info in Infos:
+                        if info['EventTime'] < 81:
+                            if info['EventType'] == '进球' or info['EventType'] == '点球':
+                                if info['Team'] == m.hometeam:
+                                    ohg += 1
+                                elif info['Team'] == m.awayteam:
+                                    oag += 1
+                            if info['EventType'] == '乌龙球':
+                                if info['Team'] == m.hometeam:
+                                    oag += 1
+                                elif info['Team'] == m.awayteam:
+                                    ohg += 1
+                    if oag == ohg:
+                        outtime = 111
                 players = dict()
                 Habandon = False
                 Aabandon = False
