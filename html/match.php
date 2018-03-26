@@ -151,7 +151,7 @@ if (preg_match('/^MA.+/', $dbname)) {
         $subtitle = "马杯女足".$subtitle;
     } 
 }
-$sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' AND Valid = 1 ORDER BY KitNumber";
+$sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
 $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
     $homeplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
