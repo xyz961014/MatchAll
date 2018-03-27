@@ -22,7 +22,7 @@ if ($conn->connect_error) {
 //    echo $sql;
 //    $conn->query($sql);
 //}
-$sql = "SELECT Name,ExtraInfo FROM Players WHERE Team = '".$team."' and Kitnumber = ".$kitnum;
+$sql = "SELECT Name,ExtraInfo FROM Players WHERE Team = '".$team."' and Kitnumber = ".$kitnum." AND Name = '".$name."'";
 $result = $conn->query($sql);
 $extrainfo = null;
 if ($type != '弃赛'){

@@ -166,8 +166,9 @@ echo "<div class='hometable col-lg-6 col-md-6'><table class='table table-bordere
 //echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
     for($i = 0;$i<count($homeplayers);$i++) {
         $num = $homeplayers[$i]['KitNumber'];
+        $name = $homeplayers[$i]['Name'];
         echo "<tr class='row".$num."'><td>".$num."</td><td>".$homeplayers[$i]['Name']."</td><td>";
-        echo "<input type='checkbox' name='Homecheck' id='H$num' value='$num' onclick='homecheck($num)'>";
+        echo "<input class='firstcheck' type='checkbox' name='Homecheck' id='H~$num~$name' value='$num'>";
         //echo $num."-".$homeplayers[$i]['Name'];
         echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
     }
@@ -176,8 +177,9 @@ echo "<div class='awaytable col-lg-6 col-md-6'><table class='table table-bordere
 //echo "<br>".$awayteam."首发:<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛<br>";
     for($i = 0;$i<count($awayplayers);$i++) {
         $num = $awayplayers[$i]['KitNumber'];
+        $name = $awayplayers[$i]['Name'];
         echo "<tr class='row".$num."'><td>".$num."</td><td>".$awayplayers[$i]['Name']."</td><td>";
-        echo "<input type='checkbox' name='Awaycheck' id='A$num' value='$num' onclick='awaycheck($num)'>";
+        echo "<input class='firstcheck' type='checkbox' name='Awaycheck' id='A~$num~$name' value='$num'>";
         //echo $num."-".$awayplayers[$i]['Name'];
         echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
     }
@@ -356,14 +358,22 @@ $('.abandon').click(function () {
             }
     })
 });
-function homecheck(id) {
+$(".firstcheck").click(function() {
+    var id = $(this).attr('id');
+    var parseid = id.split('~');
+    var num = parseid[1];
+    var name = parseid[2];
+    if (parseid[0] == 'H')
+        var team = '<?=$hometeam?>';
+    else if (parseid[0] == 'A')
+        var team = '<?=$awayteam?>';
     var Hnum = $("input[name=Homecheck]");
     var n = 0;
     for (k in Hnum) {
         if (Hnum[k].checked)
             n++;
     }
-    var Hinst = document.getElementById('H'+id); 
+    var Hinst = document.getElementById(id); 
     if (Hinst.checked && n > 11) {
         Hinst.checked = false;
         alert('more than 11');
@@ -376,13 +386,14 @@ function homecheck(id) {
             Valid: validbool
         }, function(data, state) {
             console.log(data);
+            console.log(team,num,name);
             if (Hinst.checked) {
                 $.get('additem.php', {
                     dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
-                    Team: '<?=$hometeam ?>',
-                    KitNumber: id,
-                    Name: null,
+                    Team: team,
+                    KitNumber: num,
+                    Name: name,
                     Type: '首发',
                     Time: 0,
                     StoppageTime: 0
@@ -395,9 +406,9 @@ function homecheck(id) {
                  $.get('delitem.php', {
                     dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
-                    Team: '<?=$hometeam ?>',
-                    KitNumber: id,
-                    Name: null,
+                    Team: team,
+                    KitNumber: num,
+                    Name: name,
                     Type: '首发',
                     Time: 0,
                     StoppageTime: 0
@@ -408,61 +419,114 @@ function homecheck(id) {
             }
         })
     }
-}
-function awaycheck(id) {
-    var Anum = $("input[name=Awaycheck]");
-    var n = 0;
-    for (k in Anum) {
-        if (Anum[k].checked)
-            n++;
-    }
-    var Ainst = document.getElementById('A'+id); 
-    if (Ainst.checked && n > 11) {
-        Ainst.checked = false;
-        alert('more than 11');
-    }
-    else {
-        validbool = 0;
-        $.get('checked.php', {
-            dbname: '<?=$dbname ?>',
-            MatchID: '<?=$id ?>',
-            Valid: validbool
-        }, function(data, state) {
-            console.log(data);
-            if (Ainst.checked) {
-                $.get('additem.php', {
-                    dbname: '<?=$dbname ?>',
-                    MatchID: "<?='Match'.$id ?>",
-                    Team: '<?=$awayteam ?>',
-                    KitNumber: id,
-                    Name: null,
-                    Type: '首发',
-                    Time: 0,
-                    StoppageTime: 0
-            }, function(data, state) {
-                console.log(data);
-                showreport();
-            })
-            }
-            else {
-                 $.get('delitem.php', {
-                    dbname: '<?=$dbname ?>',
-                    MatchID: "<?='Match'.$id ?>",
-                    Team: '<?=$awayteam ?>',
-                    KitNumber: id,
-                    Name: null,
-                    Type: '首发',
-                    Time: 0,
-                    StoppageTime: 0
-                }, function(data, state) {
-                    console.log(data);
-                    showreport();
-                })
-            }
-        })
-    }
-
-}
+})
+//function homecheck(id) {
+//    var Hnum = $("input[name=Homecheck]");
+//    var n = 0;
+//    for (k in Hnum) {
+//        if (Hnum[k].checked)
+//            n++;
+//    }
+//    var Hinst = document.getElementById('H'+id); 
+//    if (Hinst.checked && n > 11) {
+//        Hinst.checked = false;
+//        alert('more than 11');
+//    }
+//    else {
+//        validbool = 0;
+//        $.get('checked.php', {
+//            dbname: '<?=$dbname ?>',
+//            MatchID: '<?=$id ?>',
+//            Valid: validbool
+//        }, function(data, state) {
+//            console.log(data);
+//            if (Hinst.checked) {
+//                $.get('additem.php', {
+//                    dbname: '<?=$dbname ?>',
+//                    MatchID: "<?='Match'.$id ?>",
+//                    Team: '<?=$hometeam ?>',
+//                    KitNumber: id,
+//                    Name: null,
+//                    Type: '首发',
+//                    Time: 0,
+//                    StoppageTime: 0
+//            }, function(data, state) {
+//                console.log(data);
+//                showreport();
+//            })
+//            }
+//            else {
+//                 $.get('delitem.php', {
+//                    dbname: '<?=$dbname ?>',
+//                    MatchID: "<?='Match'.$id ?>",
+//                    Team: '<?=$hometeam ?>',
+//                    KitNumber: id,
+//                    Name: null,
+//                    Type: '首发',
+//                    Time: 0,
+//                    StoppageTime: 0
+//                }, function(data, state) {
+//                    console.log(data);
+//                    showreport();
+//                })
+//            }
+//        })
+//    }
+//}
+//function awaycheck(id) {
+//    var Anum = $("input[name=Awaycheck]");
+//    var n = 0;
+//    for (k in Anum) {
+//        if (Anum[k].checked)
+//            n++;
+//    }
+//    var Ainst = document.getElementById('A'+id); 
+//    if (Ainst.checked && n > 11) {
+//        Ainst.checked = false;
+//        alert('more than 11');
+//    }
+//    else {
+//        validbool = 0;
+//        $.get('checked.php', {
+//            dbname: '<?=$dbname ?>',
+//            MatchID: '<?=$id ?>',
+//            Valid: validbool
+//        }, function(data, state) {
+//            console.log(data);
+//            if (Ainst.checked) {
+//                $.get('additem.php', {
+//                    dbname: '<?=$dbname ?>',
+//                    MatchID: "<?='Match'.$id ?>",
+//                    Team: '<?=$awayteam ?>',
+//                    KitNumber: id,
+//                    Name: null,
+//                    Type: '首发',
+//                    Time: 0,
+//                    StoppageTime: 0
+//            }, function(data, state) {
+//                console.log(data);
+//                showreport();
+//            })
+//            }
+//            else {
+//                 $.get('delitem.php', {
+//                    dbname: '<?=$dbname ?>',
+//                    MatchID: "<?='Match'.$id ?>",
+//                    Team: '<?=$awayteam ?>',
+//                    KitNumber: id,
+//                    Name: null,
+//                    Type: '首发',
+//                    Time: 0,
+//                    StoppageTime: 0
+//                }, function(data, state) {
+//                    console.log(data);
+//                    showreport();
+//                })
+//            }
+//        })
+//    }
+//
+//}
 //function HSubmit() {
 //    validbool = 0;
 //    $.get('checked.php',{
@@ -891,7 +955,7 @@ function showreport() {
             $(".penalty").hide();
         }
         for (var i = 0;i < hflist.length;i++) {
-            var Hinst = document.getElementById('H'+hflist[i].kitnum); 
+            var Hinst = document.getElementById('H~'+hflist[i].kitnum+'~'+hflist[i].name); 
             Hinst.checked = true;
             //if blank extrainfo
             var ptn = /(校友|教工|足特)/;
@@ -908,7 +972,7 @@ function showreport() {
             //homefirst.append(cont);
         } 
         for (var i = 0;i < aflist.length;i++) {
-            var Ainst = document.getElementById('A'+aflist[i].kitnum); 
+            var Ainst = document.getElementById('A~'+aflist[i].kitnum+'~'+aflist[i].name); 
             Ainst.checked = true;
             //if blank extrainfo
             var ptn = /(校友|教工|足特)/;

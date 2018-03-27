@@ -24,16 +24,17 @@ if ($conn->connect_error) {
 //    $extrainfo = $row['ExtraInfo'];
 //}
 //echo $name.$extrainfo;
-$sqlkit = "AND KitNumber = '".$kitnum."'";
-$sqltime = "AND EventTime = '".$time."'";
-$sqlstptime = "AND StoppageTime = '".$stptime."'";
+$sqlkit = " AND KitNumber = '".$kitnum."'";
+$sqltime = " AND EventTime = '".$time."'";
+$sqlstptime = " AND StoppageTime = '".$stptime."'";
 $sql = "DELETE FROM ".$id." WHERE EventType = '".$type."' AND Team = '".$team."'";
 $sqls = "SELECT * FROM ".$id." WHERE EventType = '".$type."' AND Team = '".$team."'";
 if ($kitnum != null){
     $sql = $sql.$sqlkit;
     $sqls = $sqls.$sqlkit;
-} else if ($name != null) {
-    $sqlname = "AND Name = '".$name."'";
+} 
+if ($name != null) {
+    $sqlname = " AND Name = '".$name."'";
     $sql = $sql.$sqlname;
     $sqls = $sqls.$sqlname;
 } 
