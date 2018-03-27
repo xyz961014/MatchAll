@@ -167,7 +167,7 @@ echo "<div class='hometable col-lg-6 col-md-6'><table class='table table-bordere
     for($i = 0;$i<count($homeplayers);$i++) {
         $num = $homeplayers[$i]['KitNumber'];
         $name = $homeplayers[$i]['Name'];
-        echo "<tr class='row".$num."'><td>".$num."</td><td>".$homeplayers[$i]['Name']."</td><td>";
+        echo "<tr class='row".$num.$name."'><td>".$num."</td><td>".$homeplayers[$i]['Name']."</td><td>";
         echo "<input class='firstcheck' type='checkbox' name='Homecheck' id='H~$num~$name' value='$num'>";
         //echo $num."-".$homeplayers[$i]['Name'];
         echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$homeplayers[$i]['Name']."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
@@ -178,7 +178,7 @@ echo "<div class='awaytable col-lg-6 col-md-6'><table class='table table-bordere
     for($i = 0;$i<count($awayplayers);$i++) {
         $num = $awayplayers[$i]['KitNumber'];
         $name = $awayplayers[$i]['Name'];
-        echo "<tr class='row".$num."'><td>".$num."</td><td>".$awayplayers[$i]['Name']."</td><td>";
+        echo "<tr class='row".$num.$name."'><td>".$num."</td><td>".$awayplayers[$i]['Name']."</td><td>";
         echo "<input class='firstcheck' type='checkbox' name='Awaycheck' id='A~$num~$name' value='$num'>";
         //echo $num."-".$awayplayers[$i]['Name'];
         echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$awayplayers[$i]['Name']."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
@@ -368,13 +368,19 @@ $(".firstcheck").click(function() {
     else if (parseid[0] == 'A')
         var team = '<?=$awayteam?>';
     var Hnum = $("input[name=Homecheck]");
-    var n = 0;
+    var hn = 0;
     for (k in Hnum) {
         if (Hnum[k].checked)
-            n++;
+            hn++;
+    }
+    var Anum = $("input[name=Awaycheck]");
+    var an = 0;
+    for (k in Anum) {
+        if (Anum[k].checked)
+            an++;
     }
     var Hinst = document.getElementById(id); 
-    if (Hinst.checked && n > 11) {
+    if (Hinst.checked && (an > 11 || hn > 11)) {
         Hinst.checked = false;
         alert('more than 11');
     }
@@ -1032,7 +1038,7 @@ function showreport() {
             hevent[i].timestr = timestr;
             var tb = " <a class='delevent' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (hevent[i].type == '进球' || hevent[i].type == '点球' || hevent[i].type == '乌龙球' || hevent[i].type == '点球罚失' ) {
-                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + ' .goal');
+                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + hevent[i].name + ' .goal');
                 if (hevent[i].type == '进球') {
                     var lbl = "<span class='tbl label label-primary'>"+hevent[i].timestr+tb+"</span> ";
                 }
@@ -1048,7 +1054,7 @@ function showreport() {
                 Hcell.append(lbl);
             }
             if (hevent[i].type == '换下' || hevent[i].type == '换上') {
-                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + ' .chg');
+                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + hevent[i].name + ' .chg');
                 if (hevent[i].type == '换下') {
                     var lbl = "<span class='tbl label label-danger'><span class='glyphicon glyphicon-arrow-down'></span>"+hevent[i].timestr+tb+"</span> ";
                 }
@@ -1058,7 +1064,7 @@ function showreport() {
                 Hcell.append(lbl);
             }
             if (hevent[i].type == '黄牌' || hevent[i].type == '红牌') {
-                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + ' .ryc');
+                var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + hevent[i].name + ' .ryc');
                 if (hevent[i].type == '黄牌') {
                     var lbl = "<span class='tbl label label-warning'>"+hevent[i].timestr+tb+"</span> ";
                 }
@@ -1092,7 +1098,7 @@ function showreport() {
             aevent[i].timestr = timestr;
             var tb = " <a class='delevent' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (aevent[i].type == '进球' || aevent[i].type == '点球' || aevent[i].type == '乌龙球' || aevent[i].type == '点球罚失' ) {
-                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + ' .goal');
+                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + aevent[i].name + ' .goal');
                 if (aevent[i].type == '进球') {
                     var lbl = "<span class='tbl label label-primary'>"+aevent[i].timestr+tb+"</span> ";
                 }
@@ -1108,7 +1114,7 @@ function showreport() {
                 Hcell.append(lbl);
             }
             if (aevent[i].type == '换下' || aevent[i].type == '换上') {
-                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + ' .chg');
+                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + aevent[i].name + ' .chg');
                 if (aevent[i].type == '换下') {
                     var lbl = "<span class='tbl label label-danger'><span class='glyphicon glyphicon-arrow-down'></span>"+aevent[i].timestr+tb+"</span> ";
                 }
@@ -1118,7 +1124,7 @@ function showreport() {
                 Hcell.append(lbl);
             }
             if (aevent[i].type == '黄牌' || aevent[i].type == '红牌') {
-                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + ' .ryc');
+                var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + aevent[i].name + ' .ryc');
                 if (aevent[i].type == '黄牌') {
                     var lbl = "<span class='tbl label label-warning'>"+aevent[i].timestr+tb+"</span> ";
                 }
