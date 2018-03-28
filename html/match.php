@@ -963,8 +963,6 @@ function showreport() {
             $(".penalty").hide();
         }
         for (var i = 0;i < hflist.length;i++) {
-            var Hinst = document.getElementById('H~'+hflist[i].kitnum+'~'+hflist[i].name); 
-            Hinst.checked = true;
             //if blank extrainfo
             var ptn = /(校友|教工|足特)/;
             if (ptn.test(hflist[i].extrainfo)) {
@@ -976,14 +974,14 @@ function showreport() {
             var name = hflist[i].name.replace(/^\s+|\s+$/, '');
             hflist[i].name = name;
             hflist[i].namestr = txt;
+            var Hinst = document.getElementById('H~'+hflist[i].kitnum+'~'+hflist[i].name); 
+            Hinst.checked = true;
             tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+hflist[i].team+"\."+hflist[i].kitnum.toString()+"\."+hflist[i].name+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
             //homefirst.append(cont);
         } 
         for (var i = 0;i < aflist.length;i++) {
-            var Ainst = document.getElementById('A~'+aflist[i].kitnum+'~'+aflist[i].name); 
-            Ainst.checked = true;
             //if blank extrainfo
             var ptn = /(校友|教工|足特)/;
             if (ptn.test(aflist[i].extrainfo)) {
@@ -995,6 +993,8 @@ function showreport() {
             var name = aflist[i].name.replace(/^\s+|\s+$/, '');
             aflist[i].name = name;
             aflist[i].namestr = txt;
+            var Ainst = document.getElementById('A~'+aflist[i].kitnum+'~'+aflist[i].name); 
+            Ainst.checked = true;
             tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+aflist[i].team+"\."+aflist[i].kitnum.toString()+"\."+aflist[i].name+"' value='delete'>";
             var cont = $("<p></p>").text(txt); 
             cont.append(tb);
