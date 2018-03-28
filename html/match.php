@@ -965,14 +965,14 @@ function showreport() {
         for (var i = 0;i < hflist.length;i++) {
             //if blank extrainfo
             var ptn = /(校友|教工|足特)/;
+            var name = hflist[i].name.replace(/^\s+|\s+$/, '');
+            hflist[i].name = name;
             if (ptn.test(hflist[i].extrainfo)) {
                 var txt = hflist[i].kitnum + "-" + hflist[i].name + "(" + hflist[i].extrainfo + ")";
             }
             else {
                 var txt = hflist[i].kitnum + "-" + hflist[i].name;
             }
-            var name = hflist[i].name.replace(/^\s+|\s+$/, '');
-            hflist[i].name = name;
             hflist[i].namestr = txt;
             var Hinst = document.getElementById('H~'+hflist[i].kitnum+'~'+hflist[i].name); 
             Hinst.checked = true;
@@ -984,14 +984,14 @@ function showreport() {
         for (var i = 0;i < aflist.length;i++) {
             //if blank extrainfo
             var ptn = /(校友|教工|足特)/;
+            var name = aflist[i].name.replace(/^\s+|\s+$/, '');
+            aflist[i].name = name;
             if (ptn.test(aflist[i].extrainfo)) {
                 var txt = aflist[i].kitnum + "-" + aflist[i].name + "(" + aflist[i].extrainfo + ")";
             }
             else {
                 var txt = aflist[i].kitnum + "-" + aflist[i].name;
             }
-            var name = aflist[i].name.replace(/^\s+|\s+$/, '');
-            aflist[i].name = name;
             aflist[i].namestr = txt;
             var Ainst = document.getElementById('A~'+aflist[i].kitnum+'~'+aflist[i].name); 
             Ainst.checked = true;
@@ -1030,15 +1030,15 @@ function showreport() {
                     });
         for (var i = 0;i < hevent.length;i++) {
             var ptn = /(校友|教工|足特)/;
+            var name = hevent[i].name.replace(/^\s+|\s+$/, '');
+            hevent[i].name = name;
+            hevent[i].namestr = namestr;
             if (ptn.test(hevent[i].extrainfo)) {
                 var namestr = hevent[i].kitnum + "-" + hevent[i].name + "(" + hevent[i].extrainfo + ")";
             }
             else {
                 var namestr = hevent[i].kitnum + "-" + hevent[i].name;
             }
-            var name = hevent[i].name.replace(/^\s+|\s+$/, '');
-            hevent[i].name = name;
-            hevent[i].namestr = namestr;
             if (hevent[i].stptime == 0) 
                 var timestr = hevent[i].time.toString();
             else 
@@ -1093,14 +1093,14 @@ function showreport() {
         }
         for (var i = 0;i < aevent.length;i++) {
             var ptn = /(校友|教工|足特)/;
+            var name = aevent[i].name.replace(/^\s+|\s+$/, '');
+            aevent[i].name = name;
             if (ptn.test(aevent[i].extrainfo)) {
                 var namestr = aevent[i].kitnum + "-" + aevent[i].name + "(" + aevent[i].extrainfo + ")";
             }
             else {
                 var namestr = aevent[i].kitnum + "-" + aevent[i].name;
             }
-            var name = aevent[i].name.replace(/^\s+|\s+$/, '');
-            aevent[i].name = name;
             aevent[i].namestr = namestr;
             if (aevent[i].stptime == 0) 
                 var timestr = aevent[i].time.toString();
