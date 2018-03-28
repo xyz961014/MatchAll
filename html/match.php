@@ -921,6 +921,18 @@ function showreport() {
         var events = [];
         for (var i = 0;i < info.length;i++) {
             var e = JSON.parse(info[i]);
+            if (e.type != "弃赛") {
+                var ptn = /(校友|教工|足特)/;
+                var name = e.name.replace(/^\s+|\s+$/, '');
+                e.name = name;
+                if (ptn.test(e.extrainfo)) {
+                    var txt = e.kitnum + "-" + e.name + "(" + e.extrainfo + ")";
+                }
+                else {
+                    var txt = e.kitnum + "-" + e.name;
+                }
+                e.namestr = txt;
+            }
             if (e.team == homename) {
                 if (e.type == "首发") {
                     hflist.push(e);
@@ -956,7 +968,7 @@ function showreport() {
                 }
             }
         }
-        console.log(events);
+        console.log("events",events);
         if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag) {
             $(".penalty").show();
         } else {
@@ -964,16 +976,16 @@ function showreport() {
         }
         for (var i = 0;i < hflist.length;i++) {
             //if blank extrainfo
-            var ptn = /(校友|教工|足特)/;
-            var name = hflist[i].name.replace(/^\s+|\s+$/, '');
-            hflist[i].name = name;
-            if (ptn.test(hflist[i].extrainfo)) {
-                var txt = hflist[i].kitnum + "-" + hflist[i].name + "(" + hflist[i].extrainfo + ")";
-            }
-            else {
-                var txt = hflist[i].kitnum + "-" + hflist[i].name;
-            }
-            hflist[i].namestr = txt;
+            //var ptn = /(校友|教工|足特)/;
+            //var name = hflist[i].name.replace(/^\s+|\s+$/, '');
+            //hflist[i].name = name;
+            //if (ptn.test(hflist[i].extrainfo)) {
+            //    var txt = hflist[i].kitnum + "-" + hflist[i].name + "(" + hflist[i].extrainfo + ")";
+            //}
+            //else {
+            //    var txt = hflist[i].kitnum + "-" + hflist[i].name;
+            //}
+            //hflist[i].namestr = txt;
             var Hinst = document.getElementById('H~'+hflist[i].kitnum+'~'+hflist[i].name); 
             Hinst.checked = true;
             tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+hflist[i].team+"\."+hflist[i].kitnum.toString()+"\."+hflist[i].name+"' value='delete'>";
@@ -983,16 +995,16 @@ function showreport() {
         } 
         for (var i = 0;i < aflist.length;i++) {
             //if blank extrainfo
-            var ptn = /(校友|教工|足特)/;
-            var name = aflist[i].name.replace(/^\s+|\s+$/, '');
-            aflist[i].name = name;
-            if (ptn.test(aflist[i].extrainfo)) {
-                var txt = aflist[i].kitnum + "-" + aflist[i].name + "(" + aflist[i].extrainfo + ")";
-            }
-            else {
-                var txt = aflist[i].kitnum + "-" + aflist[i].name;
-            }
-            aflist[i].namestr = txt;
+            //var ptn = /(校友|教工|足特)/;
+            //var name = aflist[i].name.replace(/^\s+|\s+$/, '');
+            //aflist[i].name = name;
+            //if (ptn.test(aflist[i].extrainfo)) {
+            //    var txt = aflist[i].kitnum + "-" + aflist[i].name + "(" + aflist[i].extrainfo + ")";
+            //}
+            //else {
+            //    var txt = aflist[i].kitnum + "-" + aflist[i].name;
+            //}
+            //aflist[i].namestr = txt;
             var Ainst = document.getElementById('A~'+aflist[i].kitnum+'~'+aflist[i].name); 
             Ainst.checked = true;
             tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+aflist[i].team+"\."+aflist[i].kitnum.toString()+"\."+aflist[i].name+"' value='delete'>";
@@ -1029,16 +1041,16 @@ function showreport() {
             })
                     });
         for (var i = 0;i < hevent.length;i++) {
-            var ptn = /(校友|教工|足特)/;
-            var name = hevent[i].name.replace(/^\s+|\s+$/, '');
-            hevent[i].name = name;
-            hevent[i].namestr = namestr;
-            if (ptn.test(hevent[i].extrainfo)) {
-                var namestr = hevent[i].kitnum + "-" + hevent[i].name + "(" + hevent[i].extrainfo + ")";
-            }
-            else {
-                var namestr = hevent[i].kitnum + "-" + hevent[i].name;
-            }
+            //var ptn = /(校友|教工|足特)/;
+            //var name = hevent[i].name.replace(/^\s+|\s+$/, '');
+            //hevent[i].name = name;
+            //if (ptn.test(hevent[i].extrainfo)) {
+            //    var namestr = hevent[i].kitnum + "-" + hevent[i].name + "(" + hevent[i].extrainfo + ")";
+            //}
+            //else {
+            //    var namestr = hevent[i].kitnum + "-" + hevent[i].name;
+            //}
+            //hevent[i].namestr = namestr;
             if (hevent[i].stptime == 0) 
                 var timestr = hevent[i].time.toString();
             else 
@@ -1092,16 +1104,16 @@ function showreport() {
             }
         }
         for (var i = 0;i < aevent.length;i++) {
-            var ptn = /(校友|教工|足特)/;
-            var name = aevent[i].name.replace(/^\s+|\s+$/, '');
-            aevent[i].name = name;
-            if (ptn.test(aevent[i].extrainfo)) {
-                var namestr = aevent[i].kitnum + "-" + aevent[i].name + "(" + aevent[i].extrainfo + ")";
-            }
-            else {
-                var namestr = aevent[i].kitnum + "-" + aevent[i].name;
-            }
-            aevent[i].namestr = namestr;
+            //var ptn = /(校友|教工|足特)/;
+            //var name = aevent[i].name.replace(/^\s+|\s+$/, '');
+            //aevent[i].name = name;
+            //if (ptn.test(aevent[i].extrainfo)) {
+            //    var namestr = aevent[i].kitnum + "-" + aevent[i].name + "(" + aevent[i].extrainfo + ")";
+            //}
+            //else {
+            //    var namestr = aevent[i].kitnum + "-" + aevent[i].name;
+            //}
+            //aevent[i].namestr = namestr;
             if (aevent[i].stptime == 0) 
                 var timestr = aevent[i].time.toString();
             else 
@@ -1384,6 +1396,7 @@ function showreport() {
                 var rectwidth = 0;
                 var rectheight = hside.length * 50 + 10;
                 for (var k = 0;k < hside.length;k++) {
+                    console.log('KKKK',hside[k].namestr);
                     $('canvas').drawText({
                         layer: true,
                         name: 'measure' + hside[k].namestr,
