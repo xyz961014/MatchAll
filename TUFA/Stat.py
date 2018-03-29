@@ -338,6 +338,7 @@ def Stat(matchname, matchid = None, add = True):
                     p[1].getontime()
                     sql = 'SELECT * FROM Players WHERE Team = %s AND Name = %s AND KitNumber = %s'
                     cursor.execute(sql,(p[1].team, p[1].name, p[1].kitnum))
+                    print(p[1].name)
                     playerinfo = cursor.fetchall()
                     playerinfo = playerinfo[0]
                     #print(playerinfo)
