@@ -693,6 +693,7 @@ $(".firstcheck").click(function() {
     </div>
 </div>
 <div class="col-xs-12">
+<h5>注：对于同一时间发生的多个事件，双击将其排在最末。</h5>
 <a class="btn btn-default" id="pngdown">下载图片</a>
 </div>
 <canvas id="canvas"></canvas>
@@ -1250,23 +1251,36 @@ function showreport() {
         for (var i = 0;i < aflist.length;i++) {
             afstr += aflist[i].namestr + '    ';
         }
-        if (hfstr.length > afstr.length)
-            var mstr = hfstr;
-        else
-            var mstr = afstr;
+        //if (hfstr.length > afstr.length)
+        //    var mstr = hfstr;
+        //else
+        //    var mstr = afstr;
         $('canvas').drawText({
             layer: true,
             fillStyle: 'rgba(0, 0, 0, 0)',
             fontFamily: 'WenQuanYi Micro Hei',
             fontSize: 36,
-            name: 'measurefirst',
-            text: mstr,
+            name: 'measurehfirst',
+            text: hfstr,
             fromCenter: false,
             x: 0, y: curY,
             align: 'left',
             maxWidth: 600
         });
-        hy += Math.max($('canvas').measureText('measurefirst').height / 2, 70) + $('canvas').measureText('measurefirst').height / 2;
+        $('canvas').drawText({
+            layer: true,
+            fillStyle: 'rgba(0, 0, 0, 0)',
+            fontFamily: 'WenQuanYi Micro Hei',
+            fontSize: 36,
+            name: 'measureafirst',
+            text: afstr,
+            fromCenter: false,
+            x: 0, y: curY,
+            align: 'left',
+            maxWidth: 600
+        });
+        var hf = Math.max($('canvas').measureText('measurehfirst').height, $('canvas').measureText('measureafirst').height) / 2;
+        hy += Math.max(hf, 70) + hf;
         hy += 70;
         if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
             hy += 80;
@@ -1396,7 +1410,7 @@ function showreport() {
                 var rectwidth = 0;
                 var rectheight = hside.length * 50 + 10;
                 for (var k = 0;k < hside.length;k++) {
-                    console.log('KKKK',hside[k].namestr);
+                    //console.log('KKKK',hside[k].namestr);
                     $('canvas').drawText({
                         layer: true,
                         name: 'measure' + hside[k].namestr,
