@@ -1096,7 +1096,7 @@ function showreport() {
                 Hcell.append(lbl);
             }
             if (hevent[i].type == '点球决胜罚进' || hevent[i].type == '点球决胜罚失') {
-                var txt = hevent[i].type + "\t" + heven[i].timestr + "\'\t" + hevent[i].namestr; 
+                var txt = hevent[i].type + "\t" + hevent[i].timestr + "\'\t" + hevent[i].namestr; 
                 tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"' value='delete'>";
                 var cont = $("<p class='eventdisplay'></p>").text(txt); 
                 cont.append(tb);
