@@ -205,7 +205,7 @@ def Evolve(matchname):
                 if em.valid:
                     for i,g in Groups.items():
                         for ti,te in enumerate(g.teams):
-                            if em.hometeam == te.name:
+                            if em.hometeam == TeamDict.getfull(te.name):
                                 Groups[i].teams[ti].goals -= em.homegoal
                                 Groups[i].teams[ti].concede -= em.awaygoal
                                 if em.homegoal > em.awaygoal:
@@ -214,7 +214,7 @@ def Evolve(matchname):
                                     Groups[i].teams[ti].lose -= 1
                                 elif em.homegoal == em.awaygoal:
                                     Groups[i].teams[ti].draw -= 1
-                            if em.awayteam == te.name:
+                            if em.awayteam == TeamDict.getfull(te.name):
                                 Groups[i].teams[ti].goals -= em.awaygoal
                                 Groups[i].teams[ti].concede -= em.homegoal
                                 if em.homegoal > em.awaygoal:
