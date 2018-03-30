@@ -150,9 +150,15 @@ def getabbr(teamname):
     return Teamabbrs[teamname][0]
 def getfull(teamabbr,full=False):
     if full:
-        return Teamfull[teamabbr][1]
+        if teamabbr in Teamfull.keys():
+            return Teamfull[teamabbr][1]
+        else:
+            return "NOT FOUND"
     else:
-        return Teamfull[teamabbr][0]
+        if teamabbr in Teamfull.keys():
+            return Teamfull[teamabbr][0]
+        else:
+            return "NOT FOUND"
 #fp = open('TeamDict.php','w')
 #fp.write('<?php\n$dict = array(\n')
 #for key,value in Teamfull.items():
