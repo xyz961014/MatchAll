@@ -318,7 +318,61 @@ def loadinfomanyu(filename):
     finally:
         connection.close()
 
+def loadinfomawu(filename):
+    if not re.search('\.docx$',filename):
+        return
+    document = Document(filename)
+    ps = document.paragraphs
+    print(len(ps))
+    teaminfo = ps[3].text.split()
+    teamname = teaminfo[1]
+    teamcolor = teaminfo[3] + '/' + teaminfo[5]
+    print(teamname, teamcolor)
+    tb = document.tables
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='961014',
+                                 db='MAWU_18',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor)
+
+    try:
+        with connection.cursor() as cursor:
+            sql = "INSERT INTO `Teams` (`TeamName`, `KitColor`) VALUES (%s, %s)"
+            cursor.execute(sql,(teamname,teamcolor))
+        kitnums = []
+        for p in tb[0].rows[1:]:
+            name = p.cells[2].text
+            class1 = p.cells[3].text
+            idnumber = p.cells[4].text
+            phonenumber = p.cells[5].text
+            kitnumber = p.cells[1].text
+            extrainfo = p.cells[6].text
+            if not (re.match('^\s+$', name) or name == ''):
+                if int(kitnumber) in kitnums:
+                    raise NameError('有重复的球员号码')
+                else:
+                    kitnums.append(int(kitnumber))
+                kitnumber = int(kitnumber)
+                print(name,class1,idnumber,phonenumber,kitnumber,extrainfo)
+                if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
+                    idnumber = None
+                with connection.cursor() as cursor:
+                    # Create a new record
+                    sql = "INSERT INTO `Players` (`Team`, `Name`,`Class`,`IDNumber`,`PhoneNumber`,`KitNumber`,`ExtraInfo`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql, (teamname, name, class1, idnumber, phonenumber, kitnumber, extrainfo))
+
+        # connection is not autocommit by default. So you must commit to save
+        # your changes.
+        connection.commit()
+
+    finally:
+        connection.close()
+
+
 
 #loadinfofreshman('./新生杯队伍报名表/新生杯清北人叉队报名表.docx')
 #loadinfobubaoming('./男足补报名18/电机系马杯男足补报名表.docx')
 #loadinfomanyu('./女足报名18/template.docx')
+#loadinfomawu('./马五2018/化学系马杯五人制报名材料.docx')
+#loadinfomawu('./马五2018/土木院（系）马杯五人制报名材料.docx')

@@ -14,12 +14,15 @@
   </head>
   <body>
 <div class="container">
-<ul class="nav nav-tabs">
+<ul id="navbar" class="nav nav-tabs">
     <li class='active'>
         <a href="#MANAN" data-toggle="tab"> 马杯男足 </a>
     </li>
     <li>
         <a href="#MANYU" data-toggle="tab"> 马杯女足 </a>
+    </li>
+    <li>
+        <a href="#MAWU" data-toggle="tab"> 马杯五人制 </a>
     </li>
 </ul>
     <div class="tab-content">
@@ -38,6 +41,11 @@
             <a href="ranktable.php?Match=MANYU_18">马杯女足积分表</a>
 
         </div>
+        <div class="tab-pane fade" id="MAWU">
+            <a href="sheet.php?Match=MAWU_18">马杯五人制执场单</a>
+
+        </div>
+
     <div>
 </div>
 
@@ -45,5 +53,12 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<?php
+$tabnum = $_GET['tab'];
+?>
+<script>
+var tab = '<?=$tabnum ?>';
+$('#navbar li:eq('+ tab.toString() +') a').tab('show');
+</script>
   </body>
 </html>

@@ -90,8 +90,8 @@ def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大�
   tables[0].rows[0].cells[4].paragraphs[0].runs[1].text += homeinfo[0]['KitColor']
   tables[16].rows[0].cells[0].paragraphs[0].runs[0].text = homeinfo[0]['TeamName']
   tables[16].rows[0].cells[3].paragraphs[0].runs[1].text += homeinfo[0]['KitColor']
-  tables[0].rows[32].cells[2].paragraphs[0].runs[0].text = homeleaders[0]['Name']
-  if len(homeleaders) > 1:
+  if len(homeleaders) > 0:
+    tables[0].rows[32].cells[2].paragraphs[0].runs[0].text = homeleaders[0]['Name']
     tables[0].rows[32].cells[5].paragraphs[0].runs[0].text = homeleaders[1]['Name']
   lenhc = len(tables[0].rows[0].cells[4].paragraphs[0].runs[0].text) + len(tables[0].rows[0].cells[4].paragraphs[0].runs[1].text)
   if lenhc >= 10:
@@ -126,8 +126,8 @@ def createmanansheet(hometeam='',awayteam='',title='2017—2018年度清华大�
   tables[8].rows[0].cells[4].paragraphs[0].runs[1].text += awayinfo[0]['KitColor']
   tables[16].rows[0].cells[6].paragraphs[0].runs[0].text = awayinfo[0]['TeamName']
   tables[16].rows[0].cells[9].paragraphs[0].runs[1].text += awayinfo[0]['KitColor']
-  tables[8].rows[32].cells[2].paragraphs[0].runs[0].text = awayleaders[0]['Name']
-  if len(awayleaders) > 1:
+  if len(awayleaders) > 0:
+    tables[8].rows[32].cells[2].paragraphs[0].runs[0].text = awayleaders[0]['Name']
     tables[8].rows[32].cells[5].paragraphs[0].runs[0].text = awayleaders[1]['Name']
   lenac = len(tables[8].rows[0].cells[4].paragraphs[0].runs[0].text) + len(tables[8].rows[0].cells[4].paragraphs[0].runs[1].text)
   if lenac >= 10:

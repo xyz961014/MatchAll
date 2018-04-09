@@ -1,4 +1,13 @@
 <!doctype html>
+<?php
+$dbname = $_GET['Match'];
+if (preg_match('/^MANAN.+/', $dbname)) {
+        $tabnum = 0;
+    } 
+    if (preg_match('/^MANYU.+/', $dbname)) {
+        $tabnum = 1;
+    }
+?>
 <html lang="ch">
   <head>
     <!-- Required meta tags -->
@@ -13,45 +22,13 @@
     <title>TUFA</title>
   </head>
   <body>
-    <a href="index.php">返回</a>
+    <?php echo "<a href='index.php?tab=".$tabnum."'>返回</a>"; ?>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <div class="container">
     <p class='list'></p>
-<?php
-$dbname = $_GET['Match'];
-//$servername = "localhost";
-//$username = "root";
-//$password = "961014";
-//$dbname = "MANAN_1718";
-//
-//$conn = new mysqli($servername, $username, $password,$dbname);
-//if ($conn->connect_error) {
-//    die("Connection failed:".$conn->connect_error);
-//}
-//$sql = "SELECT * FROM Matches";
-//$result = $conn->query($sql);
-//if($result->num_rows > 0) {
-//    while($row = $result->fetch_assoc()) {
-//        echo $row['MatchID'].$row["HomeTeam"].$row["AwayTeam"].$row["MatchTime"].$row["MatchField"];
-//        $id = $row['MatchID'];
-//        $valid = $row['Valid'];
-//        if ($valid == '1')
-//            $valid = "checked='checked'";
-//        else
-//            $valid = '';
-//        echo "<input name='validcheck' type='checkbox' ".$valid." id='$id' onclick='onvalid($id)' />VALID";
-//        echo "<a href='match.php?id=$id'>Add</a>";
-//        echo "<br>";
-//    }
-//} else {
-//    echo "No record.";
-//}
-//$conn->close();
-//
-?>
 <script>
 //console.log('load');
 var d = new Date();

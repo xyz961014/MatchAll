@@ -1,4 +1,16 @@
 <!doctype html>
+<?php
+$dbname = $_GET['Match'];
+if (preg_match('/^MANAN.+/', $dbname)) {
+        $tabnum = 0;
+} 
+if (preg_match('/^MANYU.+/', $dbname)) {
+        $tabnum = 1;
+}
+if (preg_match('/^MAWU.+/', $dbname)) {
+        $tabnum = 2;
+}
+?>
 <html lang="ch">
   <head>
     <!-- Required meta tags -->
@@ -16,7 +28,8 @@
     <title>TUFA</title>
   </head>
   <body>
-    <a href="index.php">返回</a>
+    <?php echo "<a href='index.php?tab=".$tabnum."'>返回</a>"; ?>
+    <!-- Optional JavaScript -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
@@ -25,7 +38,6 @@
 $servername = "localhost";
 $username = "root";
 $password = "961014";
-$dbname = $_GET['Match'];
 $conn = new mysqli($servername, $username, $password,$dbname);
 mysqli_query($conn,'set names utf8');
 if ($conn->connect_error) {
@@ -36,6 +48,9 @@ if (preg_match('/^MANAN.+/', $dbname)) {
 }
 if (preg_match('/^MANYU.+/', $dbname)) {
     $title = "马杯女足执场单";
+}
+if (preg_match('/^MAWU.+/', $dbname)) {
+    $title = "马杯五人制执场单";
 }
 echo "<h2>".$title."</h2>";
 $sql = "SELECT TeamName FROM Teams";

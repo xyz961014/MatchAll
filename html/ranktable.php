@@ -1,4 +1,16 @@
 <!doctype html>
+<?php
+$dbname = $_GET['Match'];
+if (preg_match('/^MANAN.+/', $dbname)) {
+        $tabnum = 0;
+    } 
+    if (preg_match('/^MANYU.+/', $dbname)) {
+        $tabnum = 1;
+    }
+exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$arr,$ret);
+//print_r($arr);
+?>
+
 <html lang="ch">
   <head>
     <!-- Required meta tags -->
@@ -16,7 +28,8 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <a href="index.php">返回</a>
+    <?php echo "<a href='index.php?tab=".$tabnum."'>返回</a>"; ?>
+    <!-- Optional JavaScript -->
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="active">
@@ -92,11 +105,6 @@
         </div>
      </div>
 
-<?php
-$dbname = $_GET['Match'];
-exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$arr,$ret);
-//print_r($arr);
-?>
 <script>
 
 var dbname = '<?=$dbname?>';
