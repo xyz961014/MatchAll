@@ -41,6 +41,8 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
                 </a>
                 <ul class="dropdown-menu">
                    <li><a href="#pgoal" data-toggle="tab">进球</a></li>
+                   <li><a href="#pgam" data-toggle="tab">场均进球</a></li>
+                   <li><a href="#pgmm" data-toggle="tab">进球效率</a></li>
                    <li><a href="#pyc" data-toggle="tab">黄牌</a></li>
                    <li><a href="#prc" data-toggle="tab">红牌</a></li>
                    <li><a href="#ppen" data-toggle="tab">点球</a></li>
@@ -56,6 +58,7 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
                 </a>
                 <ul class="dropdown-menu">
                    <li><a href="#tgoal" data-toggle="tab">进球</a></li>
+                   <li><a href="#tgam" data-toggle="tab">场均进球</a></li>
                    <li><a href="#tconcede" data-toggle="tab">失球</a></li>
                    <li><a href="#tpen" data-toggle="tab">点球</a></li>
                    <li><a href="#tyc" data-toggle="tab">黄牌</a></li>
@@ -78,6 +81,10 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
             </div>
             <div class="tab-pane fade" id="pgoal">
             </div>
+            <div class="tab-pane fade" id="pgam">
+            </div>
+            <div class="tab-pane fade" id="pgmm">
+            </div>
             <div class="tab-pane fade" id="pyc">
             </div>
             <div class="tab-pane fade" id="prc">
@@ -89,6 +96,8 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
             <div class="tab-pane fade" id="pog">
             </div>
             <div class="tab-pane fade" id="tgoal">
+            </div>
+            <div class="tab-pane fade" id="tgam">
             </div>
             <div class="tab-pane fade" id="tconcede">
             </div>
@@ -109,28 +118,32 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
 
 var dbname = '<?=$dbname?>';
 var d = new Date();
-Getrank(dbname,d.getTime(),'Players', 'Appearances', 'papp', '出场次数');
-Getrank(dbname,d.getTime(),'Players', 'Minutes', 'pmin', '出场时间');
-Getrank(dbname,d.getTime(),'Players', 'Goals', 'pgoal', '进球',asort='Penalties');
-Getrank(dbname,d.getTime(),'Players', 'YellowCards', 'pyc', '黄牌');
-Getrank(dbname,d.getTime(),'Players', 'RedCards', 'prc', '红牌');
-Getrank(dbname,d.getTime(),'Players', 'Penalties', 'ppen', '点球');
-Getrank(dbname,d.getTime(),'Players', 'Penaltymiss', 'ppenmiss', '点球罚失');
-Getrank(dbname,d.getTime(),'Players', 'OwnGoals', 'pog', '乌龙球');
-Getrank(dbname,d.getTime(),'Teams', 'Goal', 'tgoal', '进球',asort='Penalty',isteam=true);
-Getrank(dbname,d.getTime(),'Teams', 'Concede', 'tconcede', '失球',null,isteam=true);
-Getrank(dbname,d.getTime(),'Teams', 'Penalty', 'tpen', '点球',null,isteam=true);
-Getrank(dbname,d.getTime(),'Teams', 'YellowCard', 'tyc', '黄牌',null,isteam=true);
-Getrank(dbname,d.getTime(),'Teams', 'RedCard', 'trc', '红牌',null,isteam=true);
-Getrank(dbname,d.getTime(),'Teams', 'Penaltymiss', 'tpenmiss', '点球',null,isteam=true);
-Getrank(dbname,d.getTime(),'Teams', 'OwnGoal', 'tog', '乌龙球',null,isteam=true);
-function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false) {
+Getrank(dbname,d.getTime(),'Players', 'Appearances', 'papp', '出场次数', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'Minutes', 'pmin', '出场时间', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'Goals', 'pgoal', '进球',asort='Penalties', false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'CAST(Goals/Appearances as DECIMAL(12,2))', 'pgam', '场均进球', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'CAST(Minutes/Goals as DECIMAL(12,2))', 'pgmm', '进球效率（分钟）', null, false, ' ASC');
+Getrank(dbname,d.getTime(),'Players', 'YellowCards', 'pyc', '黄牌', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'RedCards', 'prc', '红牌', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'Penalties', 'ppen', '点球', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'Penaltymiss', 'ppenmiss', '点球罚失', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'OwnGoals', 'pog', '乌龙球', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Teams', 'Goal', 'tgoal', '进球',asort='Penalty',isteam=true, ' DESC');
+Getrank(dbname,d.getTime(),'Teams', 'CAST(Goal/(Win+Draw+Lose) as DECIMAL(12,2))', 'tgam', '场均进球',null,isteam=true, ' DESC');
+Getrank(dbname,d.getTime(),'Teams', 'Concede', 'tconcede', '失球',null,isteam=true, ' ASC');
+Getrank(dbname,d.getTime(),'Teams', 'Penalty', 'tpen', '点球',null,isteam=true, ' DESC');
+Getrank(dbname,d.getTime(),'Teams', 'YellowCard', 'tyc', '黄牌',null,isteam=true, ' DESC');
+Getrank(dbname,d.getTime(),'Teams', 'RedCard', 'trc', '红牌',null,isteam=true, ' DESC');
+Getrank(dbname,d.getTime(),'Teams', 'Penaltymiss', 'tpenmiss', '点球',null,isteam=true, ' DESC');
+Getrank(dbname,d.getTime(),'Teams', 'OwnGoal', 'tog', '乌龙球',null,isteam=true, ' DESC');
+function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false,order) {
     $.get("getrank.php", {
         table: table,
         sort: sort,
         asort: asort,
         time: time,
-        dbname: dbname
+        dbname: dbname,
+        order: order
 }, function(data,state) {
     var tableinfo = JSON.parse(data);
     console.log(tableinfo);
@@ -141,11 +154,11 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false) {
             var t = tableinfo[i];
             if (i > 0){
                 if (asort) {
-                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) > parseInt(tableinfo[i-1][asort])) 
+                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) > parseInt(tableinfo[i-1][asort])) 
                         j = i + 1;
                 }
                 else {
-                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort])) 
+                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort])) 
                         j = i + 1;
                 }
             }
@@ -162,11 +175,11 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false) {
             var t = tableinfo[i];
             if (i > 0){
                 if (asort) {
-                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) >parseInt(tableinfo[i-1][asort])) 
+                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) >parseInt(tableinfo[i-1][asort])) 
                         j = i + 1;
                 }
                 else {
-                    if (parseInt(t[sort]) < parseInt(tableinfo[i-1][sort])) 
+                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort])) 
                         j = i + 1;
                 }
             }
