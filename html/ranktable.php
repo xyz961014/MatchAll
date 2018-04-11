@@ -154,11 +154,11 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false,or
             var t = tableinfo[i];
             if (i > 0){
                 if (asort) {
-                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) > parseInt(tableinfo[i-1][asort])) 
+                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort]) || parseFloat(t[asort]) != parseFloat(tableinfo[i-1][asort])) 
                         j = i + 1;
                 }
                 else {
-                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort])) 
+                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort])) 
                         j = i + 1;
                 }
             }
@@ -175,11 +175,11 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false,or
             var t = tableinfo[i];
             if (i > 0){
                 if (asort) {
-                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort]) || parseInt(t[asort]) >parseInt(tableinfo[i-1][asort])) 
+                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort]) || parseFloat(t[asort]) != parseFloat(tableinfo[i-1][asort])) 
                         j = i + 1;
                 }
                 else {
-                    if (parseInt(t[sort]) != parseInt(tableinfo[i-1][sort])) 
+                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort])) 
                         j = i + 1;
                 }
             }
