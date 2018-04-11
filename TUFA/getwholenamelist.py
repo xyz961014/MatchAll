@@ -1,10 +1,10 @@
 import pymysql.cursors
 
-fp = open('PlayerListmanyu.txt', 'w')
+fp = open('PlayerListmawu.txt', 'w')
 connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANYU_18',
+                               db='MAWU_18',
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
 

@@ -94,9 +94,11 @@ def loadplayerinfomanan(filename):
       phonenumber = p.cells[4].text
       kitnumber = p.cells[5].text
       extrainfo = p.cells[6].text
-      if not (re.match('\s+', name) or name == ''):
+      if not (re.match('^\s+$', name) or name == ''):
+        name = re.sub(r'^\s+', '', name)
+        name = re.sub(r'\s+$', '', name)
         kitnumber = int(kitnumber)
-        if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
+        if re.match('^\s+$',idnumber) or idnumber == '无' or idnumber == '':
           idnumber = None
         with connection.cursor() as cursor:
           # Create a new record
@@ -149,9 +151,11 @@ def loadinfofreshman(filename):
         kitnumber = p.cells[6].text
         extrainfo = p.cells[7].text
         #print(name, class1,idnumber,phonenumber,kitnumber,extrainfo)
-        if name != '':
+        if not (re.match('^\s+$', name) or name == ''):
+          name = re.sub(r'^\s+', '', name)
+          name = re.sub(r'\s+$', '', name)
           kitnumber = int(kitnumber)
-          if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
+          if re.match('^\s+$',idnumber) or idnumber == '无' or idnumber == '':
             idnumber = None
           with connection.cursor() as cursor:
             # Create a new record
@@ -213,10 +217,12 @@ def loadinfobubaoming(filename):
             phonenumber = p.cells[4].text
             kitnumber = p.cells[5].text
             extrainfo = p.cells[6].text
-            if not (re.match('\s+', name) or name == ''):
+            if not (re.match('^\s+$', name) or name == ''):
+                name = re.sub(r'^\s+', '', name)
+                name = re.sub(r'\s+$', '', name)
                 kitnumber = int(kitnumber)
                 nums.remove(kitnumber)
-                if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
+                if re.match('^\s+$',idnumber) or idnumber == '无' or idnumber == '':
                     idnumber = None
                 print(name,class1,idnumber,phonenumber,kitnumber,extrainfo)
                 with connection.cursor() as cursor:
@@ -231,13 +237,15 @@ def loadinfobubaoming(filename):
             phonenumber = p.cells[4].text
             kitnumber = p.cells[5].text
             extrainfo = p.cells[6].text
-            if not (re.match('\s+', name) or name == ''):
+            if not (re.match('^\s+$', name) or name == ''):
+                name = re.sub(r'^\s+', '', name)
+                name = re.sub(r'\s+$', '', name)
                 if int(kitnumber) in nums:
                     raise NameError("有重复的球员号码")
                 else:
                     nums.append(int(kitnumber))
                 kitnumber = int(kitnumber)
-                if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
+                if re.match('^\s+$',idnumber) or idnumber == '无' or idnumber == '':
                     idnumber = None
                 print(name,class1,idnumber,phonenumber,kitnumber,extrainfo)
                 with connection.cursor() as cursor:
@@ -297,14 +305,16 @@ def loadinfomanyu(filename):
             phonenumber = p.cells[5].text
             kitnumber = p.cells[1].text
             extrainfo = p.cells[6].text
-            if not (re.match('\s+', name) or name == ''):
+            if not (re.match('^\s+$', name) or name == ''):
+                name = re.sub(r'^\s+', '', name)
+                name = re.sub(r'\s+$', '', name)
                 if int(kitnumber) in kitnums:
                     raise NameError('有重复的球员号码')
                 else:
                     kitnums.append(int(kitnumber))
                 kitnumber = int(kitnumber)
                 print(name,class1,idnumber,phonenumber,kitnumber,extrainfo)
-                if re.match('\s+',idnumber) or idnumber == '无' or idnumber == '':
+                if re.match('^\s+$',idnumber) or idnumber == '无' or idnumber == '':
                     idnumber = None
                 with connection.cursor() as cursor:
                     # Create a new record
@@ -349,6 +359,8 @@ def loadinfomawu(filename):
             kitnumber = p.cells[1].text
             extrainfo = p.cells[6].text
             if not (re.match('^\s+$', name) or name == ''):
+                name = re.sub(r'^\s+', '', name)
+                name = re.sub(r'\s+$', '', name)
                 if int(kitnumber) in kitnums:
                     raise NameError('有重复的球员号码')
                 else:
@@ -364,7 +376,7 @@ def loadinfomawu(filename):
 
         # connection is not autocommit by default. So you must commit to save
         # your changes.
-        connection.commit()
+        #connection.commit()
 
     finally:
         connection.close()

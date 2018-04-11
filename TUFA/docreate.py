@@ -9,7 +9,12 @@ def main(argv):
         matchdb = argv[2]
         if re.match('MANYU',matchdb):
             subtitle = '女子足球执场单'
-    fname = createsheet.createmanansheet(argv[0],argv[1],matchdb=matchdb,subtitle=subtitle)
+            fname = createsheet.createsinglesheet(argv[0], argv[1], matchdb=matchdb, subtitle=subtitle)
+        elif re.match('MAWU', matchdb):
+            subtitle = '五人制足球执场单'
+            fname = createsheet.createsinglesheet(argv[0], argv[1], matchdb=matchdb, subtitle=subtitle)
+        elif re.match('MANAN', matchdb):
+            fname = createsheet.createmanansheet(argv[0],argv[1],matchdb=matchdb,subtitle=subtitle)
     print('completed')
     print(fname[0])
     print(fname[1])

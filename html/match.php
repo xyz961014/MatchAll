@@ -63,7 +63,7 @@
                 <br>
                 <div class="form-group">
                     <label for="name">时间： </label>
-                    <input type="text" class="form-control timeinput" id="name" placeholder="请输入时间，伤停补时用+号表示。多个事件用空格隔开。">
+                    <input type="text" class="form-control timeinput" id="timeinput" placeholder="请输入时间，伤停补时用+号表示。多个事件用空格隔开。">
                 </div>
 		    </div>
             <div class="modal-footer">
