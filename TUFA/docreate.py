@@ -13,6 +13,9 @@ def main(argv):
         elif re.match('MAWU', matchdb):
             subtitle = '五人制足球执场单'
             fname = createsheet.createsinglesheet(argv[0], argv[1], matchdb=matchdb, subtitle=subtitle)
+        elif re.match('FRESH', matchdb):
+            subtitle = '足球比赛执场单'
+            fname = createsheet.create4subsheet(argv[0], argv[1], matchdb=matchdb, subtitle=subtitle)
         elif re.match('MANAN', matchdb):
             fname = createsheet.createmanansheet(argv[0],argv[1],matchdb=matchdb,subtitle=subtitle)
     print('completed')

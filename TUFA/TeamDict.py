@@ -2,6 +2,7 @@
 #Team Dicts
 Teamabbrs = {}
 Teamfull = {}
+Nanqiteams = {}
 Teamabbrs['生命科学学院'] = ['BIO']
 Teamabbrs['微纳电子系'] = ['IME']
 Teamabbrs['数学科学系'] = ['MAT']
@@ -43,6 +44,7 @@ Teamabbrs['材料学院'] = ['MSE']
 
 Teamfull['生命'] = ['生命科学学院', '生命科学学院']
 Teamfull['生科'] = ['生命科学学院', '生命科学学院']
+Teamfull['生物科学'] = ['生命科学学院', '生命科学学院']
 Teamfull['生院'] = ['生命科学学院', '生命科学学院']
 Teamfull['生命学院'] = ['生命科学学院', '生命科学学院']
 Teamfull['生命科学学院'] = ['生命科学学院', '生命科学学院']
@@ -59,6 +61,7 @@ Teamfull['地学'] = ['地球系统科学系', '地球系统科学系']
 Teamfull['地学系'] = ['地球系统科学系', '地球系统科学系']
 Teamfull['地球系统科学系'] = ['地球系统科学系', '地球系统科学系']
 Teamfull['土木'] = ['土木建管系', '土木建管系']
+Teamfull['土木工程'] = ['土木建管系', '土木建管系']
 Teamfull['土木系'] = ['土木建管系', '土木建管系']
 Teamfull['土木建管系'] = ['土木建管系', '土木建管系']
 Teamfull['美术'] = ['美术学院', '美术学院']
@@ -108,6 +111,7 @@ Teamfull['物理'] = ['物理系', '物理系']
 Teamfull['物理系'] = ['物理系', '物理系']
 Teamfull['工物'] = ['工程物理系', '工程物理系']
 Teamfull['工物系'] = ['工程物理系', '工程物理系']
+Teamfull['工程物理'] = ['工程物理系', '工程物理系']
 Teamfull['工程物理系'] = ['工程物理系', '工程物理系']
 Teamfull['航天航空学院'] = ['航天航空学院', '航天航空学院']
 Teamfull['航院'] = ['航天航空学院', '航天航空学院']
@@ -118,13 +122,16 @@ Teamfull['机械'] = ['机械工程系', '机械工程系']
 Teamfull['机械系'] = ['机械工程系', '机械工程系']
 Teamfull['机械工程系'] = ['机械工程系', '机械工程系']
 Teamfull['经管'] = ['经济管理学院', '经济管理学院']
+Teamfull['经济管理'] = ['经济管理学院', '经济管理学院']
 Teamfull['经管学院'] = ['经济管理学院', '经济管理学院']
 Teamfull['经济管理学院'] = ['经济管理学院', '经济管理学院']
 Teamfull['工工'] = ['工业工程系', '工业工程系']
 Teamfull['工业'] = ['工业工程系', '工业工程系']
 Teamfull['工业系'] = ['工业工程系', '工业工程系']
+Teamfull['工业工程'] = ['工业工程系', '工业工程系']
 Teamfull['工业工程系'] = ['工业工程系', '工业工程系']
 Teamfull['建筑'] = ['建筑学院', '建筑学院']
+Teamfull['建筑系'] = ['建筑学院', '建筑学院']
 Teamfull['建筑学院'] = ['建筑学院', '建筑学院']
 Teamfull['人文'] = ['人文学院', '人文学院']
 Teamfull['人文学院'] = ['人文学院', '人文学院']
@@ -146,6 +153,33 @@ Teamfull['自动化'] = ['自动化系', '自动化系']
 Teamfull['自动化系'] = ['自动化系', '自动化系']
 Teamfull['材料'] = ['材料学院', '材料学院']
 Teamfull['材料学院'] = ['材料学院', '材料学院']
+
+Nanqiteams[1] = "曼联"
+Nanqiteams[2] = "巴塞罗那"
+Nanqiteams[3] = "AC米兰"
+Nanqiteams[4] = "中国"
+Nanqiteams[5] = "阿森纳"
+Nanqiteams[6] = "德国"
+Nanqiteams[7] = "皇家马德里"
+Nanqiteams[8] = "意大利"
+Nanqiteams[9] = "拜仁慕尼黑"
+Nanqiteams[10] = "切尔西"
+Nanqiteams[11] = "巴西"
+Nanqiteams[12] = "国际米兰"
+Nanqiteams[13] = "多特蒙德"
+Nanqiteams[14] = "尤文图斯"
+Nanqiteams[15] = "阿根廷"
+Nanqiteams[16] = "利物浦"
+Nanqiteams[106] = "马德里竞技"
+Nanqiteams[107] = "巴黎圣日耳曼"
+Nanqiteams[112] = "佛罗伦萨"
+Nanqiteams[116] = "莱斯特城"
+Nanqiteams[117] = "罗马"
+Nanqiteams[127] = "曼城"
+Nanqiteams[128] = "谢周三"
+Nanqiteams[140] = "葡萄牙"
+
+
 def getabbr(teamname):
     return Teamabbrs[teamname][0]
 def getfull(teamabbr,full=False):
@@ -153,12 +187,14 @@ def getfull(teamabbr,full=False):
         if teamabbr in Teamfull.keys():
             return Teamfull[teamabbr][1]
         else:
-            return "NOT FOUND"
+            return teamabbr
     else:
         if teamabbr in Teamfull.keys():
             return Teamfull[teamabbr][0]
         else:
-            return "NOT FOUND"
+            return teamabbr
+def getnanqifull(num):
+    return Nanqiteams[num]
 #fp = open('TeamDict.php','w')
 #fp.write('<?php\n$dict = array(\n')
 #for key,value in Teamfull.items():

@@ -151,6 +151,12 @@ if (preg_match('/^MA.+/', $dbname)) {
         $subtitle = "马杯女足".$subtitle;
     } 
 }
+if (preg_match('/^FRESHMANCUP.+/', $dbname)) {
+    $subtitle = "新生杯".$subtitle;
+} 
+if (preg_match('/^NANQI.+/', $dbname)) {
+    $subtitle = '"小世界杯"'.$subtitle;
+} 
 $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
 $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
@@ -901,9 +907,15 @@ function showreport() {
         var hg = 0;
         var ag = 0;
         var homename = "<?=$hometeam ?>";
-        var HomeName = "<?=$dict2[$hometeam] ?>";
         var awayname = "<?=$awayteam ?>";
-        var AwayName = "<?=$dict2[$awayteam] ?>";
+        var dbname = '<?=$dbname ?>';
+        if (dbname.match(/^MA.+/)) {
+            var HomeName = "<?=$dict2[$hometeam] ?>";
+            var AwayName = "<?=$dict2[$awayteam] ?>";
+        } else {
+            var HomeName = homename;
+            var AwayName = awayname;
+        }
         var homefirst = $(".homefirst");
         var awayfirst = $(".awayfirst");
         var homeevent = $(".homeevent");
