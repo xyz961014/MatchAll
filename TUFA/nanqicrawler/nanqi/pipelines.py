@@ -66,13 +66,18 @@ class WebcrawlerScrapyPipeline(object):
     
     #写入数据库中
     def _conditional_insert(self,tx,item):
-        sql = "select * from Players WHERE Name = %s AND Team = %s AND Class = %s"
-        params=(item["name"],item["team"],item["school"])
+        sql = "select * from Players WHERE Name = %s"
+        params=(item["name"])
         tx.execute(sql,params)
         ans = tx.fetchall()
         #print item['name']
         if len(ans) == 0:
-            sql="insert into Players(Name, Team, Class) values(%s,%s,%s)"
+            sql = "insert into Players(Name, Team, Class) values(%s,%s,%s)"
+            params=(item["name"],item["team"],item["school"])
+            tx.execute(sql,params)
+        else:
+            sql = "update Players set Team = %s, Class = %s WHERE Name = %s"
+            params=(item["team"],item["school"],item["name"])
             tx.execute(sql,params)
     
     #错误处理方法
