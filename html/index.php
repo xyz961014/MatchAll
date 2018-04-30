@@ -24,6 +24,9 @@
     <li>
         <a href="#MAWU" data-toggle="tab"> 马杯五人制 </a>
     </li>
+    <li>
+        <a href="#NANQI" data-toggle="tab"> 小世界杯 </a>
+    </li>
 </ul>
     <div class="tab-content">
         <div class="tab-pane fade in active" id="MANAN">
@@ -43,6 +46,12 @@
         </div>
         <div class="tab-pane fade" id="MAWU">
             <a href="sheet.php?Match=MAWU_18">马杯五人制执场单</a>
+
+        </div>
+        <div class="tab-pane fade" id="NANQI">
+            <a href="schedule.php?Match=NANQI_18">小世界杯赛程</a>
+            <br>
+            <a href="ranktable.php?Match=NANQI_18">小世界杯积分表</a>
 
         </div>
 

@@ -72,8 +72,8 @@ class WebcrawlerScrapyPipeline(object):
         ans = tx.fetchall()
         #print item['name']
         if len(ans) == 0:
-            sql = "insert into Players(Name, Team, Class) values(%s,%s,%s)"
-            params=(item["name"],item["team"],item["school"])
+            sql = "insert into Players(Name, Team, Class, KitNumber) values(%s,%s,%s,%s)"
+            params=(item["name"],item["team"],item["school"],item['num'])
             tx.execute(sql,params)
         else:
             sql = "update Players set Team = %s, Class = %s WHERE Name = %s"

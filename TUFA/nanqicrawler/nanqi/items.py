@@ -15,4 +15,4 @@ class PlayerItem(scrapy.Item):
     name = scrapy.Field()   #修改你所需要的字段
     team = scrapy.Field()
     school = scrapy.Field()
-    class1 = scrapy.Field()
+    num = scrapy.Field()

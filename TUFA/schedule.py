@@ -76,21 +76,21 @@ def inputschedule(matches,matchname):
             info.field = m[8]
         infos.append(info)
         print(info.hometeam, info.awayteam, info.time)
-    #connection = pymysql.connect(host='localhost',
-    #                           user='root',
-    #                           password='961014',
-    #                           db=matchname,
-    #                           charset='utf8mb4',
-    #                           cursorclass=pymysql.cursors.DictCursor)
-    #try:
-    #    for info in infos:
-    #        #print(info.level, info.stage, info.group,info.round, info.time,info.field, info.hometeam,info.awayteam)
-    #        with connection.cursor() as cursor:
-    #            sql = "INSERT INTO `Matches` (`Level`, `Stage`, `GroupName`, `Round`, `MatchTime`, `MatchField`, `HomeTeam`, `AwayTeam`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    #            cursor.execute(sql,(info.level, info.stage, info.group, info.round, info.time, info.field, info.hometeam, info.awayteam))
-    #    connection.commit()
-    #finally:
-    #    connection.close()
+    connection = pymysql.connect(host='localhost',
+                               user='root',
+                               password='961014',
+                               db=matchname,
+                               charset='utf8mb4',
+                               cursorclass=pymysql.cursors.DictCursor)
+    try:
+        for info in infos:
+            #print(info.level, info.stage, info.group,info.round, info.time,info.field, info.hometeam,info.awayteam)
+            with connection.cursor() as cursor:
+                sql = "INSERT INTO `Matches` (`Level`, `Stage`, `GroupName`, `Round`, `MatchTime`, `MatchField`, `HomeTeam`, `AwayTeam`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql,(info.level, info.stage, info.group, info.round, info.time, info.field, info.hometeam, info.awayteam))
+        connection.commit()
+    finally:
+        connection.close()
 
 
 #mA = createschedule('Schedule.xlsx',1,level = '甲级')
@@ -100,6 +100,6 @@ def inputschedule(matches,matchname):
 #    m.append(i)
 #m.sort(key = lambda x:x[1] + x[5])
 #inputschedule(m)
-mT = createschedule('girlsschedule.xlsx',0)
-mT.sort(key = lambda x:x[1] + x[5])
-inputschedule(mT,'MANYU_18')
+#mT = createschedule('nanqischedule.xlsx',0)
+#mT.sort(key = lambda x:x[1] + x[5])
+#inputschedule(mT,'NANQI_18')

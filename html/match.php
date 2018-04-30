@@ -155,14 +155,20 @@ if (preg_match('/^FRESHMANCUP.+/', $dbname)) {
     $subtitle = "新生杯".$subtitle;
 } 
 if (preg_match('/^NANQI.+/', $dbname)) {
-    $subtitle = '"小世界杯"'.$subtitle;
+    $subtitle = '\"小世界杯\"'.$subtitle;
 } 
 $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
+if (preg_match('/^NANQI.+/', $dbname)) {
+    $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY Class,Name";
+} 
 $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
     $homeplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
 }
 $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$awayteam."' ORDER BY KitNumber";
+if (preg_match('/^NANQI.+/', $dbname)) {
+    $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$awayteam."' ORDER BY Class,Name";
+} 
 $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
     $awayplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
@@ -938,11 +944,15 @@ function showreport() {
                 var ptn = /(校友|教工|足特)/;
                 var name = e.name.replace(/^\s+|\s+$/, '');
                 e.name = name;
-                if (ptn.test(e.extrainfo)) {
-                    var txt = e.kitnum + "-" + e.name + "(" + e.extrainfo + ")";
-                }
-                else {
-                    var txt = e.kitnum + "-" + e.name;
+                if (dbname.match(/^NANQI.+/)) {
+                    var txt = e.name;
+                } else {
+                    if (ptn.test(e.extrainfo)) {
+                        var txt = e.kitnum + "-" + e.name + "(" + e.extrainfo + ")";
+                    }
+                    else {
+                        var txt = e.kitnum + "-" + e.name;
+                    }
                 }
                 e.namestr = txt;
             }

@@ -5,6 +5,7 @@ import os
 import urllib
 import pymysql
 import sys
+import random
 sys.path.append("/var/www/TUFA")
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse,Request
@@ -49,5 +50,6 @@ class Spdier_nanqi(scrapy.spiders.Spider):
                 item["school"] = TeamDict.getfull(info[1])
             else:
                 item["school"] = None
+            item["num"] = random.randint(0,99)
             yield item
     
