@@ -47,7 +47,7 @@ class Spdier_nanqi(scrapy.spiders.Spider):
             item["name"] = info[0]
             item["team"] = TeamDict.getnanqifull(int(teamid))
             if len(info) > 1:
-                item["school"] = TeamDict.getfull(info[1])
+                item["school"] = info[1]
             else:
                 item["school"] = None
             item["num"] = random.randint(0,99)
