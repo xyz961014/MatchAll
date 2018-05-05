@@ -117,9 +117,9 @@ def loadinfofreshman(filename):
         return
     document = Document(filename)
     ps = document.paragraphs
-    print(len(ps))
+    #print(len(ps))
     teaminfo = ps[1].text.split()
-    print(teaminfo)
+    #print(teaminfo)
     tnObj = re.match(r'球队名称：\S',teaminfo[0])
     col = 0
     if tnObj:
@@ -138,7 +138,7 @@ def loadinfofreshman(filename):
     connection = pymysql.connect(host='localhost',
                                  user='root',
                                  password='961014',
-                                 db='FRESHMANCUP_17',
+                                 db='FRESHMANCUP_18',
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
 
@@ -157,6 +157,7 @@ def loadinfofreshman(filename):
           kitnumber = int(kitnumber)
           if re.match('^\s+$',idnumber) or idnumber == '无' or idnumber == '':
             idnumber = None
+          print(name, class1, idnumber, phonenumber, kitnumber, extrainfo)
           with connection.cursor() as cursor:
             # Create a new record
             sql = "INSERT INTO `Players` (`Team`, `Name`,`Class`,`IDNumber`,`PhoneNumber`,`KitNumber`,`ExtraInfo`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -168,7 +169,6 @@ def loadinfofreshman(filename):
         sql = "INSERT INTO `Teams` (`TeamName`, `KitColor`) VALUES (%s, %s)"
         cursor.execute(sql,(teamname,teamcolor))
       connection.commit()
-
     finally:
       connection.close()
 

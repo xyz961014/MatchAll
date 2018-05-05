@@ -27,6 +27,9 @@
     <li>
         <a href="#NANQI" data-toggle="tab"> 小世界杯 </a>
     </li>
+    <li>
+        <a href="#FRESH" data-toggle="tab">新生杯</a>
+    </li>
 </ul>
     <div class="tab-content">
         <div class="tab-pane fade in active" id="MANAN">
@@ -54,6 +57,15 @@
             <a href="ranktable.php?Match=NANQI_18">小世界杯积分表</a>
 
         </div>
+        <div class="tab-pane fade" id="FRESH">
+            <a href="sheet.php?Match=FRESHMANCUP_18">新生杯执场单</a>
+            <br>
+            <a href="schedule.php?Match=FRESHMANCUP_18">新生杯赛程</a>
+            <br>
+            <a href="ranktable.php?Match=FRESHMANCUP_18">新生杯积分表</a>
+
+        </div>
+
 
     <div>
 </div>

@@ -39,13 +39,13 @@ import loadinfo
 #        loadinfo.loadinfobubaoming(fname)
 #        print('complete') 
 
-rootdir="马五2018"  
+rootdir="新生杯报名表2018"  
 fname = ''
 for parent,dirnames,filenames in os.walk(rootdir):  
     for filename in filenames:    
         fname = os.path.join(parent, filename)
         print('loading:',fname)
-        loadinfo.loadinfomawu(fname)
+        loadinfo.loadinfofreshman(fname)
         print('complete') 
 
 

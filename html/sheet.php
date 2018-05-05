@@ -10,6 +10,12 @@ if (preg_match('/^MANYU.+/', $dbname)) {
 if (preg_match('/^MAWU.+/', $dbname)) {
         $tabnum = 2;
 }
+if (preg_match('/^NANQI.+/', $dbname)) {
+        $tabnum = 3;
+}
+if (preg_match('/^FRESH.+/', $dbname)) {
+        $tabnum = 4;
+}
 ?>
 <html lang="ch">
   <head>
