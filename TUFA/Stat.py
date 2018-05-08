@@ -119,7 +119,10 @@ def Stat(matchname, matchid = None, add = True):
                                 elif info['Team'] == m.awayteam:
                                     ohg += 1
                     if oag == ohg:
-                        outtime = 111
+                        if re.match("MANAN", matchname):
+                            outtime = 111
+                        if re.match("NANQI", matchname):
+                            outtime = 101
                 players = dict()
                 Habandon = False
                 Aabandon = False

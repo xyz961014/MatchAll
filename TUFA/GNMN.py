@@ -4,7 +4,7 @@ import TeamDict
 connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANYU_18',
+                               db='FRESHMANCUP_18',
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
 
