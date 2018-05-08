@@ -58,6 +58,12 @@ if (preg_match('/^MANYU.+/', $dbname)) {
 if (preg_match('/^MAWU.+/', $dbname)) {
     $title = "马杯五人制执场单";
 }
+if (preg_match('/^NANQI.+/', $dbname)) {
+    $title = "小世界杯执场单";
+}
+if (preg_match('/^FRESH.+/', $dbname)) {
+    $title = "新生杯执场单";
+}
 echo "<h2>".$title."</h2>";
 $sql = "SELECT TeamName FROM Teams";
 $res = $conn->query($sql);
