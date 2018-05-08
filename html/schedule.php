@@ -4,8 +4,14 @@ $dbname = $_GET['Match'];
 if (preg_match('/^MANAN.+/', $dbname)) {
         $tabnum = 0;
     } 
-    if (preg_match('/^MANYU.+/', $dbname)) {
+if (preg_match('/^MANYU.+/', $dbname)) {
         $tabnum = 1;
+    }
+if (preg_match('/^NANQI.+/', $dbname)) {
+        $tabnum = 3;
+    }
+if (preg_match('/^FRESH.+/', $dbname)) {
+        $tabnum = 4;
     }
 ?>
 <html lang="ch">

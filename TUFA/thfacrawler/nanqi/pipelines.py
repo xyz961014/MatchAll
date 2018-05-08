@@ -66,8 +66,8 @@ class WebcrawlerScrapyPipeline(object):
     
     #写入数据库中
     def _conditional_insert(self,tx,item):
-        sql = "select * from Players WHERE Name = %s"
-        params=(item["name"])
+        sql = "select * from Players WHERE Name = %s and Class = %s"
+        params=(item["name"], item["school"])
         tx.execute(sql,params)
         ans = tx.fetchall()
         #print item['name']
