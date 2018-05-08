@@ -270,7 +270,7 @@ def createsinglesheet(hometeam='',awayteam='',title='2017—2018年度清华大�
     doc.save(fname)
     return fname,fname[21:]
     
-def create4subsheet(hometeam='',awayteam='',title='2017—2018年度清华大学新生杯',matchdb = 'FRESHMANCUP_17',subtitle = '足球比赛执场单'):
+def create4subsheet(hometeam='',awayteam='',title='2017—2018年度清华大学',matchdb = 'FRESHMANCUP_17',subtitle = '新生杯比赛执场单'):
     filename = '/var/www/TUFA/template4sub.docx'
     doc = Document(filename)
     paras = doc.paragraphs
@@ -329,7 +329,8 @@ def create4subsheet(hometeam='',awayteam='',title='2017—2018年度清华大学
       
     
     for i in range(len(homeplayers)):
-      tables[0].rows[i+2].cells[0].paragraphs[0].runs[0].text = str(homeplayers[i]['KitNumber'])
+      if not re.match('NANQI', matchdb):
+        tables[0].rows[i+2].cells[0].paragraphs[0].runs[0].text = str(homeplayers[i]['KitNumber'])
       if homeplayers[i]['ExtraInfo'] and not re.match('^\s+$',homeplayers[i]['ExtraInfo']):
         tables[0].rows[i+2].cells[1].paragraphs[0].runs[0].text = homeplayers[i]['Name'] + '(' + homeplayers[i]['ExtraInfo'] + ')'
       else:
@@ -343,7 +344,7 @@ def create4subsheet(hometeam='',awayteam='',title='2017—2018年度清华大学
         tables[0].rows[i+2].cells[1].paragraphs[0].runs[0].font.strike = True
         
      
-    tables[0].rows[0].cells[9].paragraphs[0].runs[0].text = awayinfo[0]['TeamName']
+    tables[0].rows[0].cells[10].paragraphs[0].runs[0].text = awayinfo[0]['TeamName']
     tables[0].rows[0].cells[16].paragraphs[0].runs[1].text += awayinfo[0]['KitColor']
     lenac = len(tables[0].rows[0].cells[16].paragraphs[0].runs[0].text) + len(tables[0].rows[0].cells[16].paragraphs[0].runs[1].text)
     if lenac >= 10:
@@ -351,18 +352,19 @@ def create4subsheet(hometeam='',awayteam='',title='2017—2018年度清华大学
       tables[0].rows[0].cells[16].paragraphs[0].runs[1].font.size = Pt(110/lenac)
 
     for i in range(len(awayplayers)):
-      tables[0].rows[i+2].cells[9].paragraphs[0].runs[0].text = str(awayplayers[i]['KitNumber'])
+      if not re.match('NANQI', matchdb):
+        tables[0].rows[i+2].cells[10].paragraphs[0].runs[0].text = str(awayplayers[i]['KitNumber'])
       if awayplayers[i]['ExtraInfo'] and not re.match('\s+',awayplayers[i]['ExtraInfo']):
-        tables[0].rows[i+2].cells[10].paragraphs[0].runs[0].text = awayplayers[i]['Name'] + '(' + awayplayers[i]['ExtraInfo'] + ')'
+        tables[0].rows[i+2].cells[11].paragraphs[0].runs[0].text = awayplayers[i]['Name'] + '(' + awayplayers[i]['ExtraInfo'] + ')'
       else:
-        tables[0].rows[i+2].cells[10].paragraphs[0].runs[0].text = awayplayers[i]['Name']
-      lenname = len(tables[0].rows[i+2].cells[10].paragraphs[0].runs[0].text)
-      utf8_lenname = len(tables[0].rows[i+2].cells[10].paragraphs[0].runs[0].text.encode('utf-8'))
+        tables[0].rows[i+2].cells[11].paragraphs[0].runs[0].text = awayplayers[i]['Name']
+      lenname = len(tables[0].rows[i+2].cells[11].paragraphs[0].runs[0].text)
+      utf8_lenname = len(tables[0].rows[i+2].cells[11].paragraphs[0].runs[0].text.encode('utf-8'))
       lenname = (utf8_lenname - lenname) / 2 * 1.5 + lenname
       if lenname >= 16:
-        tables[0].rows[i+2].cells[10].paragraphs[0].runs[0].font.size = Pt(146/lenname)
+        tables[0].rows[i+2].cells[11].paragraphs[0].runs[0].font.size = Pt(146/lenname)
       if awayplayers[i]['Suspension']:
-        tables[0].rows[i+2].cells[10].paragraphs[0].runs[0].font.strike = True
+        tables[0].rows[i+2].cells[11].paragraphs[0].runs[0].font.strike = True
       
     fname = '/var/www/TUFA/sheets/' + 'sheet.docx'
     doc.save(fname)

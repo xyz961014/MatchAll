@@ -100,6 +100,6 @@ def inputschedule(matches,matchname):
 #    m.append(i)
 #m.sort(key = lambda x:x[1] + x[5])
 #inputschedule(m)
-mT = createschedule('nanqischedule.xlsx',1)
+mT = createschedule('nanqischedule.xlsx',0)
 mT.sort(key = lambda x:x[1] + x[5])
-inputschedule(mT,'FRESHMANCUP_18')
+inputschedule(mT,'NANQI_18')
