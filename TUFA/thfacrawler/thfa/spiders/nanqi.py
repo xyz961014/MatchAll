@@ -10,7 +10,7 @@ sys.path.append("/var/www/TUFA")
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse,Request
 
-from nanqi.items import PlayerItem #导入item对应的类，crawlPictures是项目名，items是items.py文件，import的是items.py中的class，也可以import *
+from thfa.items import PlayerItem #导入item对应的类，crawlPictures是项目名，items是items.py文件，import的是items.py中的class，也可以import *
 
 import TeamDict
 

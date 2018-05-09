@@ -9,10 +9,10 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'nanqi'  #与自己实现的爬虫类中的name属性一致
+BOT_NAME = 'thfa'  #与自己实现的爬虫类中的name属性一致
 
-SPIDER_MODULES = ['nanqi.spiders']
-NEWSPIDER_MODULE = 'nanqi.spiders'
+SPIDER_MODULES = ['thfa.spiders']
+NEWSPIDER_MODULE = 'thfa.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -68,8 +68,8 @@ ROBOTSTXT_OBEY = True
 #    'webCrawler_scrapy.pipelines.SomePipeline': 300,
 #}
 ITEM_PIPELINES = {
-    'nanqi.pipelines.WebcrawlerScrapyPipeline': 100,#保存到mysql数据库
-    'nanqi.pipelines.JsonWithEncodingPipeline': 300,#保存到文件中
+    'thfa.pipelines.WebcrawlerScrapyPipeline': 100,#保存到mysql数据库
+    'thfa.pipelines.JsonWithEncodingPipeline': 300,#保存到文件中
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

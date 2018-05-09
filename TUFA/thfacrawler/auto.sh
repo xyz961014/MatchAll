@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /var/www/TUFA/nanqicrawler
+cd /var/www/TUFA/thfacrawler
 while :
 do
 scrapy crawl nanqi

@@ -52,8 +52,6 @@
 
         </div>
         <div class="tab-pane fade" id="NANQI">
-            <a href="sheet.php?Match=NANQI_18">小世界杯执场单</a>
-            <br>
             <a href="schedule.php?Match=NANQI_18">小世界杯赛程</a>
             <br>
             <a href="ranktable.php?Match=NANQI_18">小世界杯积分表</a>
