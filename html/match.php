@@ -1079,7 +1079,7 @@ function showreport() {
             else 
                 var timestr = hevent[i].time.toString() + "+" + hevent[i].stptime.toString();
             hevent[i].timestr = timestr;
-            var cname = hevent[i].name.replace(/\s+/, '');
+            var cname = hevent[i].name.replace(/\s+/g, '');
             var tb = " <a class='delevent' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (hevent[i].type == '进球' || hevent[i].type == '点球' || hevent[i].type == '乌龙球' || hevent[i].type == '点球罚失' ) {
                 var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + cname + ' .goal');
@@ -1142,7 +1142,7 @@ function showreport() {
             else 
                 var timestr = aevent[i].time.toString() + "+" + aevent[i].stptime.toString();
             aevent[i].timestr = timestr;
-            var cname = aevent[i].name.replace(/\s+/, '');
+            var cname = aevent[i].name.replace(/\s+/g, '');
             var tb = " <a class='delevent' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (aevent[i].type == '进球' || aevent[i].type == '点球' || aevent[i].type == '乌龙球' || aevent[i].type == '点球罚失' ) {
                 var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + cname + ' .goal');

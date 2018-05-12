@@ -44,7 +44,7 @@ class RefSpider(scrapy.Spider):
         for ind, match in enumerate(matchrefs):
             arefs = match.css("tr").extract()
             texts = match.css("::text").extract()
-            assignref = [[], [], []]
+            assignref = [[], [], [], []]
             for aref in arefs:
                 if re.search("img", aref):
                     if re.search(r"_ref1|_ref2", aref):
@@ -53,6 +53,8 @@ class RefSpider(scrapy.Spider):
                         assignref[1].append(re.sub(r"[^\u4e00-\u9fa5]", "", aref))
                     elif re.search(r"ref5|ref6|ref7|ref8", aref):
                         assignref[2].append(re.sub(r"[^\u4e00-\u9fa5]", "", aref))
+                elif re.search("bbbbbb", aref):
+                    assignref[3].append(re.sub(r"[^\u4e00-\u9fa5]", "", aref))
             assignrefs.append(assignref)
             availableref = []
             for text in texts:
@@ -80,6 +82,8 @@ class RefSpider(scrapy.Spider):
                         tbl["refs"][ref].append(3)
                     elif ref in m.assrefs[2]:
                         tbl["refs"][ref].append(4)
+                    elif ref in m.assrefs[3]:
+                        tbl["refs"][ref].append(0)
                     else:
                         tbl["refs"][ref].append(1)
                 else:
