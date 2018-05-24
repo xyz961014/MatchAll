@@ -9,6 +9,11 @@ class CMatch:
         self.info = info
         self.assrefs = assrefs
         self.avairefs = avairefs
+def dict2list(dic:dict):
+    keys = dic.keys()
+    vals = dic.values()
+    lst = [(key, val) for key, val in zip(keys, vals)]
+    return lst
 
 
 class RefSpider(scrapy.Spider):
@@ -59,7 +64,7 @@ class RefSpider(scrapy.Spider):
             availableref = []
             for text in texts:
                 if not re.match(r"\s", text):
-                    if not re.match(r"[选派|修改|发布]", text):
+                    if not re.match(r"[选派|修改|发布|已发布|√|?]", text):
                         availableref.append(text)
             availablerefs.append(availableref)
         for ind, match in enumerate(matchinfo):
@@ -100,11 +105,12 @@ class RefSpider(scrapy.Spider):
         FO.set_bg_color("blue")
         row = 1
         col = 1
-        for p in tbl["refs"].keys():
-            worksheet.write(row, 0, p)
+        refstable = sorted(dict2list(tbl["refs"]), key = lambda x:sum([1 if i != 0 else 0 for i in x[1]]), reverse = False)
+        for p in refstable:
+            worksheet.write(row, 0, p[0])
             i = 0
-            print(tbl["refs"][p])
-            for i, a in enumerate(tbl["refs"][p]):
+            print(p)
+            for i, a in enumerate(p[1]):
                 if a == 1:
                     worksheet.write(row, 1 + i, "", available)
                 elif a == 2:

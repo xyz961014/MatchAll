@@ -176,9 +176,10 @@ while ($row = $res->fetch_assoc()) {
 
 echo "<div class='hometable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$hometeam."\t<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
 //echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
+$namefilter = '/[^\x7f-\xff\w+]+/';
     for($i = 0;$i<count($homeplayers);$i++) {
         $num = $homeplayers[$i]['KitNumber'];
-        $cname = preg_replace('/\s+/', '', $homeplayers[$i]['Name']);
+        $cname = preg_replace($namefilter, '', $homeplayers[$i]['Name']);
         $name = preg_replace('/^\s+|\s+$/', '', $homeplayers[$i]['Name']);
         echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
         echo "<input class='firstcheck' type='checkbox' name='Homecheck' id='H~$num~".$name."' value='$num'>";
@@ -190,7 +191,7 @@ echo "<div class='awaytable col-lg-6 col-md-6'><table class='table table-bordere
 //echo "<br>".$awayteam."首发:<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛<br>";
     for($i = 0;$i<count($awayplayers);$i++) {
         $num = $awayplayers[$i]['KitNumber'];
-        $cname = preg_replace('/\s+/', '', $awayplayers[$i]['Name']);
+        $cname = preg_replace($namefilter, '', $awayplayers[$i]['Name']);
         $name = preg_replace('/^\s+|\s+$/', '', $awayplayers[$i]['Name']);
         echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
         echo "<input class='firstcheck' type='checkbox' name='Awaycheck' id='A~$num~".$name."' value='$num'>";
@@ -1079,7 +1080,7 @@ function showreport() {
             else 
                 var timestr = hevent[i].time.toString() + "+" + hevent[i].stptime.toString();
             hevent[i].timestr = timestr;
-            var cname = hevent[i].name.replace(/\s+/g, '');
+            var cname = hevent[i].name.replace(/[^\u4e00-\u9fa5\w]/g, '');
             var tb = " <a class='delevent' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (hevent[i].type == '进球' || hevent[i].type == '点球' || hevent[i].type == '乌龙球' || hevent[i].type == '点球罚失' ) {
                 var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + cname + ' .goal');
@@ -1142,7 +1143,7 @@ function showreport() {
             else 
                 var timestr = aevent[i].time.toString() + "+" + aevent[i].stptime.toString();
             aevent[i].timestr = timestr;
-            var cname = aevent[i].name.replace(/\s+/g, '');
+            var cname = aevent[i].name.replace(/[^\u4e00-\u9fa5\w]/g, '');
             var tb = " <a class='delevent' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (aevent[i].type == '进球' || aevent[i].type == '点球' || aevent[i].type == '乌龙球' || aevent[i].type == '点球罚失' ) {
                 var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + cname + ' .goal');

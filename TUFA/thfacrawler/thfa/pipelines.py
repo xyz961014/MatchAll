@@ -76,8 +76,8 @@ class WebcrawlerScrapyPipeline(object):
             params=(item["name"],item["team"],item["school"],item['num'])
             tx.execute(sql,params)
         else:
-            sql = "update Players set Team = %s, Class = %s WHERE Name = %s"
-            params=(item["team"],item["school"],item["name"])
+            sql = "update Players set Class = %s WHERE Name = %s and Team = %s"
+            params=(item["school"],item["name"],item["team"])
             tx.execute(sql,params)
     
     #错误处理方法
