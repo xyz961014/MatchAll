@@ -219,12 +219,12 @@ def Stat(matchname, matchid = None, add = True):
                     awayteam.point = 0
                     hometeam.concede = 3
                     awayteam.concede = 3
-                elif Habandon and not Aabandon:
+                elif Habandon and not Aabandon and awayteam.goals - hometeam.goals <= 3:
                     hometeam.point = 0
                     awayteam.point = 3
                     hometeam.concede = 3
                     awayteam.goals = 3
-                elif not Habandon and Aabandon:
+                elif not Habandon and Aabandon and hometeam.goals - awayteam.goals <= 3:
                     hometeam.point = 3
                     awayteam.point = 0
                     hometeam.goals = 3

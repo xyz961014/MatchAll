@@ -18,7 +18,6 @@ if ($conn->connect_error) {
 $sql = "UPDATE Matches SET Valid = ".$vbool." WHERE MatchID = ".$id;
 echo $sql;
 $conn->query($sql);
-$conn->close();
 if ($vbool) {
     $output = exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Stat.py -n ".$dbname." -a ".$id." 2>&1",$arr,$ret);
     print_r($arr);

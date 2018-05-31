@@ -3,6 +3,7 @@ import scrapy
 import re
 import xlrd 
 import xlsxwriter
+import json
 
 class CMatch:
     def __init__(self, info, assrefs, avairefs):
@@ -93,6 +94,8 @@ class RefSpider(scrapy.Spider):
                         tbl["refs"][ref].append(1)
                 else:
                     tbl["refs"][ref].append(0)
+        with open('/home/xyz/Desktop/ref.json', 'w') as f:
+            f.write(json.dumps(tbl, default = lambda g:g.__dict__, sort_keys = True))
         workbook = xlsxwriter.Workbook('/home/xyz/Desktop/ref.xlsx')
         worksheet = workbook.add_worksheet()
         available = workbook.add_format()

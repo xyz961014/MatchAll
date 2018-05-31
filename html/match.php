@@ -221,17 +221,52 @@ function onvalid() {
     if (validcheck[0].checked) {
         console.log('true');
         validbool = 1;
+        $.get('showreport.php',{
+            dbname: '<?=$dbname ?>',
+            MatchID: "<?='Match'.$id ?>"
+        }, function(data,state) {
+            info = JSON.parse(data);
+            var homename = "<?=$hometeam ?>";
+            var awayname = "<?=$awayteam ?>";
+            var dbname = '<?=$dbname ?>';
+            if (dbname.match("MANAN"))
+                var leastnum = 7;
+            else if (dbname.match("MANYU"))
+                var leastnum = 5;
+            else if (dbname.match("NANQI"))
+                var leastnum = 5;
+            else if (dbname.match("FRESH"))
+                var leastnum = 7;
+            else 
+                var leastnum = 7;
+            var [hflist, aflist, hevent, aevent, events, hg, ag, habandon, aabandon] = getevents(info, dbname, homename, awayname);
+            var che = check(hflist, aflist, hevent, aevent, habandon, aabandon, leastnum);
+            if (!che.right) {
+                alert(homename + ':\n' + che.herr + '\n' + awayname + ':\n' + che.aerr);
+                var validche = document.getElementById('validcheck'); 
+                validche.checked = false;
+            } else {
+                $.get('checked.php',{
+                    dbname: '<?=$dbname ?>',
+                    MatchID: '<?=$id ?>',
+                    Valid: validbool
+                },function(data,state) {
+                    console.log(data);
+                })
+            }
+        });
     } else {
         console.log('false');
         validbool = 0;
-    }
-    $.get('checked.php',{
-        dbname: '<?=$dbname ?>',
-        MatchID: '<?=$id ?>',
-        Valid: validbool
-    },function(data,state) {
+        $.get('checked.php',{
+            dbname: '<?=$dbname ?>',
+            MatchID: '<?=$id ?>',
+            Valid: validbool
+        },function(data,state) {
         console.log(data);
-    })
+        });
+    }
+    
 }
 $('#addModal').modal({
     keyboard: false,
@@ -476,7 +511,7 @@ $(".firstcheck").click(function() {
 //                showreport();
 //            })
 //            }
-//            else {
+//            else {undefined
 //                 $.get('delitem.php', {
 //                    dbname: '<?=$dbname ?>',
 //                    MatchID: "<?='Match'.$id ?>",
@@ -796,6 +831,10 @@ function PSubmit() {
             var time = 110;
         else if (dbstr.match("MANYU"))
             var time = 60;
+        else if (dbstr.match("NANQI"))
+            var time = 100;
+        else if (dbstr.match("FRESH"))
+            var time = 80;
         var stptime = 0;
         var team = $("select[name=Team]");
         var num = $("input[name=KitNumber][title=penalty]");
@@ -865,7 +904,7 @@ function ESubmit() {
         //    type = 'RED';
         //} else if (type == "点球") {
         //    type = 'PENALTY';
-        //} else if (type == "乌龙球") {
+        //} else if (type == "乌龙球") {undefined
         //    type = 'ONWGOAL';
         //} else if (type == "点球罚失") {
         //    type = 'PMISSS';
@@ -894,52 +933,17 @@ function ESubmit() {
 
     })
 }
-
-function showreport() {
-    var validcheck = document.getElementById('validcheck'); 
-    console.log('valid:',validbool);
-    if (validbool == 1) {
-        validcheck.checked = true;
-    } else {
-        validcheck.checked = false;
-    }
-    $('.tbl').remove();
-    $(".eventdisplay").remove();
-    $.get('showreport.php',{
-        dbname: '<?=$dbname ?>',
-        MatchID: "<?='Match'.$id ?>"
-    }, function(data,state) {
-        info = JSON.parse(data);
-        console.log(info);
-        var hg = 0;
-        var ag = 0;
-        var homename = "<?=$hometeam ?>";
-        var awayname = "<?=$awayteam ?>";
-        var dbname = '<?=$dbname ?>';
-        if (dbname.match(/^MA.+/)) {
-            var HomeName = "<?=$dict2[$hometeam] ?>";
-            var AwayName = "<?=$dict2[$awayteam] ?>";
-        } else {
-            var HomeName = homename;
-            var AwayName = awayname;
-        }
-        var homefirst = $(".homefirst");
-        var awayfirst = $(".awayfirst");
-        var homeevent = $(".homeevent");
-        var awayevent = $(".awayevent");
-        
-        homefirst.text(homename + "首发：");
-        awayfirst.text(awayname + "首发：");
-        homefirst.hide();
-        awayfirst.hide();
-        homeevent.append($("<h4 class='eventdisplay'></h4>").text(homename + "点球决胜："));
-        awayevent.append($("<h4 class='eventdisplay'></h4>").text(awayname + "点球决胜："));
-        var hflist = [];
-        var aflist = [];
-        var hevent = [];
-        var aevent = [];
-        var events = [];
-        for (var i = 0;i < info.length;i++) {
+function getevents(info, dbname, homename, awayname) {
+    var hflist = [];
+    var aflist = [];
+    var hevent = [];
+    var aevent = [];
+    var events = [];
+    var hg = 0;
+    var ag = 0;
+    var habandon = false;
+    var aabandon = false;
+    for (var i = 0;i < info.length;i++) {
             var e = JSON.parse(info[i]);
             if (e.type != "弃赛") {
                 var ptn = /(校友|教工|足特)/;
@@ -963,6 +967,7 @@ function showreport() {
                 } else if (e.type == "弃赛") {
                     var Hhab = document.getElementById('H~Abandon');
                     Hhab.checked = true;
+                    habandon = true;
                 } else {
                     hevent.push(e);
                     events.push(e);
@@ -980,6 +985,7 @@ function showreport() {
                 } else if (e.type == "弃赛") {
                     var Haab = document.getElementById('A~Abandon');
                     Haab.checked = true;
+                    aabandon = true
                 } else {
                     aevent.push(e);
                     events.push(e);
@@ -992,6 +998,61 @@ function showreport() {
                 }
             }
         }
+    for (var i = 0;i < hevent.length;i++) {
+        if (hevent[i].stptime == 0) 
+            var timestr = hevent[i].time.toString();
+        else 
+            var timestr = hevent[i].time.toString() + "+" + hevent[i].stptime.toString();
+        hevent[i].timestr = timestr;
+    }
+    for (var i = 0;i < aevent.length;i++) {
+        if (aevent[i].stptime == 0) 
+            var timestr = aevent[i].time.toString();
+        else 
+            var timestr = aevent[i].time.toString() + "+" + aevent[i].stptime.toString();
+        aevent[i].timestr = timestr;
+    }
+    return [hflist, aflist, hevent, aevent, events, hg, ag, habandon, aabandon]; 
+}
+
+function showreport() {
+    var validcheck = document.getElementById('validcheck'); 
+    console.log('valid:',validbool);
+    if (validbool == 1) {
+        validcheck.checked = true;
+    } else {
+        validcheck.checked = false;
+    }
+    $('.tbl').remove();
+    $(".eventdisplay").remove();
+    $.get('showreport.php',{
+        dbname: '<?=$dbname ?>',
+        MatchID: "<?='Match'.$id ?>"
+    }, function(data,state) {
+        info = JSON.parse(data);
+        console.log(info);
+        var homename = "<?=$hometeam ?>";
+        var awayname = "<?=$awayteam ?>";
+        var dbname = '<?=$dbname ?>';
+        if (dbname.match(/^MA.+/)) {
+            var HomeName = "<?=$dict2[$hometeam] ?>";
+            var AwayName = "<?=$dict2[$awayteam] ?>";
+        } else {
+            var HomeName = homename;
+            var AwayName = awayname;
+        }
+        var homefirst = $(".homefirst");
+        var awayfirst = $(".awayfirst");
+        var homeevent = $(".homeevent");
+        var awayevent = $(".awayevent");
+        
+        homefirst.text(homename + "首发：");
+        awayfirst.text(awayname + "首发：");
+        homefirst.hide();
+        awayfirst.hide();
+        homeevent.append($("<h4 class='eventdisplay'></h4>").text(homename + "点球决胜："));
+        awayevent.append($("<h4 class='eventdisplay'></h4>").text(awayname + "点球决胜："));
+        var [hflist, aflist, hevent, aevent, events, hg, ag] = getevents(info, dbname, homename, awayname);
         console.log("events",events);
         if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag) {
             $(".penalty").show();
@@ -999,42 +1060,12 @@ function showreport() {
             $(".penalty").hide();
         }
         for (var i = 0;i < hflist.length;i++) {
-            //if blank extrainfo
-            //var ptn = /(校友|教工|足特)/;
-            //var name = hflist[i].name.replace(/^\s+|\s+$/, '');
-            //hflist[i].name = name;
-            //if (ptn.test(hflist[i].extrainfo)) {
-            //    var txt = hflist[i].kitnum + "-" + hflist[i].name + "(" + hflist[i].extrainfo + ")";
-            //}
-            //else {
-            //    var txt = hflist[i].kitnum + "-" + hflist[i].name;
-            //}
-            //hflist[i].namestr = txt;
             var Hinst = document.getElementById('H~'+hflist[i].kitnum+'~'+hflist[i].name); 
             Hinst.checked = true;
-            tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+hflist[i].team+"\."+hflist[i].kitnum.toString()+"\."+hflist[i].name+"' value='delete'>";
-            var cont = $("<p></p>").text(txt); 
-            cont.append(tb);
-            //homefirst.append(cont);
         } 
         for (var i = 0;i < aflist.length;i++) {
-            //if blank extrainfo
-            //var ptn = /(校友|教工|足特)/;
-            //var name = aflist[i].name.replace(/^\s+|\s+$/, '');
-            //aflist[i].name = name;
-            //if (ptn.test(aflist[i].extrainfo)) {
-            //    var txt = aflist[i].kitnum + "-" + aflist[i].name + "(" + aflist[i].extrainfo + ")";
-            //}
-            //else {
-            //    var txt = aflist[i].kitnum + "-" + aflist[i].name;
-            //}
-            //aflist[i].namestr = txt;
             var Ainst = document.getElementById('A~'+aflist[i].kitnum+'~'+aflist[i].name); 
             Ainst.checked = true;
-            tb = " <input type='button' class='delplayer btn btn-sm btn-default' id='"+aflist[i].team+"\."+aflist[i].kitnum.toString()+"\."+aflist[i].name+"' value='delete'>";
-            var cont = $("<p></p>").text(txt); 
-            cont.append(tb);
-            //awayfirst.append(cont);
         }
         $(".delplayer").click(function() {
             var id = $(this).attr('id');
@@ -1065,16 +1096,6 @@ function showreport() {
             })
                     });
         for (var i = 0;i < hevent.length;i++) {
-            //var ptn = /(校友|教工|足特)/;
-            //var name = hevent[i].name.replace(/^\s+|\s+$/, '');
-            //hevent[i].name = name;
-            //if (ptn.test(hevent[i].extrainfo)) {
-            //    var namestr = hevent[i].kitnum + "-" + hevent[i].name + "(" + hevent[i].extrainfo + ")";
-            //}
-            //else {
-            //    var namestr = hevent[i].kitnum + "-" + hevent[i].name;
-            //}
-            //hevent[i].namestr = namestr;
             if (hevent[i].stptime == 0) 
                 var timestr = hevent[i].time.toString();
             else 
@@ -1128,16 +1149,6 @@ function showreport() {
             }
         }
         for (var i = 0;i < aevent.length;i++) {
-            //var ptn = /(校友|教工|足特)/;
-            //var name = aevent[i].name.replace(/^\s+|\s+$/, '');
-            //aevent[i].name = name;
-            //if (ptn.test(aevent[i].extrainfo)) {
-            //    var namestr = aevent[i].kitnum + "-" + aevent[i].name + "(" + aevent[i].extrainfo + ")";
-            //}
-            //else {
-            //    var namestr = aevent[i].kitnum + "-" + aevent[i].name;
-            //}
-            //aevent[i].namestr = namestr;
             if (aevent[i].stptime == 0) 
                 var timestr = aevent[i].time.toString();
             else 
@@ -1218,8 +1229,6 @@ function showreport() {
             })
             
         });
-        var che = check(hflist, aflist,hevent,aevent);
-        console.log(che);
         //console.log(hflist,aflist,hevent,aevent);
         //REPORT PNG
         var revents = [];
@@ -2139,6 +2148,7 @@ function showreport() {
             pngbtn.download = subtitle + HomeName + score + AwayName +".png";
         },500);
             //callback(subtitle, HomeName, score, AwayName);
+        //var che = check(hflist, aflist, hevent, aevent, leastnum);
         });
 }
 //function getpng(subtitle, HomeName, score, AwayName) {
@@ -2150,7 +2160,7 @@ function showreport() {
 //    },200);
 //}
 showreport();
-function check(hflist, aflist, hevent, aevent) {
+function check(hflist, aflist, hevent, aevent, habandon, aabandon, leastnum) {
     class Player {
         constructor(team, num, name, onpitch) {
             this.team = team;
@@ -2167,13 +2177,20 @@ function check(hflist, aflist, hevent, aevent) {
     var aplayer = [];
     var herrline = "";
     var aerrline = "";
-    if (hflist.length < 7) {
-        right = false;
-        herrline += '首发不足7人！';
+    if (habandon || aabandon) {
+        return {
+            right:true,
+            herr:herrline,
+            aerr:aerrline
+        };
     }
-    if (aflist.length < 7) {
+    if (hflist.length < leastnum) {
         right = false;
-        aerrline += '首发不足7人！';
+        herrline += '首发不足' + leastnum.toString() + '人！' + '\n';
+    }
+    if (aflist.length < leastnum) {
+        right = false;
+        aerrline += '首发不足' + leastnum.toString() + '人！' + '\n';
     }
     for (var i = 0;i < hflist.length;i++) { //存入主队首发
         hplayer.push(new Player(hflist[i].team, hflist[i].kitnum, hflist[i].name, true));
@@ -2188,7 +2205,7 @@ function check(hflist, aflist, hevent, aevent) {
                 hfound = true;
                 if (hevent[i].type == "进球" || hevent[i].type == "点球" || hevent[i].type == "乌龙球" || hevent[i].type == "点球罚失") {
                     if (!hplayer[j].onpitch){
-                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟' + hevent[i].type +'时不是场上球员！';
+                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟' + hevent[i].type +'时不是场上球员！' + '\n';
                         right = false;
                     }
                 }
@@ -2198,7 +2215,7 @@ function check(hflist, aflist, hevent, aevent) {
                     }
                     else {
                         right = false;
-                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟被' + hevent[i].type +'时不是场上球员！';
+                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟被' + hevent[i].type +'时不是场上球员！' + '\n';
                     }
                 }
                 else if (hevent[i].type == "换上") {
@@ -2207,7 +2224,7 @@ function check(hflist, aflist, hevent, aevent) {
                     }
                     else {
                         right = false;
-                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟被' + hevent[i].type +'时是场上球员！';
+                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟被' + hevent[i].type +'时是场上球员！' + '\n';
                     }
                 }
                 else if (hevent[i].type == "黄牌") {
@@ -2218,7 +2235,7 @@ function check(hflist, aflist, hevent, aevent) {
                     } 
                     else {
                         right = false;
-                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！';
+                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！' + '\n';
                     }
                 }
                 else if (hevent[i].type == "红牌") {
@@ -2228,7 +2245,7 @@ function check(hflist, aflist, hevent, aevent) {
                     }
                     else {
                         right = false;
-                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！';
+                        herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！' + '\n';
                     }
                 }
             }
@@ -2237,11 +2254,11 @@ function check(hflist, aflist, hevent, aevent) {
             hplayer.push(new Player(hevent[i].team, hevent[i].kitnum, hevent[i].name, false));
             if (hevent[i].type == "进球" || hevent[i].type == "点球" || hevent[i].type == "乌龙球" || hevent[i].type == "点球罚失") {
                 right = false;
-                herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟' + hevent[i].type +'时不是场上球员！';
+                herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟' + hevent[i].type +'时不是场上球员！' + '\n';
             }
             else if (hevent[i].type == "换下") {
                 right = false;
-                herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟被' + hevent[i].type +'时不是场上球员！';
+                herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟被' + hevent[i].type +'时不是场上球员！' + '\n';
             }
             else if (hevent[i].type == "换上") {
                 hplayer[j].onpitch = true;
@@ -2254,7 +2271,7 @@ function check(hflist, aflist, hevent, aevent) {
                 } 
                 else {
                     right = false;
-                    herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！';
+                    herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！' + '\n';
                 }
             }
             else if (hevent[i].type == "红牌") {
@@ -2264,7 +2281,7 @@ function check(hflist, aflist, hevent, aevent) {
                 }
                 else {
                     right = false;
-                    herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！';
+                    herrline += hevent[i].namestr + '在第' + hevent[i].timestr + '分钟得到' + hevent[i].type +'时已经被罚下！' + '\n';
                 }
             }  
         }
@@ -2278,7 +2295,7 @@ function check(hflist, aflist, hevent, aevent) {
                 if (aevent[i].type == "进球" || aevent[i].type == "点球" || aevent[i].type == "乌龙球" || aevent[i].type == "点球罚失") {
                     if (!aplayer[j].onpitch) {
                         right = false;
-                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟' + aevent[i].type +'时不是场上球员！';
+                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟' + aevent[i].type +'时不是场上球员！' + '\n';
                     }
                 }
                 else if (aevent[i].type == "换下") {
@@ -2287,7 +2304,7 @@ function check(hflist, aflist, hevent, aevent) {
                     }
                     else {
                         right = false;
-                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟被' + aevent[i].type +'时不是场上球员！';
+                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟被' + aevent[i].type +'时不是场上球员！' + '\n';
                     }
                 }
                 else if (aevent[i].type == "换上") {
@@ -2296,7 +2313,7 @@ function check(hflist, aflist, hevent, aevent) {
                     }
                     else {
                         right = false;
-                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟被' + aevent[i].type +'时是场上球员！';
+                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟被' + aevent[i].type +'时是场上球员！' + '\n';
                     }
                 }
                 else if (aevent[i].type == "黄牌") {
@@ -2307,7 +2324,7 @@ function check(hflist, aflist, hevent, aevent) {
                     } 
                     else {
                         right = false;
-                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！';
+                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！' + '\n';
                     }
                 }
                 else if (aevent[i].type == "红牌") {
@@ -2317,20 +2334,21 @@ function check(hflist, aflist, hevent, aevent) {
                     }
                     else {
                         right = false;
-                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！';
+                        aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！' + '\n';
                     }
                 }
+                
             }
         }
         if (!afound) {
             aplayer.push(new Player(aevent[i].team, aevent[i].kitnum, aevent[i].name, false));
             if (aevent[i].type == "进球" || aevent[i].type == "点球" || aevent[i].type == "乌龙球" || aevent[i].type == "点球罚失") {
                 right = false;
-                aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟' + aevent[i].type +'时不是场上球员！';
+                aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟' + aevent[i].type +'时不是场上球员！' + '\n';
             }
             else if (aevent[i].type == "换下") {
                 right = false;
-                aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟被' + aevent[i].type +'时不是场上球员！';
+                aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟被' + aevent[i].type +'时不是场上球员！' + '\n';
             }
             else if (aevent[i].type == "换上") {
                 aplayer[j].onpitch = true;
@@ -2343,7 +2361,7 @@ function check(hflist, aflist, hevent, aevent) {
                 } 
                 else {
                     right = false;
-                    aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！';
+                    aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！' + '\n';
                 }
             }
             else if (aevent[i].type == "红牌") {
@@ -2353,7 +2371,7 @@ function check(hflist, aflist, hevent, aevent) {
                 }
                 else {
                     right = false;
-                    aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！';
+                    aerrline += aevent[i].namestr + '在第' + aevent[i].timestr + '分钟得到' + aevent[i].type +'时已经被罚下！' + '\n';
                 }
             }  
         }
