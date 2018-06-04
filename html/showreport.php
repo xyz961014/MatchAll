@@ -1,15 +1,9 @@
 <?php
 require 'TeamDict.php';
+require "dbinfo.php";
 $id = $_GET['MatchID'];
-$servername = "localhost";
-$username = "root";
-$password = "961014";
 $dbname = $_GET['dbname'];
-$conn = new mysqli($servername, $username, $password,$dbname);
-mysqli_query($conn,'set names utf8');
-if ($conn->connect_error) {
-    die("Connection failed:".$conn->connect_error);
-}
+$conn = dbconnect($dbname);
 $sql = "SELECT * FROM ".$id." ORDER BY EventTime,StoppageTime";
 $result = $conn->query($sql);
 $infos = array();

@@ -88,22 +88,29 @@
 <br>
 <?php
 require 'TeamDict.php';
+require 'dbinfo.php';
 $id = $_GET["id"];
-$servername = "localhost";
-$username = "root";
-$password = "961014";
+$matchdb = "MATCHES";
+$matchconn = dbconnect($matchdb);
 $dbname = $_GET['Match'];
+$sql = "SELECT * FROM matches WHERE dbname = '".$dbname."'";
+$res = $matchconn->query($sql);
+while($row = $res->fetch_assoc()) {
+    $matchname = $row['name'];
+    $subname = $row['subname'];
+    $maxonfield = $row['maxonfield'];
+    $minonfield = $row['minonfield'];
+    $matchclass = $row['class'];
+    $enablekitnum = $row['enablekitnum'];
+}
+$matchconn->close();
+$conn = dbconnect($dbname);
 echo "<a href='schedule.php?Match=$dbname'>返回</a>";
 echo "<div class='row' id='match'>";
 $elifile = fopen($dbname.'.json','r') or die("Unable to open file!");
 $eliinfo = json_decode(fgets($elifile));
 $eliinfo = $eliinfo[1];
 fclose($elifile);
-$conn = new mysqli($servername, $username, $password,$dbname);
-mysqli_query($conn,'set names utf8');
-if ($conn->connect_error) {
-    die("Connection failed:".$conn->connect_error);
-}
 $sql = "SELECT * FROM Match$id";
 $result = $conn->query($sql);
 if (!$result) {
@@ -144,19 +151,9 @@ if ($stage != 'Group') {
 if (preg_match('/^MA.+/', $dbname)) {
     $hometeam = $dict[$hometeam];
     $awayteam = $dict[$awayteam];
-    if (preg_match('/^MANAN.+/', $dbname)) {
-        $subtitle = "马杯男足".$subtitle;
-    } 
-    if (preg_match('/^MANYU.+/', $dbname)) {
-        $subtitle = "马杯女足".$subtitle;
-    } 
 }
-if (preg_match('/^FRESHMANCUP.+/', $dbname)) {
-    $subtitle = "新生杯".$subtitle;
-} 
-if (preg_match('/^NANQI.+/', $dbname)) {
-    $subtitle = '\"小世界杯\"'.$subtitle;
-} 
+$subname = str_replace('"', '\"', $subname);
+$subtitle = $subname.$subtitle;
 $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
 if (preg_match('/^NANQI.+/', $dbname)) {
     $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY Class,Name";
@@ -229,16 +226,7 @@ function onvalid() {
             var homename = "<?=$hometeam ?>";
             var awayname = "<?=$awayteam ?>";
             var dbname = '<?=$dbname ?>';
-            if (dbname.match("MANAN"))
-                var leastnum = 7;
-            else if (dbname.match("MANYU"))
-                var leastnum = 5;
-            else if (dbname.match("NANQI"))
-                var leastnum = 5;
-            else if (dbname.match("FRESH"))
-                var leastnum = 7;
-            else 
-                var leastnum = 7;
+            var leastnum = "<?=$minonfield ?>";
             var [hflist, aflist, hevent, aevent, events, hg, ag, habandon, aabandon] = getevents(info, dbname, homename, awayname);
             var che = check(hflist, aflist, hevent, aevent, habandon, aabandon, leastnum);
             if (!che.right) {
@@ -413,6 +401,7 @@ $(".firstcheck").click(function() {
     var parseid = id.split('~');
     var num = parseid[1];
     var name = parseid[2];
+    var maxonfield = "<?=$maxonfield ?>";
     if (parseid[0] == 'H')
         var team = '<?=$hometeam?>';
     else if (parseid[0] == 'A')
@@ -430,9 +419,9 @@ $(".firstcheck").click(function() {
             an++;
     }
     var Hinst = document.getElementById(id); 
-    if (Hinst.checked && (an > 11 || hn > 11)) {
+    if (Hinst.checked && (an > maxonfield || hn > maxonfield)) {
         Hinst.checked = false;
-        alert('more than 11');
+        alert('首发人数超过' + maxonfield.toString() + "人！");
     }
     else {
         validbool = 0;
@@ -476,210 +465,6 @@ $(".firstcheck").click(function() {
         })
     }
 })
-//function homecheck(id) {
-//    var Hnum = $("input[name=Homecheck]");
-//    var n = 0;
-//    for (k in Hnum) {
-//        if (Hnum[k].checked)
-//            n++;
-//    }
-//    var Hinst = document.getElementById('H'+id); 
-//    if (Hinst.checked && n > 11) {
-//        Hinst.checked = false;
-//        alert('more than 11');
-//    }
-//    else {
-//        validbool = 0;
-//        $.get('checked.php', {
-//            dbname: '<?=$dbname ?>',
-//            MatchID: '<?=$id ?>',
-//            Valid: validbool
-//        }, function(data, state) {
-//            console.log(data);
-//            if (Hinst.checked) {
-//                $.get('additem.php', {
-//                    dbname: '<?=$dbname ?>',
-//                    MatchID: "<?='Match'.$id ?>",
-//                    Team: '<?=$hometeam ?>',
-//                    KitNumber: id,
-//                    Name: null,
-//                    Type: '首发',
-//                    Time: 0,
-//                    StoppageTime: 0
-//            }, function(data, state) {
-//                console.log(data);
-//                showreport();
-//            })
-//            }
-//            else {undefined
-//                 $.get('delitem.php', {
-//                    dbname: '<?=$dbname ?>',
-//                    MatchID: "<?='Match'.$id ?>",
-//                    Team: '<?=$hometeam ?>',
-//                    KitNumber: id,
-//                    Name: null,
-//                    Type: '首发',
-//                    Time: 0,
-//                    StoppageTime: 0
-//                }, function(data, state) {
-//                    console.log(data);
-//                    showreport();
-//                })
-//            }
-//        })
-//    }
-//}
-//function awaycheck(id) {
-//    var Anum = $("input[name=Awaycheck]");
-//    var n = 0;
-//    for (k in Anum) {
-//        if (Anum[k].checked)
-//            n++;
-//    }
-//    var Ainst = document.getElementById('A'+id); 
-//    if (Ainst.checked && n > 11) {
-//        Ainst.checked = false;
-//        alert('more than 11');
-//    }
-//    else {
-//        validbool = 0;
-//        $.get('checked.php', {
-//            dbname: '<?=$dbname ?>',
-//            MatchID: '<?=$id ?>',
-//            Valid: validbool
-//        }, function(data, state) {
-//            console.log(data);
-//            if (Ainst.checked) {
-//                $.get('additem.php', {
-//                    dbname: '<?=$dbname ?>',
-//                    MatchID: "<?='Match'.$id ?>",
-//                    Team: '<?=$awayteam ?>',
-//                    KitNumber: id,
-//                    Name: null,
-//                    Type: '首发',
-//                    Time: 0,
-//                    StoppageTime: 0
-//            }, function(data, state) {
-//                console.log(data);
-//                showreport();
-//            })
-//            }
-//            else {
-//                 $.get('delitem.php', {
-//                    dbname: '<?=$dbname ?>',
-//                    MatchID: "<?='Match'.$id ?>",
-//                    Team: '<?=$awayteam ?>',
-//                    KitNumber: id,
-//                    Name: null,
-//                    Type: '首发',
-//                    Time: 0,
-//                    StoppageTime: 0
-//                }, function(data, state) {
-//                    console.log(data);
-//                    showreport();
-//                })
-//            }
-//        })
-//    }
-//
-//}
-//function HSubmit() {
-//    validbool = 0;
-//    $.get('checked.php',{
-//        dbname: '<?=$dbname ?>',
-//        MatchID: '<?=$id ?>',
-//        Valid: validbool
-//    },function(data,state) {
-//        console.log(data);
-//        showreport();
-//        var Hnum = $("input[name=Homecheck]");
-//        var h_check = [];
-//        for (var k in Hnum) {
-//            if (Hnum[k].checked)
-//                h_check.push(Hnum[k].value);
-//        }
-//        //alert(h_check);
-//        $.get('delitem.php',{
-//                dbname: '<?=$dbname ?>',
-//                MatchID: "<?='Match'.$id ?>",
-//                Team: '<?=$hometeam ?>',
-//                KitNumber: null,
-//                Name: null,
-//                Type: '首发',
-//                Time: null,
-//                StoppageTime:null
-//        },function (data,state) {
-//            //alert(data);
-//            for (var item in h_check) {
-//                $.get('additem.php',{
-//                    dbname: '<?=$dbname ?>',
-//                    MatchID: "<?='Match'.$id ?>",
-//                    Team: '<?=$hometeam ?>',
-//                    KitNumber: h_check[item],
-//                    Name: null,
-//                    Type: '首发',
-//                    Time: 0,
-//                    StoppageTime: 0
-//                },function (data,state) {
-//                    console.log(data);
-//                    console.log(state);
-//                    showreport();
-//                });
-//            }
-//        });
-//
-//    })
-//        
-//}
-//function ASubmit() {
-//    validbool = 0;
-//    $.get('checked.php',{
-//        dbname: '<?=$dbname ?>',
-//        MatchID: '<?=$id ?>',
-//        Valid: validbool
-//    },function(data,state) {
-//        console.log(data);
-//        showreport();
-//        var Anum = $("input[name=Awaycheck]");
-//        var a_check = [];
-//        for (k in Anum) {
-//            if (Anum[k].checked)
-//                a_check.push(Anum[k].value);
-//        }
-//        //alert(a_check);
-//        $.get('delitem.php',{
-//                dbname: '<?=$dbname ?>',
-//                MatchID: "<?='Match'.$id ?>",
-//                Team: '<?=$awayteam ?>',
-//                KitNumber: null,
-//                Name: null,
-//                Type: '首发',
-//                Time: null,
-//                StoppageTime:null
-//
-//        },function(data,state) {
-//            //alert(data);
-//            for (var item in a_check) {
-//                $.get('additem.php',{
-//                    dbname: '<?=$dbname ?>',
-//                    MatchID: "<?='Match'.$id ?>",
-//                    Team: '<?=$awayteam ?>',
-//                    KitNumber: a_check[item],
-//                    Name: null,
-//                    Type: '首发',
-//                    Time: 0,
-//                    StoppageTime: 0
-//                },function (data,state) {
-//                    //alert(data);
-//                    //alert(state);
-//                    showreport();
-//                });
-//            }
-//        });
-//
-//    })
-//        
-//}
 </script>
 <div class='input col-xs-12 penalty'>
     
@@ -892,23 +677,6 @@ function ESubmit() {
         time = parseInt(time.val());
         stptime = parseInt(stptime.val());
         type = type.val();
-        //if (type == "进球") {
-        //    type = 'GOAL';
-        //} else if (type == "换下") {
-        //    type = 'OUT';
-        //} else if (type == "换上") {
-        //    type = 'IN';
-        //} else if (type == "黄牌") {
-        //    type = 'YELLOW';
-        //} else if (type == "红牌") {
-        //    type = 'RED';
-        //} else if (type == "点球") {
-        //    type = 'PENALTY';
-        //} else if (type == "乌龙球") {undefined
-        //    type = 'ONWGOAL';
-        //} else if (type == "点球罚失") {
-        //    type = 'PMISSS';
-        //}
         if (num.val().length == 0 || name.val().length == 0) {
             alert('不是有效球员！');
             return;
@@ -1550,7 +1318,6 @@ function showreport() {
                             });
 
                         }
-
                     } else if (hside[k].type == "红牌") {
                         $('canvas').drawImage({
                             layer: true,

@@ -1,6 +1,8 @@
 <!doctype html>
 <?php
+require "dbinfo.php";
 $dbname = $_GET['Match'];
+$conn = dbconnect($dbname);
 if (preg_match('/^MANAN.+/', $dbname)) {
         $tabnum = 0;
     } 
@@ -71,6 +73,9 @@ function onvalid(id) {
 }
 
 </script>
+<?php
+$conn->close();
+?>
 </div>
   </body>
 </html>

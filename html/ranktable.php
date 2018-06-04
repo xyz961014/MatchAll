@@ -1,6 +1,8 @@
 <!doctype html>
 <?php
+require "dbinfo.php";
 $dbname = $_GET['Match'];
+$conn = dbconnect($dbname);
 if (preg_match('/^MANAN.+/', $dbname)) {
         $tabnum = 0;
     } 
@@ -76,7 +78,7 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade in active" id="pt">
-                <a class="btn btn-link hidearrow">编辑</a>
+                <a class="btn btn-link hidearrow">隐藏</a>
                 <div class="row" id="grouprank">
                 </div>
                 <div class="row" id="eliinfo">
@@ -125,8 +127,7 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
 
 var dbname = '<?=$dbname?>';
 var d = new Date();
-var hidearrow = true;
-$(".btnmove").hide();
+var hidearrow = false;
 Getrank(dbname,d.getTime(),'Players', 'Appearances', 'papp', '出场次数', null, false, ' DESC');
 Getrank(dbname,d.getTime(),'Players', 'Minutes', 'pmin', '出场时间', null, false, ' DESC');
 Getrank(dbname,d.getTime(),'Players', 'Goals', 'pgoal', '进球',asort='Penalties', false, ' DESC');
@@ -341,6 +342,9 @@ function Refresh(dbname,time) {
 }
 
 </script>
+<?php 
+$conn->close();
+?>
   </body>
 </html>
 

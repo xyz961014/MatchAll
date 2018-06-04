@@ -1,6 +1,8 @@
 <!doctype html>
 <?php
+require "dbinfo.php";
 $dbname = $_GET['Match'];
+$conn = dbconnect($dbname);
 if (preg_match('/^MANAN.+/', $dbname)) {
         $tabnum = 0;
 } 
@@ -41,14 +43,6 @@ if (preg_match('/^FRESH.+/', $dbname)) {
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "961014";
-$conn = new mysqli($servername, $username, $password,$dbname);
-mysqli_query($conn,'set names utf8');
-if ($conn->connect_error) {
-    die("Connection failed:".$conn->connect_error);
-}
 if (preg_match('/^MANAN.+/', $dbname)) {
     $title = "马杯男足执场单";
 }
@@ -113,23 +107,7 @@ while ($row = $res->fetch_assoc()) {
             }
             </script>
 <?php
-// 定义变量并默认设为空值
-//$homename = $awayname = "";
-//
-//if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//      $homename = test_input($_POST["hometeam"]);
-//      $awayname = test_input($_POST["awayteam"]);
-//      $output = exec("python3 /var/www/TUFA/docreate.py $homename $awayname 2>&1",$arr,$ret);
-//      exec("cp $arr[1] /var/www/html/sheets/");
-//     // print_r($arr); 
-//}
-//
-//function test_input($data) {
-//   $data = trim($data);
-//   $data = stripslashes($data);
-//   $data = htmlspecialchars($data);
-//   return $data;
-//}
+$conn->close();
 ?>
 
 <h3>下载:</h3>

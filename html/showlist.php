@@ -1,21 +1,13 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "961014";
+require "dbinfo.php";
 $dbname = $_GET['dbname'];
+$conn = dbconnect($dbname);
 $time = $_GET['time'];
 
 $elifile = fopen($dbname.'.json','r');
 $eliinfo = json_decode(fgets($elifile));
 $eliinfo = $eliinfo[1];
 fclose($elifile);
-//print_r($eliinfo);
-//echo $eliinfo->13->hometeam;
-$conn = new mysqli($servername, $username, $password,$dbname);
-mysqli_query($conn,'set names utf8');
-if ($conn->connect_error) {
-    die("Connection failed:".$conn->connect_error);
-}
 $sql = "SELECT * FROM Matches";
 $result = $conn->query($sql);
 if($result->num_rows > 0) {

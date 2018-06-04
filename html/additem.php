@@ -1,5 +1,6 @@
 <?php
 require 'TeamDict.php';
+require 'dbinfo.php';
 $id = $_GET['MatchID'];
 $team = $_GET['Team'];
 $kitnum = $_GET['KitNumber'];
@@ -7,21 +8,9 @@ $name = $_GET['Name'];
 $type = $_GET['Type'];
 $time = $_GET['Time'];
 $stptime = $_GET['StoppageTime'];
-$servername = "localhost";
-$username = "root";
-$password = "961014";
 $dbname = $_GET['dbname'];
-echo $id.$team.$kitnum.$type.$time.$stptime;
-$conn = new mysqli($servername, $username, $password,$dbname);
-mysqli_query($conn,'set names utf8');
-if ($conn->connect_error) {
-    die("Connection failed:".$conn->connect_error);
-}
-//if ($type == 'FIRST') {
-//    $sql = "DELETE FROM ".$id." WHERE EventType = 'FIRST' and Team = '".$team."'";
-//    echo $sql;
-//    $conn->query($sql);
-//}
+$conn = dbconnect($dbname);
+//echo $id.$team.$kitnum.$type.$time.$stptime;
 $sql = "SELECT Name,ExtraInfo FROM Players WHERE Team = '".$team."' and Kitnumber = ".$kitnum." AND Name = '".$name."'";
 $result = $conn->query($sql);
 $extrainfo = null;
