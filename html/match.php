@@ -173,7 +173,7 @@ while ($row = $res->fetch_assoc()) {
 
 echo "<div class='hometable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$hometeam."\t<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
 //echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
-$namefilter = '/[^\x7f-\xff\w+]+/';
+$namefilter = '/[^\x7f-\xff\w+]|·+/';
     for($i = 0;$i<count($homeplayers);$i++) {
         $num = $homeplayers[$i]['KitNumber'];
         $cname = preg_replace($namefilter, '', $homeplayers[$i]['Name']);
