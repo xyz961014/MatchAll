@@ -1001,17 +1001,22 @@ function showreport() {
         //REPORT PNG
         var revents = [];
         var simul = [];
+        var penal = [];
         if (events.length > 0)
             simul = [events[0]];
         for (var i = 1;i < events.length;i++) {
-            if (simul.length == 0 || events[i].timestr == simul[0].timestr) {
-                simul.push(events[i]);
+            if (events[i].type.match(/点球决胜/)){
+                penal.push(events[i]);
+            } 
+            else if (events[i].timestr == simul[0].timestr) {
+                    simul.push(events[i]);
             } else {
                 revents.push(simul);
                 simul = [events[i]];
             }
         } 
         revents.push(simul);
+        revents.push(penal);
         console.log("re",revents);
 
         var curY = 50;
