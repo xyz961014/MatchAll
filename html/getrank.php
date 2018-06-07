@@ -1,5 +1,5 @@
 <?php
-require "dbinfo.php"
+require "dbinfo.php";
 $table = $_GET['table'];
 $sort = $_GET['sort'];
 $asort = $_GET['asort'];
