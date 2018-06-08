@@ -1043,7 +1043,7 @@ function showreport() {
                 }
                 
             }
-            var halfh = Math.max(hside.length, aside.length) * 45 / 2 + 10;
+            var halfh = Math.max(hside.length, aside.length) * 50 / 2 + 10;
             if (hside.length == 0 && aside.length == 0)
                 halfh = -20;
             hy += 2 * halfh + 40;
@@ -1060,30 +1060,145 @@ function showreport() {
         //    var mstr = hfstr;
         //else
         //    var mstr = afstr;
-        $('canvas').drawText({
+        function drawfirst(color, layername, text, x, y) {
+            $('canvas').drawText({
             layer: true,
-            fillStyle: 'rgba(0, 0, 0, 0)',
+            fillStyle: color,
             fontFamily: 'WenQuanYi Micro Hei',
             fontSize: 36,
-            name: 'measurehfirst',
-            text: hfstr,
+            name: layername,
+            text: text,
             fromCenter: false,
-            x: 0, y: curY,
+            x: x, y: y,
             align: 'left',
             maxWidth: 600
         });
+        }
+        function drawtitle(layername, text, x, y) {
+            $('canvas').drawText({
+            layer: true,
+            fillStyle: '#000',
+            fontStyle: 'bold',
+            name: layername,
+            x: x, y: y,
+            fontSize: 50,
+            fontFamily: 'simHei',
+            text: text
+        });
+        }
+        function drawcenter(font, size, style, layername, text, y) {
         $('canvas').drawText({
             layer: true,
-            fillStyle: 'rgba(0, 0, 0, 0)',
-            fontFamily: 'WenQuanYi Micro Hei',
-            fontSize: 36,
-            name: 'measureafirst',
-            text: afstr,
-            fromCenter: false,
-            x: 0, y: curY,
-            align: 'left',
-            maxWidth: 600
-        });
+            fillStyle: '#000',
+            fontStyle: style,
+            name: layername,
+            x: 800, y: y,
+            fontSize: size,
+            fontFamily: font,
+            text: text
+        })
+        }
+        function drawline(layername, x1, x2, y) {
+            $('canvas').drawLine({
+                    layer: true,
+                    name: layername,
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    rounded: true,
+                    x1: x1, y1: y,
+                    x2: x2, y2: y,
+                });
+        }
+        function drawtime(layername, time, x, y) {
+            $('canvas').drawText({
+                    layer: true,
+                    name: layername,
+                    fillStyle: '#000',
+                    fontFamily: 'Trebuchet MS',
+                    fontSize: 36,
+                    text: time,
+                    x: x, y: y,
+                })
+
+        }
+        function drawname(color, layername, name, x, y) {
+            $('canvas').drawText({
+                        layer: true,
+                        name: layername,
+                        fillStyle: color,
+                        fontFamily: 'WenQuanYi Micro Hei',
+                        fontSize: 40,
+                        text: name,
+                        x: x, y: y,
+                    });
+
+        }
+        function drawplayer(layername, name, x, y) {
+            $('canvas').drawText({
+                        layer: true,
+                        name: layername,
+                        fillStyle: '#000',
+                        fontFamily: 'WenQuanYi Micro Hei',
+                        fontSize: 40,
+                        text: name,
+                        fromCenter: false,
+                        x: x, y: y,
+                        dblclick: function(layer) {
+                            var item = layer.name.split("~");
+                            console.log(item);
+                            $.get('delitem.php', {
+                               dbname: '<?=$dbname ?>',
+                               MatchID: "<?='Match'.$id ?>",
+                               Team: item[0],
+                               KitNumber: parseInt(item[1]),
+                               Name: item[2],
+                               Type: item[3],
+                               Time: item[4],
+                               StoppageTime: item[5]
+                            }, function(data,state) {
+                                console.log(data,state);
+                                $.get('additem.php', {
+                                    dbname: '<?=$dbname ?>',
+                                    MatchID: "<?='Match'.$id ?>",
+                                    Team: item[0],
+                                    KitNumber: parseInt(item[1]),
+                                    Name: item[2],
+                                    Type: item[3],
+                                    Time: item[4],
+                                    StoppageTime: item[5]
+                                }, function(data,state) {
+                                    console.log(data,state);
+                                    location.reload();
+                                });
+
+                            });
+                        }
+                    }); 
+        }
+        function drawrect(layername, x, y, w, h) {
+            $('canvas').drawRect({
+                    layer: true,
+                    name: layername,
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    x: x, y: y,
+                    width: w,
+                    height: h,
+                    cornerRadius: 10
+                });
+        }
+        function drawicon (layername, icon, x, y) {
+            $('canvas').drawImage({
+                    layer: true,
+                    name: layername,
+                    source: 'ReportElements/'+ icon +'.png',
+                    x: x, y: y,
+                    fromCenter: false
+                });
+
+        }
+        drawfirst('rgba(0, 0, 0, 0)', 'measurehfirst', hfstr, 0, curY);
+        drawfirst('rgba(0, 0, 0, 0)', 'measureafirst', afstr, 0, curY);
         var hf = Math.max($('canvas').measureText('measurehfirst').height, $('canvas').measureText('measureafirst').height) / 2;
         hy += Math.max(hf, 70) + hf;
         hy += 70;
@@ -1091,75 +1206,19 @@ function showreport() {
             hy += 80;
         $('canvas').attr("height", hy);
 
-        $('canvas').drawText({
-            layer: true,
-            fillStyle: '#000',
-            fontStyle: 'bold',
-            name: 'homename',
-            x: 400, y: 50,
-            fontSize: 50,
-            fontFamily: 'simHei',
-            text: HomeName
-        });
-        $('canvas').drawText({
-            layer: true,
-            fillStyle: '#000',
-            fontStyle: 'bold',
-            name: 'awayname',
-            x: 1200, y: 50,
-            fontSize: 50,
-            fontFamily: 'simHei',
-            text: AwayName
-        });
+        drawtitle('homename', HomeName, 400, 50);
+        drawtitle('awayname', AwayName, 1200, 50);
         curY += $('canvas').measureText('homename').height + 10; 
         if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
             curY += 80;
         var subtitle = "<?=$subtitle ?>";
-        $('canvas').drawText({
-            layer: true,
-            fillStyle: '#000',
-            name: 'subtitle',
-            x: 800, y: curY,
-            fontSize: 25,
-            fontFamily: 'simHei',
-            text: subtitle
-        })
+        drawcenter('simHei', 25, 'normal', 'subtitle', subtitle, curY);
         curY += $('canvas').measureText('subtitle').height + 20; 
-        $('canvas').drawText({
-            layer: true,
-            fillStyle: '#000',
-            fontFamily: 'WenQuanYi Micro Hei',
-            fontSize: 36,
-            name: 'homefirst',
-            text: hfstr,
-            fromCenter: false,
-            x: 0, y: curY,
-            align: 'left',
-            maxWidth: 600
-        });
-        $('canvas').drawText({
-            layer: true,
-            fillStyle: '#000',
-            fontFamily: 'WenQuanYi Micro Hei',
-            fontSize: 36,
-            text: afstr,
-            name: 'awayfirst',
-            fromCenter: false,
-            x: 1000, y: curY,
-            align: 'left',
-            maxWidth: 600
-        });
+        drawfirst('#000', 'homefirst', hfstr, 0, curY);
+        drawfirst('#000', 'awayfirst', afstr, 1000, curY);
         var firstheight = Math.max($('canvas').measureText('homefirst').height, $('canvas').measureText('awayfirst').height);
         curY += firstheight / 2 - 10; 
-        $('canvas').drawText({
-            layer: true,
-            name: 'First',
-            fillStyle: '#000',
-            fontFamily: 'simHei',
-            fontSize: 38,
-            text: "首发阵容",
-            x: 800, y: curY,
-        });
+        drawcenter('simHei', 38, 'normal', 'First', "首发阵容", curY);
         curY += Math.max($('canvas').measureText('First').height + 30, firstheight / 2); 
         $('canvas').drawImage({
             layer: true,
@@ -1188,111 +1247,36 @@ function showreport() {
                     aside.push(revents[i][j]);
                 }
             }
-            var halfh = Math.max(hside.length, aside.length) * 45 / 2 + 10;
+            var halfh = Math.max(hside.length, aside.length) * 50 / 2 + 10;
             if (hside.length == 0 && aside.length == 0)
                 halfh = -20;
             console.log(halfh);
             curY += halfh;
             if (hside.length != 0) {
-                $('canvas').drawLine({
-                    layer: true,
-                    name: 'htimeline' + i.toString(),
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    rounded: true,
-                    x1: 700, y1: curY,
-                    x2: 800, y2: curY,
-                });
-                $('canvas').drawText({
-                    layer: true,
-                    name: 'htime' + i.toString(),
-                    fillStyle: '#000',
-                    fontFamily: 'Trebuchet MS',
-                    fontSize: 36,
-                    text: hside[0].timestr,
-                    x: 750, y: curY - 20,
-                })
+                drawline('htimeline' + i.toString(), 680, 800, curY);
+                drawtime('htime' + i.toString(), hside[0].timestr, 740, curY - 20);
                 var rectwidth = 0;
                 var rectheight = hside.length * 50 + 10;
                 for (var k = 0;k < hside.length;k++) {
-                    //console.log('KKKK',hside[k].namestr);
-                    $('canvas').drawText({
-                        layer: true,
-                        name: 'measure' + hside[k].namestr,
-                        fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: hside[k].namestr,
-                        x: 800, y: 0,
-                    });
+                    drawname('rgba(0, 0, 0, 0)', 'measure' + hside[k].namestr, hside[k].namestr, 800, 0);
                     rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + hside[k].namestr).width);
                 }
                 rectwidth += 100;
-                $('canvas').drawRect({
-                    layer: true,
-                    name: 'hrect' + i.toString(),
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    x: 700 - rectwidth / 2, y: curY,
-                    width: rectwidth,
-                    height: rectheight,
-                    cornerRadius: 10
-                });
+                drawrect('hrect' + i.toString(), 680 - rectwidth / 2, curY, rectwidth, rectheight);
                 var ey = curY - rectheight / 2 + 10;
                 for (var k = 0;k < hside.length;k++) {
                     if (hside[k].type == "进球") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'hG' + i.toString() + k.toString(),
-                            source: 'ReportElements/G.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
+                        drawicon('hG' + i.toString() + k.toString(), 'G', 680 - rectwidth + 20, ey);
                     } else if (hside[k].type == "点球") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'hPG' + i.toString() + k.toString(),
-                            source: 'ReportElements/PG.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
-                    
+                        drawicon('hPG' + i.toString() + k.toString(), 'PG', 680 - rectwidth + 20, ey);
                     } else if (hside[k].type == "点球罚失") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'hPM' + i.toString() + k.toString(),
-                            source: 'ReportElements/PM.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('hPM' + i.toString() + k.toString(), 'PM', 680 - rectwidth + 20, ey);
                     } else if (hside[k].type == "乌龙球") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'hOG' + i.toString() + k.toString(),
-                            source: 'ReportElements/OG.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('hOG' + i.toString() + k.toString(), 'OG', 680 - rectwidth + 20, ey);
                     } else if (hside[k].type == "换下") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'hSO' + i.toString() + k.toString(),
-                            source: 'ReportElements/SO.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('hSO' + i.toString() + k.toString(), 'SO', 680 - rectwidth + 20, ey);
                     } else if (hside[k].type == "换上") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'hSI' + i.toString() + k.toString(),
-                            source: 'ReportElements/SI.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('hSI' + i.toString() + k.toString(), 'SI', 680 - rectwidth + 20, ey);
                     } else if (hside[k].type == "黄牌") {
                         var y2c = false;
                         for (var l = 0;l < i;l++) {
@@ -1301,181 +1285,45 @@ function showreport() {
                                     y2c = true;
                                     break;
                                 }
-
                             }
                         }
                         if (y2c) {
-                            $('canvas').drawImage({
-                                layer: true,
-                                name: 'hY2C' + i.toString() + k.toString(),
-                                source: 'ReportElements/Y2C.png',
-                                x: 700 - rectwidth + 20, y: ey,
-                                fromCenter: false
-                            });
-
+                            drawicon('hY2C' + i.toString() + k.toString(), 'Y2C', 680 - rectwidth + 20, ey);
                         } else {
-                            $('canvas').drawImage({
-                                layer: true,
-                                name: 'hYC' + i.toString() + k.toString(),
-                                source: 'ReportElements/YC.png',
-                                x: 700 - rectwidth + 20, y: ey,
-                                fromCenter: false
-                            });
-
+                            drawicon('hYC' + i.toString() + k.toString(), 'YC', 680 - rectwidth + 20, ey);
                         }
                     } else if (hside[k].type == "红牌") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'hRC' + i.toString() + k.toString(),
-                            source: 'ReportElements/RC.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('hRC' + i.toString() + k.toString(), 'RC', 680 - rectwidth + 20, ey);
                     }
-                    $('canvas').drawText({
-                        layer: true,
-                        name: hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(),
-                        fillStyle: '#000',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: hside[k].namestr,
-                        fromCenter: false,
-                        x: 700 - rectwidth + 70, y: ey,
-                        dblclick: function(layer) {
-                            var item = layer.name.split("~");
-                            console.log(item);
-                            $.get('delitem.php', {
-                               dbname: '<?=$dbname ?>',
-                               MatchID: "<?='Match'.$id ?>",
-                               Team: item[0],
-                               KitNumber: parseInt(item[1]),
-                               Name: item[2],
-                               Type: item[3],
-                               Time: item[4],
-                               StoppageTime: item[5]
-                            }, function(data,state) {
-                                console.log(data,state);
-                                $.get('additem.php', {
-                                    dbname: '<?=$dbname ?>',
-                                    MatchID: "<?='Match'.$id ?>",
-                                    Team: item[0],
-                                    KitNumber: parseInt(item[1]),
-                                    Name: item[2],
-                                    Type: item[3],
-                                    Time: item[4],
-                                    StoppageTime: item[5]
-                                }, function(data,state) {
-                                    console.log(data,state);
-                                    location.reload();
-                                });
-
-                            });
-                        }
-                    });
+                    drawplayer(hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(), hside[k].namestr, 680 - rectwidth + 70, ey);
                     ey += 50;
                 }
-
             } 
             if (aside.length != 0) {
-                $('canvas').drawLine({
-                    layer: true,
-                    name: 'atimeline' + i.toString(),
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    rounded: true,
-                    x1: 800, y1: curY,
-                    x2: 900, y2: curY,
-                });
-                $('canvas').drawText({
-                    layer: true,
-                    name: 'atime' + i.toString(),
-                    fillStyle: '#000',
-                    fontFamily: 'Trebuchet MS',
-                    fontSize: 36,
-                    text: aside[0].timestr,
-                    x: 850, y: curY - 20,
-                })
+                drawline('atimeline' + i.toString(), 800, 920, curY);
+                drawtime('atime' + i.toString(), aside[0].timestr, 860, curY - 20);
                 var rectwidth = 0;
                 var rectheight = aside.length * 50 + 10;
                 for (var k = 0;k < aside.length;k++) {
-                    $('canvas').drawText({
-                        layer: true,
-                        name: 'measure' + aside[k].namestr,
-                        fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: aside[k].namestr,
-                        x: 800, y: 0,
-                    });
+                    drawname('rgba(0, 0, 0, 0)', 'measure' + aside[k].namestr, aside[k].namestr, 800, 0);
                     rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + aside[k].namestr).width);
                 }
                 rectwidth += 100;
-                $('canvas').drawRect({
-                    layer: true,
-                    name: 'arect' + i.toString(),
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    x: 900 + rectwidth / 2, y: curY,
-                    width: rectwidth,
-                    height: rectheight,
-                    cornerRadius: 10
-                });
+                drawrect('arect' + i.toString(), 920 + rectwidth / 2, curY, rectwidth, rectheight);
                 var ey = curY - rectheight / 2 + 10;
                 for (var k = 0;k < aside.length;k++) {
                      if (aside[k].type == "进球") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'aG' + i.toString() + k.toString(),
-                            source: 'ReportElements/G.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
+                        drawicon('aG' + i.toString() + k.toString(), 'G', 920 + 20, ey);
                     } else if (aside[k].type == "点球") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'aPG' + i.toString() + k.toString(),
-                            source: 'ReportElements/PG.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('aPG' + i.toString() + k.toString(), 'PG', 920 + 20, ey);
                     } else if (aside[k].type == "点球罚失") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'aPM' + i.toString() + k.toString(),
-                            source: 'ReportElements/PM.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('aPM' + i.toString() + k.toString(), 'PM', 920 + 20, ey);
                     } else if (aside[k].type == "乌龙球") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'aOG' + i.toString() + k.toString(),
-                            source: 'ReportElements/OG.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('aOG' + i.toString() + k.toString(), 'OG', 920 + 20, ey);
                     } else if (aside[k].type == "换下") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'aSO' + i.toString() + k.toString(),
-                            source: 'ReportElements/SO.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('aSO' + i.toString() + k.toString(), 'SO', 920 + 20, ey);
                     } else if (aside[k].type == "换上") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'aSI' + i.toString() + k.toString(),
-                            source: 'ReportElements/SI.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('aSI' + i.toString() + k.toString(), 'SI', 920 + 20, ey);
                     } else if (aside[k].type == "黄牌") {
                         var y2c = false;
                         for (var l = 0;l < i;l++) {
@@ -1484,79 +1332,17 @@ function showreport() {
                                     y2c = true;
                                     break;
                                 }
-
                             }
                         }
                         if (y2c) {
-                            $('canvas').drawImage({
-                                layer: true,
-                                name: 'aY2C' + i.toString() + k.toString(),
-                                source: 'ReportElements/Y2C.png',
-                                x: 900 + 20, y: ey,
-                                fromCenter: false
-                            });
-
+                            drawicon('aY2C' + i.toString() + k.toString(), 'Y2C', 920 + 20, ey);
                         } else {
-                            $('canvas').drawImage({
-                                layer: true,
-                                name: 'aYC' + i.toString() + k.toString(),
-                                source: 'ReportElements/YC.png',
-                                x: 900 + 20, y: ey,
-                                fromCenter: false
-                            });
-
+                            drawicon('aYC' + i.toString() + k.toString(), 'YC', 920 + 20, ey);
                         }
-
                     } else if (aside[k].type == "红牌") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'aRC' + i.toString() + k.toString(),
-                            source: 'ReportElements/RC.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('aRC' + i.toString() + k.toString(), 'RC', 920 + 20, ey);
                     }
-                    $('canvas').drawText({
-                        layer: true,
-                        name: aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(),
-                        fillStyle: '#000',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: aside[k].namestr,
-                        fromCenter: false,
-                        x: 970, y: ey,
-                        dblclick: function(layer) {
-                            var item = layer.name.split("~");
-                            console.log(item);
-                            $.get('delitem.php', {
-                               dbname: '<?=$dbname ?>',
-                               MatchID: "<?='Match'.$id ?>",
-                               Team: item[0],
-                               KitNumber: parseInt(item[1]),
-                               Name: item[2],
-                               Type: item[3],
-                               Time: item[4],
-                               StoppageTime: item[5]
-                            }, function(data,state) {
-                                console.log(data,state);
-                                $.get('additem.php', {
-                                    dbname: '<?=$dbname ?>',
-                                    MatchID: "<?='Match'.$id ?>",
-                                    Team: item[0],
-                                    KitNumber: parseInt(item[1]),
-                                    Name: item[2],
-                                    Type: item[3],
-                                    Time: item[4],
-                                    StoppageTime: item[5]
-                                }, function(data,state) {
-                                    console.log(data,state);
-                                    location.reload();
-                                });
-
-                            });
-                        }
-                    });
+                    drawplayer(aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(), aside[k].namestr, 920 + 70, ey);
                     ey += 50;
                 }
             }
@@ -1581,239 +1367,61 @@ function showreport() {
                 halfh = -20;
             curY += halfh;
             if (hside.length != 0) {
-                $('canvas').drawLine({
-                    layer: true,
-                    name: 'phtimeline',
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    rounded: true,
-                    x1: 700, y1: curY,
-                    x2: 800, y2: curY,
-                });
-                $('canvas').drawText({
-                    layer: true,
-                    name: 'phtime',
-                    fillStyle: '#000',
-                    fontFamily: 'Trebuchet MS',
-                    fontSize: 36,
-                    text: hside[0].timestr,
-                    x: 750, y: curY - 20,
-                })
+                drawline('phtimeline', 680, 800, curY);
+                drawtime('phtime', hside[0].timestr, 740, curY - 20);
                 var rectwidth = 0;
                 var rectheight = hside.length * 50 + 10;
                 for (var k = 0;k < hside.length;k++) {
-                    $('canvas').drawText({
-                        layer: true,
-                        name: 'measure' + hside[k].namestr,
-                        fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: hside[k].namestr,
-                        x: 800, y: 0,
-                    });
+                    drawname('rgba(0, 0, 0, 0)', 'measure' + hside[k].namestr, 800, 0);
                     rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + hside[k].namestr).width);
                 }
                 rectwidth += 100;
-                $('canvas').drawRect({
-                    layer: true,
-                    name: 'phrect',
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    x: 700 - rectwidth / 2, y: curY,
-                    width: rectwidth,
-                    height: rectheight,
-                    cornerRadius: 10
-                });
+                drawrect('phrect', 680 - rectwidth / 2, curY, rectwidth, rectheight);
                 var ey = curY - rectheight / 2 + 10;
                 for (var k = 0;k < hside.length;k++) {
                     if (hside[k].type == "点球决胜罚进") {
                         phg++;
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'phPG' + i.toString() + k.toString(),
-                            source: 'ReportElements/PG.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
+                        drawicon('phPG' + i.toString() + k.toString(), 'PG', 680 - rectwidth + 20, ey);
                     } else if (hside[k].type == "点球决胜罚失") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'phPM' + i.toString() + k.toString(),
-                            source: 'ReportElements/PM.png',
-                            x: 700 - rectwidth + 20, y: ey,
-                            fromCenter: false
-                        });
+                        drawicon('phPM' + i.toString() + k.toString(), 'PM', 680 - rectwidth + 20, ey);
 
                     }                    
-                    $('canvas').drawText({
-                        layer: true,
-                        name: hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(),
-                        fillStyle: '#000',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: hside[k].namestr,
-                        fromCenter: false,
-                        x: 700 - rectwidth + 70, y: ey,
-                        dblclick: function(layer) {
-                            var item = layer.name.split("~");
-                            console.log(item);
-                            $.get('delitem.php', {
-                               dbname: '<?=$dbname ?>',
-                               MatchID: "<?='Match'.$id ?>",
-                               Team: item[0],
-                               KitNumber: parseInt(item[1]),
-                               Name: item[2],
-                               Type: item[3],
-                               Time: item[4],
-                               StoppageTime: item[5]
-                            }, function(data,state) {
-                                console.log(data,state);
-                                $.get('additem.php', {
-                                    dbname: '<?=$dbname ?>',
-                                    MatchID: "<?='Match'.$id ?>",
-                                    Team: item[0],
-                                    KitNumber: parseInt(item[1]),
-                                    Name: item[2],
-                                    Type: item[3],
-                                    Time: item[4],
-                                    StoppageTime: item[5]
-                                }, function(data,state) {
-                                    console.log(data,state);
-                                    location.reload();
-                                });
-
-                            });
-                        }
-                    });
+                    drawplayer(hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(), hside[k].namestr, 680 - rectwidth + 70, ey);
                     ey += 50;
                 }
 
             } 
             if (aside.length != 0) {
-                $('canvas').drawLine({
-                    layer: true,
-                    name: 'patimeline',
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    rounded: true,
-                    x1: 800, y1: curY,
-                    x2: 900, y2: curY,
-                });
-                $('canvas').drawText({
-                    layer: true,
-                    name: 'patime',
-                    fillStyle: '#000',
-                    fontFamily: 'Trebuchet MS',
-                    fontSize: 36,
-                    text: aside[0].timestr,
-                    x: 850, y: curY - 20,
-                })
+                drawline('patimeline', 800, 920, curY);
+                drawtime('patime', aside[0].timestr, 860, curY - 20);
                 var rectwidth = 0;
                 var rectheight = aside.length * 50 + 10;
                 for (var k = 0;k < aside.length;k++) {
-                    $('canvas').drawText({
-                        layer: true,
-                        name: 'measure' + aside[k].namestr,
-                        fillStyle: 'rgba(0, 0, 0, 0)',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: aside[k].namestr,
-                        x: 800, y: 0
-                    });
+                    drawname('rgba(0, 0, 0, 0)', 'measure' + aside[k].namestr, 800, 0);
                     rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + aside[k].namestr).width);
                 }
                 rectwidth += 100;
-                $('canvas').drawRect({
-                    layer: true,
-                    name: 'parect',
-                    strokeStyle: '#000',
-                    strokeWidth: 3,
-                    x: 900 + rectwidth / 2, y: curY,
-                    width: rectwidth,
-                    height: rectheight,
-                    cornerRadius: 10
-                });
+                drawrect('parect', 920 + rectwidth / 2, curY, rectwidth, rectheight);
                 var ey = curY - rectheight / 2 + 10;
                 for (var k = 0;k < aside.length;k++) {
                     if (aside[k].type == "点球决胜罚进") {
                         pag++;
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'paPG' + i.toString() + k.toString(),
-                            source: 'ReportElements/PG.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('paPG' + i.toString() + k.toString(), 'PG', 920 + 20, ey);
                     } else if (aside[k].type == "点球决胜罚失") {
-                        $('canvas').drawImage({
-                            layer: true,
-                            name: 'paPM' + i.toString() + k.toString(),
-                            source: 'ReportElements/PM.png',
-                            x: 900 + 20, y: ey,
-                            fromCenter: false
-                        });
-
+                        drawicon('paPM' + i.toString() + k.toString(), 'PM', 920 + 20, ey);
                     }                     
-                    $('canvas').drawText({
-                        layer: true,
-                        name: aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(),
-                        fillStyle: '#000',
-                        fontFamily: 'WenQuanYi Micro Hei',
-                        fontSize: 40,
-                        text: aside[k].namestr,
-                        fromCenter: false,
-                        x: 970, y: ey,
-                        dblclick: function(layer) {
-                            var item = layer.name.split("~");
-                            console.log(item);
-                            $.get('delitem.php', {
-                               dbname: '<?=$dbname ?>',
-                               MatchID: "<?='Match'.$id ?>",
-                               Team: item[0],
-                               KitNumber: parseInt(item[1]),
-                               Name: item[2],
-                               Type: item[3],
-                               Time: item[4],
-                               StoppageTime: item[5]
-                            }, function(data,state) {
-                                console.log(data,state);
-                                $.get('additem.php', {
-                                    dbname: '<?=$dbname ?>',
-                                    MatchID: "<?='Match'.$id ?>",
-                                    Team: item[0],
-                                    KitNumber: parseInt(item[1]),
-                                    Name: item[2],
-                                    Type: item[3],
-                                    Time: item[4],
-                                    StoppageTime: item[5]
-                                }, function(data,state) {
-                                    console.log(data,state);
-                                    location.reload();
-                                });
-
-                            });
-                        }
-
-                    });
+                    drawplayer(aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(), aside[k].namestr, 920 + 70, ey);
                     ey += 50;
                 }
             }
             curY += halfh + 40;
         }
             var pscore = "(" + phg.toString() + ":" + pag.toString() + ")";
-            $('canvas').drawText({
-                layer: true,
-                fillStyle: '#000',
-                fontStyle: 'bold',
-                name: 'pscore',
-                x: 800, y: 120,
-                fontSize: 60,
-                fontFamily: 'Trebuchet MS',
-                text: pscore
-            });
+            drawcenter('Trebuchet MS', 60, 'bold', 'pscore', pscore, 120);
         }
         
+        var score = hg.toString() + ":" + ag.toString();
+        drawcenter('Trebuchet MS', 60, 'bold', 'score', score, 60);
         $('canvas').drawLine({
             layer: true,
             name: 'timeline',
@@ -1898,21 +1506,7 @@ function showreport() {
             fontFamily: 'simHei',
             text: "乌龙球"
         })
-        var score = hg.toString() + ":" + ag.toString();
-        $('canvas').drawText({
-            layer: true,
-            fillStyle: '#000',
-            fontStyle: 'bold',
-            name: 'score',
-            x: 800, y: 50,
-            fontSize: 60,
-            fontFamily: 'Trebuchet MS',
-            text: score
-        });
-        //$('canvas').attr("height", curY + 50);
 
-
-        //
         window.setTimeout(function() {
             var pngdown = $('canvas').getCanvasImage('png');
             var pngbtn = document.getElementById("pngdown");
@@ -1923,14 +1517,6 @@ function showreport() {
         //var che = check(hflist, aflist, hevent, aevent, leastnum);
         });
 }
-//function getpng(subtitle, HomeName, score, AwayName) {
-//    window.setTimeout(function() {
-//        var pngdown = $('canvas').getCanvasImage('png');
-//        var pngbtn = document.getElementById("pngdown");
-//        pngbtn.href = pngdown;
-//        pngbtn.download = subtitle + HomeName + score + AwayName +".png";
-//    },200);
-//}
 showreport();
 function check(hflist, aflist, hevent, aevent, habandon, aabandon, leastnum) {
     class Player {
