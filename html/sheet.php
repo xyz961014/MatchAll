@@ -3,21 +3,6 @@
 require "dbinfo.php";
 $dbname = $_GET['Match'];
 $conn = dbconnect($dbname);
-if (preg_match('/^MANAN.+/', $dbname)) {
-        $tabnum = 0;
-} 
-if (preg_match('/^MANYU.+/', $dbname)) {
-        $tabnum = 1;
-}
-if (preg_match('/^MAWU.+/', $dbname)) {
-        $tabnum = 2;
-}
-if (preg_match('/^NANQI.+/', $dbname)) {
-        $tabnum = 3;
-}
-if (preg_match('/^FRESH.+/', $dbname)) {
-        $tabnum = 4;
-}
 ?>
 <html lang="ch">
   <head>
@@ -36,27 +21,17 @@ if (preg_match('/^FRESH.+/', $dbname)) {
     <title>TUFA</title>
   </head>
   <body>
-    <?php echo "<a href='index.php?tab=".$tabnum."'>返回</a>"; ?>
+    <?php echo "<a href='index.php?tab=".$dbname."'>返回</a>"; ?>
     <!-- Optional JavaScript -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <?php
-if (preg_match('/^MANAN.+/', $dbname)) {
-    $title = "马杯男足执场单";
-}
-if (preg_match('/^MANYU.+/', $dbname)) {
-    $title = "马杯女足执场单";
-}
-if (preg_match('/^MAWU.+/', $dbname)) {
-    $title = "马杯五人制执场单";
-}
-if (preg_match('/^NANQI.+/', $dbname)) {
-    $title = "小世界杯执场单";
-}
-if (preg_match('/^FRESH.+/', $dbname)) {
-    $title = "新生杯执场单";
+$sql = "SELECT * FROM Info";
+$res = $conn->query($sql);
+while ($row = $res->fetch_assoc()) {
+    $title = $row['subname']."执场单";
 }
 echo "<h2>".$title."</h2>";
 $sql = "SELECT TeamName FROM Teams";

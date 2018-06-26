@@ -3,18 +3,6 @@
 require "dbinfo.php";
 $dbname = $_GET['Match'];
 $conn = dbconnect($dbname);
-if (preg_match('/^MANAN.+/', $dbname)) {
-        $tabnum = 0;
-    } 
-if (preg_match('/^MANYU.+/', $dbname)) {
-        $tabnum = 1;
-    }
-if (preg_match('/^NANQI.+/', $dbname)) {
-        $tabnum = 3;
-    }
-if (preg_match('/^FRESH.+/', $dbname)) {
-        $tabnum = 4;
-    }
 ?>
 <html lang="ch">
   <head>
@@ -30,7 +18,7 @@ if (preg_match('/^FRESH.+/', $dbname)) {
     <title>TUFA</title>
   </head>
   <body>
-    <?php echo "<a href='index.php?tab=".$tabnum."'>返回</a>"; ?>
+    <?php echo "<a href='index.php?tab=".$dbname."'>返回</a>"; ?>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>

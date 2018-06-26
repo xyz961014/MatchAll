@@ -3,18 +3,6 @@
 require "dbinfo.php";
 $dbname = $_GET['Match'];
 $conn = dbconnect($dbname);
-if (preg_match('/^MANAN.+/', $dbname)) {
-        $tabnum = 0;
-    } 
-if (preg_match('/^MANYU.+/', $dbname)) {
-        $tabnum = 1;
-}
-if (preg_match('/^NANQI.+/', $dbname)) {
-        $tabnum = 3;
-}
-if (preg_match('/^FRESH.+/', $dbname)) {
-        $tabnum = 4;
-}
 exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$arr,$ret);
 //print_r($arr);
 ?>
@@ -36,7 +24,7 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <?php echo "<a href='index.php?tab=".$tabnum."'>返回</a>"; ?>
+    <?php echo "<a href='index.php?tab=".$dbname."'>返回</a>"; ?>
     <!-- Optional JavaScript -->
     <div class="container">
         <ul class="nav nav-tabs">

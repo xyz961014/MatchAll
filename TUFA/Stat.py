@@ -64,9 +64,11 @@ def Stat(matchname, matchid = None, add = True):
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
     try:
-        outtime = 81
-        if re.match('MANYU',matchname):
-            outtime = 61
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM Info"
+            cursor.execute(sql)
+            matchinfo = cursor.fetchall()[0]
+        outtime = matchinfo['ordinarytime'] + 1
         EliMatches = dict()
         if os.path.exists('../html/' + matchname + '.json'):
             with open('../html/' + matchname + '.json') as ef:
@@ -103,11 +105,11 @@ def Stat(matchname, matchid = None, add = True):
                 if m.stage == 'Group':
                     groupbool = True
                 Infos = cursor.fetchall() #all events
-                if re.match("MANAN", matchname) and not groupbool:
+                if (matchinfo['penalty'] == "elimination" and not groupbool) or (matchinfo['penalty'] == "always"):
                     ohg = 0
                     oag = 0
                     for info in Infos:
-                        if info['EventTime'] < 81:
+                        if info['EventTime'] < matchinfo['ordinarytime'] + 1:
                             if info['EventType'] == '进球' or info['EventType'] == '点球':
                                 if info['Team'] == m.hometeam:
                                     ohg += 1
@@ -119,10 +121,7 @@ def Stat(matchname, matchid = None, add = True):
                                 elif info['Team'] == m.awayteam:
                                     ohg += 1
                     if oag == ohg:
-                        if re.match("MANAN", matchname):
-                            outtime = 111
-                        if re.match("NANQI", matchname):
-                            outtime = 101
+                        outtime = matchinfo['extratime'] + matchinfo['ordinarytime'] + 1
                 players = dict()
                 Habandon = False
                 Aabandon = False
@@ -171,10 +170,19 @@ def Stat(matchname, matchid = None, add = True):
                             players[str(info['KitNumber']) + info['Name']].yc += 1
                             if players[str(info['KitNumber']) + info['Name']].yc == 2:
                                 players[str(info['KitNumber']) + info['Name']].outtime.append(info['EventTime'])
-                            if info['Team'] == m.hometeam:
-                                hometeam.yc += 1
+                                players[str(info['KitNumber']) + info['Name']].yc = 0
+                                players[str(info['KitNumber']) + info['Name']].rc = 1
+                                if info['Team'] == m.hometeam:
+                                    hometeam.yc -= 1
+                                    hometeam.rc += 1
+                                else:
+                                    awayteam.yc -= 1
+                                    awayteam.rc += 1
                             else:
-                                awayteam.yc += 1
+                                if info['Team'] == m.hometeam:
+                                    hometeam.yc += 1
+                                else:
+                                    awayteam.yc += 1
                         elif info['EventType'] == '红牌':
                             players[str(info['KitNumber']) + info['Name']].rc += 1
                             players[str(info['KitNumber']) + info['Name']].outtime.append(info['EventTime'])

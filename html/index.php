@@ -1,4 +1,21 @@
 <!doctype html>
+<?php 
+require "dbinfo.php";
+$dbname = "MATCHES";
+$conn = dbconnect($dbname);
+$sql = "SELECT * FROM matches";
+$result = $conn->query($sql);
+$tabs = array();
+while ($row = $result->fetch_assoc()) {
+    if (!array_key_exists($row['class'], $tabs)) {
+        $tabs[$row['class']] = array($row);
+    }
+    else {
+        array_push($tabs[$row['class']], $row);
+    }
+}
+asort($tabs);
+?>
 <html lang="ch">
   <head>
     <!-- Required meta tags -->
@@ -15,58 +32,28 @@
   <body>
 <div class="container">
 <ul id="navbar" class="nav nav-tabs">
-    <li class='active'>
-        <a href="#MANAN" data-toggle="tab"> 马杯男足 </a>
-    </li>
-    <li>
-        <a href="#MANYU" data-toggle="tab"> 马杯女足 </a>
-    </li>
-    <li>
-        <a href="#MAWU" data-toggle="tab"> 马杯五人制 </a>
-    </li>
-    <li>
-        <a href="#NANQI" data-toggle="tab"> 小世界杯 </a>
-    </li>
-    <li>
-        <a href="#FRESH" data-toggle="tab">新生杯</a>
-    </li>
+<?php 
+foreach ($tabs as $tab) {
+    if (count($tab) == 1)
+        echo "<li> <a href='#".$tab[0]['dbname']."' data-toggle='tab'>".$tab[0]['subname']."</a></li>";
+    else {
+        echo "<li class='dropdown'> <a href='#' class='dropdown-toggle' data-toggle='dropdown'>".$tab[0]['subname']."<b class='caret'></b></a> <ul class='dropdown-menu'>";
+        foreach($tab as $t) {
+            echo "<li><a href='#".$t['dbname']."' data-toggle='tab'>".$t['year']."</a></li>";
+        }
+        echo "</ul></li>";
+    }
+}
+?>
 </ul>
     <div class="tab-content">
-        <div class="tab-pane fade in active" id="MANAN">
-            <a href="sheet.php?Match=MANAN_1718">马杯男足执场单</a>
-            <br>
-            <a href="schedule.php?Match=MANAN_1718">马杯男足赛程</a>
-            <br>
-            <a href="ranktable.php?Match=MANAN_1718">马杯男足积分表</a>
-        </div>
-        <div class="tab-pane fade" id="MANYU">
-            <a href="sheet.php?Match=MANYU_18">马杯女足执场单</a>
-            <br>
-            <a href="schedule.php?Match=MANYU_18">马杯女足赛程</a>
-            <br>
-            <a href="ranktable.php?Match=MANYU_18">马杯女足积分表</a>
-
-        </div>
-        <div class="tab-pane fade" id="MAWU">
-            <a href="sheet.php?Match=MAWU_18">马杯五人制执场单</a>
-
-        </div>
-        <div class="tab-pane fade" id="NANQI">
-            <a href="schedule.php?Match=NANQI_18">小世界杯赛程</a>
-            <br>
-            <a href="ranktable.php?Match=NANQI_18">小世界杯积分表</a>
-
-        </div>
-        <div class="tab-pane fade" id="FRESH">
-            <a href="sheet.php?Match=FRESHMANCUP_18">新生杯执场单</a>
-            <br>
-            <a href="schedule.php?Match=FRESHMANCUP_18">新生杯赛程</a>
-            <br>
-            <a href="ranktable.php?Match=FRESHMANCUP_18">新生杯积分表</a>
-
-        </div>
-
-
+<?php
+foreach ($tabs as $class => $tab) {
+    foreach ($tab as $t) {
+        echo "<div class='tab-pane fade' id='".$t['dbname']."'> <a href='sheet.php?Match=".$t['dbname']."'>".$t['subname']."执场单</a> <br> <a href='schedule.php?Match=".$t['dbname']."'>".$t['subname']."赛程</a> <br> <a href='ranktable.php?Match=".$t['dbname']."'>".$t['subname']."积分表</a> </div>";
+    }
+}
+?>
     <div>
 </div>
 
@@ -75,11 +62,34 @@
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <?php
-$tabnum = $_GET['tab'];
+$tabname = $_GET['tab'];
+$i = -1;
+$j = -1;
+foreach($tabs as $tab) {
+    $i++;
+    $j = -1;
+
+    foreach($tab as $t) {
+        if (count($tab) > 1)
+            $j++;
+        if ($t['dbname'] == $tabname) {
+            $taba = $i;
+            $tabb = $j;
+            break;
+        }
+    }
+}
+$conn->close();
 ?>
 <script>
-var tab = '<?=$tabnum ?>';
-$('#navbar li:eq('+ tab.toString() +') a').tab('show');
+var taba = '<?=$taba ?>';
+var tabb = '<?=$tabb ?>';
+console.log(taba, tabb);
+if (tabb == -1)
+    $('#navbar li:eq('+ taba.toString() +') a').tab('show');
+else
+    $('#navbar li:eq('+ taba.toString() +') li:eq('+ tabb.toString() +') a').tab('show');
+
 </script>
   </body>
 </html>

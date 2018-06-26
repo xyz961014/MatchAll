@@ -90,11 +90,10 @@
 require 'TeamDict.php';
 require 'dbinfo.php';
 $id = $_GET["id"];
-$matchdb = "MATCHES";
-$matchconn = dbconnect($matchdb);
 $dbname = $_GET['Match'];
-$sql = "SELECT * FROM matches WHERE dbname = '".$dbname."'";
-$res = $matchconn->query($sql);
+$conn = dbconnect($dbname);
+$sql = "SELECT * FROM Info";
+$res = $conn->query($sql);
 while($row = $res->fetch_assoc()) {
     $matchname = $row['name'];
     $subname = $row['subname'];
@@ -102,9 +101,12 @@ while($row = $res->fetch_assoc()) {
     $minonfield = $row['minonfield'];
     $matchclass = $row['class'];
     $enablekitnum = $row['enablekitnum'];
+    $penalty = $row['penalty'];
+    $ordinarytime = $row['ordinarytime'];
+    $extratime = $row['extratime'];
+    $penaltyround = $row['penaltyround'];
+    $year = $row['year'];
 }
-$matchconn->close();
-$conn = dbconnect($dbname);
 echo "<a href='schedule.php?Match=$dbname'>返回</a>";
 echo "<div class='row' id='match'>";
 $elifile = fopen($dbname.'.json','r') or die("Unable to open file!");
@@ -612,14 +614,15 @@ function PSubmit() {
         console.log(data);
         showreport();
         var dbstr = '<?=$dbname ?>';
-        if (dbstr.match("MANAN"))
-            var time = 110;
-        else if (dbstr.match("MANYU"))
-            var time = 60;
-        else if (dbstr.match("NANQI"))
-            var time = 100;
-        else if (dbstr.match("FRESH"))
-            var time = 80;
+        var time = '<?=$extratime + $ordinarytime ?>';
+        //if (dbstr.match("MANAN"))
+        //    var time = 110;
+        //else if (dbstr.match("MANYU"))
+        //    var time = 60;
+        //else if (dbstr.match("NANQI"))
+        //    var time = 100;
+        //else if (dbstr.match("FRESH"))
+        //    var time = 80;
         var stptime = 0;
         var team = $("select[name=Team]");
         var num = $("input[name=KitNumber][title=penalty]");
@@ -1348,7 +1351,7 @@ function showreport() {
             }
             curY += halfh + 40;
         }
-        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag) { //点球决胜
+        if (((stage != 'Group' && '<?=$penalty?>'.match("elimination")) || '<?=$penalty?>'.match("always")) && hg == ag) { //点球决胜
             var phg = hg;
             var pag = ag;
             for (var i = 0;i < revents.length;i++) {
@@ -1372,7 +1375,7 @@ function showreport() {
                 var rectwidth = 0;
                 var rectheight = hside.length * 50 + 10;
                 for (var k = 0;k < hside.length;k++) {
-                    drawname('rgba(0, 0, 0, 0)', 'measure' + hside[k].namestr, 800, 0);
+                    drawname('rgba(0, 0, 0, 0)', 'measure' + hside[k].namestr, hside[k].namestr, 800, 0);
                     rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + hside[k].namestr).width);
                 }
                 rectwidth += 100;
@@ -1397,7 +1400,7 @@ function showreport() {
                 var rectwidth = 0;
                 var rectheight = aside.length * 50 + 10;
                 for (var k = 0;k < aside.length;k++) {
-                    drawname('rgba(0, 0, 0, 0)', 'measure' + aside[k].namestr, 800, 0);
+                    drawname('rgba(0, 0, 0, 0)', 'measure' + aside[k].namestr, aside[k].namestr, 800, 0);
                     rectwidth = Math.max(rectwidth, $('canvas').measureText('measure' + aside[k].namestr).width);
                 }
                 rectwidth += 100;
