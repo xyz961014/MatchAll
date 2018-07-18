@@ -15,6 +15,7 @@ while ($row = $result->fetch_assoc()) {
     $info["type"] = $row['EventType'];
     $info["time"] = $row['EventTime'];
     $info["stptime"] = $row['StoppageTime'];
+    $info["eventid"] = $row['EventID'];
     array_push($infos,json_encode($info));
 }
 //$info['Team'] = $team;

@@ -63,7 +63,7 @@
                 <br>
                 <div class="form-group">
                     <label for="name">时间： </label>
-                    <input type="text" class="form-control timeinput" id="timeinput" placeholder="请输入时间，伤停补时用+号表示。多个事件用空格隔开。">
+                    <input type="text" class="form-control timeinput" id="timeinput" placeholder="请输入时间，伤停补时用+号表示。多个事件用空格隔开。" autofocus>
                 </div>
 		    </div>
             <div class="modal-footer">
@@ -116,15 +116,17 @@ fclose($elifile);
 $sql = "SELECT * FROM Match$id";
 $result = $conn->query($sql);
 if (!$result) {
-    $sql0 = "CREATE TABLE Match$id (
-      `Team` varchar(255) NOT NULL,
-      `KitNumber` int(11) DEFAULT NULL,
-      `Name` varchar(255) NOT NULL,
-      `ExtraInfo` varchar(255) DEFAULT NULL,
-      `EventType` varchar(255) NOT NULL,
-      `EventTime` int(11) DEFAULT NULL,
-      `StoppageTime` int(11) DEFAULT NULL
-    )";
+    $sql0 = "CREATE TABLE `Match$id` (
+        `Team` varchar(255) NOT NULL,
+        `KitNumber` int(11) DEFAULT NULL,
+        `Name` varchar(255) NOT NULL,
+        `ExtraInfo` varchar(255) DEFAULT NULL,
+        `EventType` varchar(255) NOT NULL,
+        `EventTime` int(11) DEFAULT NULL,
+        `StoppageTime` int(11) DEFAULT NULL,
+        `EventID` int(11) NOT NULL AUTO_INCREMENT,
+      PRIMARY KEY (`EventID`)
+) ";
     if ($conn->query($sql0) === TRUE) {
         echo "";
     } else {
@@ -181,7 +183,7 @@ $namefilter = '/[^\x7f-\xff\w+]|·+/';
         $cname = preg_replace($namefilter, '', $homeplayers[$i]['Name']);
         $name = preg_replace('/^\s+|\s+$/', '', $homeplayers[$i]['Name']);
         echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
-        echo "<input class='firstcheck' type='checkbox' name='Homecheck' id='H~$num~".$name."' value='$num'>";
+        echo "<input class='firstcheck' type='checkbox' name='Homecheck' id='H~$num~".$name."' value='0'>";
         //echo $num."-".$homeplayers[$i]['Name'];
         echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
     }
@@ -193,7 +195,7 @@ echo "<div class='awaytable col-lg-6 col-md-6'><table class='table table-bordere
         $cname = preg_replace($namefilter, '', $awayplayers[$i]['Name']);
         $name = preg_replace('/^\s+|\s+$/', '', $awayplayers[$i]['Name']);
         echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
-        echo "<input class='firstcheck' type='checkbox' name='Awaycheck' id='A~$num~".$name."' value='$num'>";
+        echo "<input class='firstcheck' type='checkbox' name='Awaycheck' id='A~$num~".$name."' value='0'>";
         //echo $num."-".$awayplayers[$i]['Name'];
         echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
     }
@@ -420,9 +422,9 @@ $(".firstcheck").click(function() {
         if (Anum[k].checked)
             an++;
     }
-    var Hinst = document.getElementById(id); 
-    if (Hinst.checked && (an > maxonfield || hn > maxonfield)) {
-        Hinst.checked = false;
+    var inst = document.getElementById(id); 
+    if (inst.checked && (an > maxonfield || hn > maxonfield)) {
+        inst.checked = false;
         alert('首发人数超过' + maxonfield.toString() + "人！");
     }
     else {
@@ -434,7 +436,7 @@ $(".firstcheck").click(function() {
         }, function(data, state) {
             console.log(data);
             console.log(team,num,name);
-            if (Hinst.checked) {
+            if (inst.checked) {
                 $.get('additem.php', {
                     dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
@@ -453,12 +455,7 @@ $(".firstcheck").click(function() {
                  $.get('delitem.php', {
                     dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
-                    Team: team,
-                    KitNumber: num,
-                    Name: name,
-                    Type: '首发',
-                    Time: 0,
-                    StoppageTime: 0
+                    EventID: inst.value,
                 }, function(data, state) {
                     console.log(data);
                     showreport();
@@ -833,39 +830,41 @@ function showreport() {
         for (var i = 0;i < hflist.length;i++) {
             var Hinst = document.getElementById('H~'+hflist[i].kitnum+'~'+hflist[i].name); 
             Hinst.checked = true;
+            Hinst.value = hflist[i].eventid;
         } 
         for (var i = 0;i < aflist.length;i++) {
             var Ainst = document.getElementById('A~'+aflist[i].kitnum+'~'+aflist[i].name); 
             Ainst.checked = true;
+            Ainst.value = aflist[i].eventid;
         }
-        $(".delplayer").click(function() {
-            var id = $(this).attr('id');
-            var id = id.split(".");
-            validbool = 0;
-            $.get('checked.php',{
-                dbname: '<?=$dbname ?>',
-                MatchID: '<?=$id ?>',
-                Valid: validbool
-            },function(data,state) {
-                console.log(data);
-                //console.log(id);
-                $.get('delitem.php', {
-                    dbname: '<?=$dbname ?>',
-                    MatchID: "<?='Match'.$id ?>",
-                    Team: id[0],
-                    KitNumber: parseInt(id[1]),
-                    Name: id[2],
-                    Type: '首发',
-                    Time: null,
-                    StoppageTime:null
+        //$(".delplayer").click(function() {
+        //    var id = $(this).attr('id');
+        //    var id = id.split(".");
+        //    validbool = 0;
+        //    $.get('checked.php',{
+        //        dbname: '<?=$dbname ?>',
+        //        MatchID: '<?=$id ?>',
+        //        Valid: validbool
+        //    },function(data,state) {
+        //        console.log(data);
+        //        //console.log(id);
+        //        $.get('delitem.php', {
+        //            dbname: '<?=$dbname ?>',
+        //            MatchID: "<?='Match'.$id ?>",
+        //            Team: id[0],
+        //            KitNumber: parseInt(id[1]),
+        //            Name: id[2],
+        //            Type: '首发',
+        //            Time: null,
+        //            StoppageTime:null
 
-                }, function(data,state) {
-                    console.log(data,state);
-                    showreport();
-                });
+        //        }, function(data,state) {
+        //            console.log(data,state);
+        //            showreport();
+        //        });
 
-            })
-                    });
+        //    })
+        //            });
         for (var i = 0;i < hevent.length;i++) {
             if (hevent[i].stptime == 0) 
                 var timestr = hevent[i].time.toString();
@@ -873,7 +872,7 @@ function showreport() {
                 var timestr = hevent[i].time.toString() + "+" + hevent[i].stptime.toString();
             hevent[i].timestr = timestr;
             var cname = hevent[i].name.replace(/[^\u4e00-\u9fa5\w]/g, '');
-            var tb = " <a class='delevent' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
+            var tb = " <a class='delevent' id='del\."+hevent[i].eventid+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (hevent[i].type == '进球' || hevent[i].type == '点球' || hevent[i].type == '乌龙球' || hevent[i].type == '点球罚失' ) {
                 var Hcell = $('.hometable .row' + hevent[i].kitnum.toString() + cname + ' .goal');
                 if (hevent[i].type == '进球') {
@@ -912,7 +911,7 @@ function showreport() {
             }
             if (hevent[i].type == '点球决胜罚进' || hevent[i].type == '点球决胜罚失') {
                 var txt = hevent[i].type + "\t" + hevent[i].timestr + "\'\t" + hevent[i].namestr; 
-                tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+hevent[i].team+"\."+hevent[i].kitnum.toString()+"\."+hevent[i].name+"\."+hevent[i].type+"\."+hevent[i].time.toString()+"\."+hevent[i].stptime.toString()+"' value='delete'>";
+                tb = " <input type='button' class='delevent btn btn-sm btn-default' id='del\."+hevent[i].eventid+"' value='delete'>";
                 var cont = $("<p class='eventdisplay'></p>").text(txt); 
                 cont.append(tb);
                 homeevent.append(cont);
@@ -926,7 +925,7 @@ function showreport() {
                 var timestr = aevent[i].time.toString() + "+" + aevent[i].stptime.toString();
             aevent[i].timestr = timestr;
             var cname = aevent[i].name.replace(/[^\u4e00-\u9fa5\w]/g, '');
-            var tb = " <a class='delevent' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
+            var tb = " <a class='delevent' id='del\."+aevent[i].eventid+"'><span class='glyphicon glyphicon-remove'></span></a>" ;
             if (aevent[i].type == '进球' || aevent[i].type == '点球' || aevent[i].type == '乌龙球' || aevent[i].type == '点球罚失' ) {
                 var Hcell = $('.awaytable .row' + aevent[i].kitnum.toString() + cname + ' .goal');
                 if (aevent[i].type == '进球') {
@@ -965,7 +964,7 @@ function showreport() {
             }
             if (aevent[i].type == '点球决胜罚进' || aevent[i].type == '点球决胜罚失') {
                 var txt = aevent[i].type + "\t" + aevent[i].timestr + "\'\t" + aevent[i].namestr; 
-                tb = " <input type='button' class='delevent btn btn-sm btn-default' id='"+aevent[i].team+"\."+aevent[i].kitnum.toString()+"\."+aevent[i].name+"\."+aevent[i].type+"\."+aevent[i].time.toString()+"\."+aevent[i].stptime.toString()+"' value='delete'>";
+                tb = " <input type='button' class='delevent btn btn-sm btn-default' id='del\."+aevent[i].eventid+"' value='delete'>";
                 var cont = $("<p class='eventdisplay'></p>").text(txt); 
                 cont.append(tb);
                 awayevent.append(cont);
@@ -986,13 +985,7 @@ function showreport() {
                 $.get('delitem.php', {
                     dbname: '<?=$dbname ?>',
                     MatchID: "<?='Match'.$id ?>",
-                    Team: id[0],
-                    KitNumber: parseInt(id[1]),
-                    Name: id[2],
-                    Type: id[3],
-                    Time: parseInt(id[4]),
-                    StoppageTime:parseInt(id[5])
-
+                    EventID: parseInt(id[1]),
                 }, function(data,state) {
                     console.log(data,state);
                     showreport();
@@ -1244,10 +1237,16 @@ function showreport() {
             var aside = [];
             for (var j = 0;j < revents[i].length;j++) {
                 if (revents[i][j].team == homename && !revents[i][j].type.match(/点球决胜/)) {
-                    hside.push(revents[i][j]);
+                    if (revents[i][j].type == "乌龙球") 
+                        aside.push(revents[i][j]);
+                    else
+                        hside.push(revents[i][j]);
                 }
                 else if (revents[i][j].team == awayname && !revents[i][j].type.match(/点球决胜/)) {
-                    aside.push(revents[i][j]);
+                    if (revents[i][j].type == "乌龙球") 
+                        hside.push(revents[i][j]);
+                    else
+                        aside.push(revents[i][j]);
                 }
             }
             var halfh = Math.max(hside.length, aside.length) * 50 / 2 + 10;
