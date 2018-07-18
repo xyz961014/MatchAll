@@ -477,7 +477,7 @@ $(".firstcheck").click(function() {
             <option> 进球
             <option> 换下
             <option> 换上
-            <option> 黄牌
+            <option> 黄牌	431
             <option> 红牌
             <option> 点球
             <option> 乌龙球
@@ -849,7 +849,7 @@ function showreport() {
         //        console.log(data);
         //        //console.log(id);
         //        $.get('delitem.php', {
-        //            dbname: '<?=$dbname ?>',
+        //            dbname: '<?=$dbname ?>',	431
         //            MatchID: "<?='Match'.$id ?>",
         //            Team: id[0],
         //            KitNumber: parseInt(id[1]),
@@ -1350,7 +1350,7 @@ function showreport() {
             }
             curY += halfh + 40;
         }
-        if (((stage != 'Group' && '<?=$penalty?>'.match("elimination")) || '<?=$penalty?>'.match("always")) && hg == ag) { //点球决胜
+        if (((stage != 'Group' && '<?=$penalty?>'.match("淘汰赛")) || '<?=$penalty?>'.match("总是")) && hg == ag) { //点球决胜
             var phg = hg;
             var pag = ag;
             for (var i = 0;i < revents.length;i++) {
