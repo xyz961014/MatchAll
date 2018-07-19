@@ -23,6 +23,9 @@
 
         <p class='list'></p>
 
+<?php
+if ($right > 1) { //权限
+?>
 <script>
 var d = new Date();
 $.get("showmatch.php", {
@@ -142,6 +145,10 @@ $.get("showmatch.php", {
 })
 </script>
 <?php
+
+} else {
+    echo "您没有权限查看这些内容！";
+}
 $conn->close();
 ?>
 </div>

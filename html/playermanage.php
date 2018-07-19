@@ -24,11 +24,15 @@ $team = $_GET['team'];
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
     <div class="container">
 
         <p class='list'></p>
-
+<?php
+if ($right > 1) {
+?>
 <script>
+
 var d = new Date();
 var dbname = "<?=$dbname ?>";
 var team = "<?=$team ?>";
@@ -143,8 +147,12 @@ $.get("showplayer.php", {
         })
     })
 })
+
 </script>
 <?php
+} else {
+    echo "您没有权限查看这些内容！";
+}
 $conn->close();
 ?>
 </div>

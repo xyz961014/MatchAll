@@ -84,14 +84,20 @@
     <script src="https://cdn.bootcss.com/jcanvas/21.0.0/min/jcanvas.min.js"></script>
     <script src="https://cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
     <div class="container">
+<?php 
+$dbname = $_GET['Match'];
+echo "<a href='schedule.php?Match=$dbname'>返回</a>";
+require "session.php"; 
+if ($right > 1) {
+?>
+        <br>
         <input id="validcheck" type="checkbox" onclick='onvalid()' />有效
-        <?php require "session.php"; ?>
-<br>
+        <br>
 <?php
+}
 require 'TeamDict.php';
 require 'dbinfo.php';
 $id = $_GET["id"];
-$dbname = $_GET['Match'];
 $conn = dbconnect($dbname);
 $sql = "SELECT * FROM Info";
 $res = $conn->query($sql);
@@ -108,7 +114,6 @@ while($row = $res->fetch_assoc()) {
     $penaltyround = $row['penaltyround'];
     $year = $row['year'];
 }
-echo "<a href='schedule.php?Match=$dbname'>返回</a>";
 echo "<div class='row' id='match'>";
 $elifile = fopen($dbname.'.json','r') or die("Unable to open file!");
 $eliinfo = json_decode(fgets($elifile));
@@ -159,49 +164,52 @@ if (preg_match('/^MA.+/', $dbname)) {
 }
 $subname = str_replace('"', '\"', $subname);
 $subtitle = $subname.$subtitle;
-$sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
-if (preg_match('/^NANQI.+/', $dbname)) {
-    $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY Class,Name";
-} 
-$res = $conn->query($sql);
-while ($row = $res->fetch_assoc()) {
-    $homeplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
-}
-$sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$awayteam."' ORDER BY KitNumber";
-if (preg_match('/^NANQI.+/', $dbname)) {
-    $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$awayteam."' ORDER BY Class,Name";
-} 
-$res = $conn->query($sql);
-while ($row = $res->fetch_assoc()) {
-    $awayplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
-}
+if ($right > 1) {
+    $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY KitNumber";
+    if (preg_match('/^NANQI.+/', $dbname)) {
+        $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$hometeam."' ORDER BY Class,Name";
+    } 
+    $res = $conn->query($sql);
+    while ($row = $res->fetch_assoc()) {
+        $homeplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
+    }
+    $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$awayteam."' ORDER BY KitNumber";
+    if (preg_match('/^NANQI.+/', $dbname)) {
+        $sql = "SELECT KitNumber,Name,ExtraInfo FROM Players WHERE Team = '".$awayteam."' ORDER BY Class,Name";
+    } 
+    $res = $conn->query($sql);
+    while ($row = $res->fetch_assoc()) {
+        $awayplayers[] = Array("Name"=>$row['Name'], "KitNumber"=>$row['KitNumber'], "ExtraInfo"=>$row['ExtraInfo']);
+    }
+    
+    echo "<div class='hometable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$hometeam."\t<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
+    //echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
+    $namefilter = '/[^\x7f-\xff\w+]|·+/';
+        for($i = 0;$i<count($homeplayers);$i++) {
+            $num = $homeplayers[$i]['KitNumber'];
+            $cname = preg_replace($namefilter, '', $homeplayers[$i]['Name']);
+            $name = preg_replace('/^\s+|\s+$/', '', $homeplayers[$i]['Name']);
+            echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
+            echo "<input class='firstcheck' type='checkbox' name='Homecheck' id='H~$num~".$name."' value='0'>";
+            //echo $num."-".$homeplayers[$i]['Name'];
+            echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
+        }
+    echo "</tbody></table></div>";
+    echo "<div class='awaytable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$awayteam."\t<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
+    //echo "<br>".$awayteam."首发:<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛<br>";
+        for($i = 0;$i<count($awayplayers);$i++) {
+            $num = $awayplayers[$i]['KitNumber'];
+            $cname = preg_replace($namefilter, '', $awayplayers[$i]['Name']);
+            $name = preg_replace('/^\s+|\s+$/', '', $awayplayers[$i]['Name']);
+            echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
+            echo "<input class='firstcheck' type='checkbox' name='Awaycheck' id='A~$num~".$name."' value='0'>";
+            //echo $num."-".$awayplayers[$i]['Name'];
+            echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
+        }
+    echo "</tbody></table></div>";
+    echo "<br>";
 
-echo "<div class='hometable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$hometeam."\t<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
-//echo $hometeam."首发:<input type='checkbox' class='abandon' name='HomeAbandon' id='H~Abandon'>弃赛<br>";
-$namefilter = '/[^\x7f-\xff\w+]|·+/';
-    for($i = 0;$i<count($homeplayers);$i++) {
-        $num = $homeplayers[$i]['KitNumber'];
-        $cname = preg_replace($namefilter, '', $homeplayers[$i]['Name']);
-        $name = preg_replace('/^\s+|\s+$/', '', $homeplayers[$i]['Name']);
-        echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
-        echo "<input class='firstcheck' type='checkbox' name='Homecheck' id='H~$num~".$name."' value='0'>";
-        //echo $num."-".$homeplayers[$i]['Name'];
-        echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='H~".$num."~".$name."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
-    }
-echo "</tbody></table></div>";
-echo "<div class='awaytable col-lg-6 col-md-6'><table class='table table-bordered table-hover table-condensed'><caption>".$awayteam."\t<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛</caption><thead><tr><th>#</th><th>姓名</th><th>首发</th><th>换人</th><th>进球</th><th>红黄牌</th></tr></thead><tbody>";
-//echo "<br>".$awayteam."首发:<input type='checkbox' class='abandon' name='AwayAbandon' id='A~Abandon'>弃赛<br>";
-    for($i = 0;$i<count($awayplayers);$i++) {
-        $num = $awayplayers[$i]['KitNumber'];
-        $cname = preg_replace($namefilter, '', $awayplayers[$i]['Name']);
-        $name = preg_replace('/^\s+|\s+$/', '', $awayplayers[$i]['Name']);
-        echo "<tr class='row".$num.$cname."'><td>".$num."</td><td>".$name."</td><td>";
-        echo "<input class='firstcheck' type='checkbox' name='Awaycheck' id='A~$num~".$name."' value='0'>";
-        //echo $num."-".$awayplayers[$i]['Name'];
-        echo "</td><td class='chg'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~chg'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='goal'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~goal'><span class='glyphicon glyphicon-plus'></span></button> </td><td class='ryc'><button class='addinfo btn btn-info btn-xs' id='A~".$num."~".$name."~ryc'><span class='glyphicon glyphicon-plus'></span></button> </td></tr>";
-    }
-echo "</tbody></table></div>";
-echo "<br>";
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Hnum = test_input($_POST['H']);
     $Anum = test_input($_POST['A']);
@@ -216,7 +224,9 @@ function test_input($data) {
 <script>
 var validbool = '<?=$valid?>';
 var stage = '<?=$stage ?>';
-console.log(stage);
+<?php
+if ($right > 1){
+?>
 function onvalid() {
     var validcheck = $("#validcheck");
     //console.log(validcheck[0].checked);
@@ -259,7 +269,6 @@ function onvalid() {
         console.log(data);
         });
     }
-    
 }
 $('#addModal').modal({
     keyboard: false,
@@ -465,7 +474,13 @@ $(".firstcheck").click(function() {
         })
     }
 })
+<?php
+}
+?>
 </script>
+<?php 
+if ($right > 1) {
+?>
 <div class='input col-xs-12 penalty'>
     
     <div class='event form-group'>
@@ -525,13 +540,24 @@ $(".firstcheck").click(function() {
         <div class="awayevent"></div>
     </div>
 </div>
+<?php
+}
+?>
 <div class="col-xs-12">
+<?php 
+if ($right > 1) {
+?>
 <h5>注：对于同一时间发生的多个事件，双击将其排在最末。</h5>
+<?php
+}
+?>
 <a class="btn btn-default" id="pngdown">下载图片</a>
 </div>
 <canvas id="canvas"></canvas>
 <script>
-
+<?php 
+if ($right > 1) {
+?>
 $('.event').hide();
 var Kittext = $("input[name=KitNumber]");
 var Nametext = $("input[name=Name]");
@@ -702,6 +728,10 @@ function ESubmit() {
 
     })
 }
+<?php
+}
+?>
+
 function getevents(info, dbname, homename, awayname) {
     var hflist = [];
     var aflist = [];
@@ -718,7 +748,7 @@ function getevents(info, dbname, homename, awayname) {
                 var ptn = /(校友|教工|足特)/;
                 var name = e.name.replace(/^\s+|\s+$/, '');
                 e.name = name;
-                if (dbname.match(/^NANQI.+/)) {
+                if ("<?=$enablekitnum?>") {
                     var txt = e.name;
                 } else {
                     if (ptn.test(e.extrainfo)) {
@@ -734,8 +764,15 @@ function getevents(info, dbname, homename, awayname) {
                 if (e.type == "首发") {
                     hflist.push(e);
                 } else if (e.type == "弃赛") {
+<?php 
+                    if ($right > 1) {
+?>
+
                     var Hhab = document.getElementById('H~Abandon');
                     Hhab.checked = true;
+<?php
+                    }
+?>
                     habandon = true;
                 } else {
                     hevent.push(e);
@@ -752,8 +789,14 @@ function getevents(info, dbname, homename, awayname) {
                 if (e.type == "首发") {
                     aflist.push(e);
                 } else if (e.type == "弃赛") {
+<?php 
+                    if ($right > 1) {
+?>
                     var Haab = document.getElementById('A~Abandon');
                     Haab.checked = true;
+<?php
+                    }
+?>
                     aabandon = true
                 } else {
                     aevent.push(e);
@@ -785,13 +828,18 @@ function getevents(info, dbname, homename, awayname) {
 }
 
 function showreport() {
+<?php 
+    if ($right > 1) {
+?>
     var validcheck = document.getElementById('validcheck'); 
-    console.log('valid:',validbool);
     if (validbool == 1) {
         validcheck.checked = true;
     } else {
         validcheck.checked = false;
     }
+<?php
+    }
+?>
     $('.tbl').remove();
     $(".eventdisplay").remove();
     $.get('showreport.php',{
@@ -810,6 +858,10 @@ function showreport() {
             var HomeName = homename;
             var AwayName = awayname;
         }
+        var [hflist, aflist, hevent, aevent, events, hg, ag] = getevents(info, dbname, homename, awayname);
+<?php 
+        if ($right > 1) {
+?>
         var homefirst = $(".homefirst");
         var awayfirst = $(".awayfirst");
         var homeevent = $(".homeevent");
@@ -821,8 +873,6 @@ function showreport() {
         awayfirst.hide();
         homeevent.append($("<h4 class='eventdisplay'></h4>").text(homename + "点球决胜："));
         awayevent.append($("<h4 class='eventdisplay'></h4>").text(awayname + "点球决胜："));
-        var [hflist, aflist, hevent, aevent, events, hg, ag] = getevents(info, dbname, homename, awayname);
-        console.log("events",events);
         if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag) {
             $(".penalty").show();
         } else {
@@ -994,6 +1044,9 @@ function showreport() {
             })
             
         });
+<?php
+        }
+?>
         //console.log(hflist,aflist,hevent,aevent);
         //REPORT PNG
         var revents = [];
@@ -1140,18 +1193,16 @@ function showreport() {
                         text: name,
                         fromCenter: false,
                         x: x, y: y,
+<?php
+                        if ($right >1) {
+?>
                         dblclick: function(layer) {
                             var item = layer.name.split("~");
                             console.log(item);
                             $.get('delitem.php', {
                                dbname: '<?=$dbname ?>',
                                MatchID: "<?='Match'.$id ?>",
-                               Team: item[0],
-                               KitNumber: parseInt(item[1]),
-                               Name: item[2],
-                               Type: item[3],
-                               Time: item[4],
-                               StoppageTime: item[5]
+                               EventID: parseInt(item[6]),
                             }, function(data,state) {
                                 console.log(data,state);
                                 $.get('additem.php', {
@@ -1170,6 +1221,9 @@ function showreport() {
 
                             });
                         }
+<?php 
+                        }
+?>
                     }); 
         }
         function drawrect(layername, x, y, w, h) {
@@ -1298,7 +1352,7 @@ function showreport() {
                     } else if (hside[k].type == "红牌") {
                         drawicon('hRC' + i.toString() + k.toString(), 'RC', 680 - rectwidth + 20, ey);
                     }
-                    drawplayer(hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + i.toString() + "~" + k.toString(), hside[k].namestr, 680 - rectwidth + 70, ey);
+                    drawplayer(hside[k].team + "~" + hside[k].kitnum + "~" + hside[k].name + "~" + hside[k].type + "~" + hside[k].time + "~" + hside[k].stptime + "~" + hside[k].eventid , hside[k].namestr, 680 - rectwidth + 70, ey);
                     ey += 50;
                 }
             } 

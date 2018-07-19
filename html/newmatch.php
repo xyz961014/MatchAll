@@ -15,6 +15,9 @@
   <body>
       <a href="./matchmanage.php">返回</a>
       <?php require "session.php"; ?>
+<?php
+if ($right > 1) { //权限
+?>
 <h3>增加新比赛</h3>
 <div class="container">
 <form role="form" action="./addmatch.php" method="post" id="matchform" onsubmit="return false">
@@ -79,11 +82,18 @@
   <button type="submit" class="btn btn-default" onclick="checkform()">提交</button>
 </form>
 </div>
-
+<?php
+} else {
+    echo "您没有权限查看这些内容！";
+}
+?>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<?php
+if ($right > 1) { //权限
+?>
 <script>
     function checkform() {
         var check = true;
@@ -142,5 +152,8 @@
     }
 
 </script>
+<?php
+} 
+?>
   </body>
 </html>

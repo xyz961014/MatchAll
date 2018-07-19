@@ -2,6 +2,27 @@
 <?php
 require "dbinfo.php";
 $dbname = $_GET['dbname'];
+
+?>
+<html lang="ch">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+
+
+    <title>TUFA</title>
+  </head>
+  <body>
+<?php echo "<a href='./schedule.php?Match=".$dbname."'>返回</a>";
+require "session.php";
+
+if ($right > 1) {
+
 $conn = dbconnect($dbname);
 $sql = "SELECT * FROM Info";
 $res = $conn->query($sql);
@@ -20,23 +41,6 @@ function printoption($teams) {
     }
     echo "<option value='TBD'>待定</option>";
 }
-?>
-<html lang="ch">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
-
-
-    <title>TUFA</title>
-  </head>
-  <body>
-<?php echo "<a href='./schedule.php?Match=".$dbname."'>返回</a>";
-require "session.php";
 echo "<h3>".$subname." 增加新比赛</h3>" ?>
 <div class="container">
 <form role="form" action="./addgame.php?dbname=<?php echo $dbname;?>" method="post">
@@ -79,11 +83,17 @@ echo "<h3>".$subname." 增加新比赛</h3>" ?>
   <button type="submit" class="btn btn-default">提交</button>
 </form>
 </div>
+<?php 
 
+}
+?>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<?php
+if ($right > 1) {
+?>
 <script>
 $("select[name$='team']").click(function() {
     var val = $(this).val();
@@ -108,6 +118,10 @@ $("select[name$='team']").click(function() {
 //})
 </script>
 <?php
+    }
+else {
+    echo "你没有权限查看这些内容！";
+}
 $conn->close();
 ?>
   </body>

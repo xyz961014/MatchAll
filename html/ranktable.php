@@ -68,7 +68,13 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade in active" id="pt">
+<?php 
+                if ($right > 1) {
+?>
                 <a class="btn btn-link hidearrow">隐藏</a>
+<?php
+                }
+?>
                 <div class="row" id="grouprank">
                 </div>
                 <div class="row" id="eliinfo">
@@ -195,6 +201,9 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false,or
     $('#'+divid).append(tableml);
 })
 }
+<?php
+if ($right > 1){
+?>
 $(".hidearrow").click(function() {
     if (hidearrow) {
         $(".btnmove").show();
@@ -207,6 +216,9 @@ $(".hidearrow").click(function() {
         $(".hidearrow").text("编辑")
     }
 })
+<?php
+}
+?>
 Refresh(dbname,d.getTime());
 function Refresh(dbname,time) {
     $('.ranktable').remove();
@@ -220,14 +232,26 @@ function Refresh(dbname,time) {
             var tableml = "<div class='ranktable col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>"+grouprank[gn].name+"组</caption><thead><tr><th>#</th><th>球队</th><th>胜</th><th>平</th><th>负</th><th>进/失</th><th>积分</th></tr></thead><tbody>";
             for (var i = 0;i < grouprank[gn].teams.length;i++) {
                 var t = grouprank[gn].teams[i];
-                var btndn = "  <button type='button' class='btnmove btn btn-xs' id='"+gn+"\.DN\."+i.toString()+"'><span class='glyphicon glyphicon-chevron-down'></span></button>"
-                var btnup = "  <button type='button' class='btnmove btn btn-xs' id='"+gn+"\.UP\."+i.toString()+"'><span class='glyphicon glyphicon-chevron-up'></span></button>"
+<?php
+                if ($right > 1){
+?>
+                var btndn = "  <button type='button' class='btnmove btn btn-xs' id='"+gn+"\.DN\."+i.toString()+"'><span class='glyphicon glyphicon-chevron-down'></span></button>";
+                var btnup = "  <button type='button' class='btnmove btn btn-xs' id='"+gn+"\.UP\."+i.toString()+"'><span class='glyphicon glyphicon-chevron-up'></span></button>";
                 if (i == 0) {
-                btnup = "  <button type='button' class='btnmove btn btn-xs hidden'><span class='glyphicon glyphicon-arrow-up'></span></button>"
+                btnup = "  <button type='button' class='btnmove btn btn-xs hidden'><span class='glyphicon glyphicon-arrow-up'></span></button>";
                 }
                 if (i == grouprank[gn].teams.length - 1) {
-                btndn = "  <button type='button' class='btnmove btn btn-xs hidden'><span class='glyphicon glyphicon-arrow-down'></span></button>"
+                btndn = "  <button type='button' class='btnmove btn btn-xs hidden'><span class='glyphicon glyphicon-arrow-down'></span></button>";
                 }
+<?php
+                } else {
+?>
+                var btnup = "";
+                var btndn = "";
+<?php
+                }
+?>
+
                 var tml = "<tr><td>"+(i+1).toString()+"</td><td>"+t.name+btndn+btnup+"</td><td>"+t.win+"</td><td>"+t.draw+"</td><td>"+t.lose+"</td><td>"+t.goals+"/"+t.concede+"</td><td>"+t.point+"</td></tr>";
                 tableml += tml;
             }
@@ -235,6 +259,9 @@ function Refresh(dbname,time) {
             $("#grouprank").append(tableml);
             console.log(grouprank[gn]);
         }
+<?php
+        if ($right > 1){
+?>
         $(".btnmove").click(function() {
             var id = $(this).attr('id');
             var id = id.split(".");
@@ -260,6 +287,10 @@ function Refresh(dbname,time) {
                 },0);
             })
         })
+<?php
+}
+?>
+
         var stage = '';
         var mlist = [];
         eliinfo.end = 'end';
@@ -269,13 +300,64 @@ function Refresh(dbname,time) {
                     var eliml ="<div class='eliinfo col-lg-12'><table class='table table-bordered table-hover table-condensed'><caption>"+stage+"</caption><thead><tr><th>比赛时间</th><th>主队</th><th>比分</th><th>客队</th>";           
                     for (var i = 0;i < mlist.length;i++) {
                         if (mlist[i].valid == 1) {
-                            if (mlist[i].todecide)
-                                var eml = "</tr></thead><tbody><tr><td>"+mlist[i].time+"</td><td>"+"<div class='col-lg-12'><div class='input-group'><input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"H~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].hometeam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='H~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"H~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div></div>"+"</td><td>"+mlist[i].result+"</td><td>"+"<div class='col-lg-12'><div class='input-group'><input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"A~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].awayteam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='A~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"A~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div></div>"+"</td></tr>";
+                            if (mlist[i].todecide) {
+                                var eml = "</tr></thead><tbody><tr><td>"+mlist[i].time+"</td><td>"+"<div class='col-lg-12'><div class='input-group'>";
+<?php
+                                if ($right > 1){
+?>
+                                eml += "<input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"H~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].hometeam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='H~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"H~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div>";
+<?php
+                                } else {
+?>
+                                eml += mlist[i].hometeam;
+<?php
+                                }
+?>
+
+                                eml += "</div>"+"</td><td>"+mlist[i].result+"</td><td>"+"<div class='col-lg-12'>";
+<?php
+                                if ($right > 1){
+?>
+                                eml += "<div class='input-group'><input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"A~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].awayteam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='A~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"A~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div>";
+<?php
+                                } else {
+?>
+                                eml += mlist[i].awayteam;
+<?php
+                                }
+?>
+                                eml += "</div>"+"</td></tr>";
+                            }
                             else
                                 var eml = "</tr></thead><tbody><tr><td>"+mlist[i].time+"</td><td>"+mlist[i].hometeam+"</td><td>"+mlist[i].result+"</td><td>"+mlist[i].awayteam+"</td></tr>";
                         } else {
-                            if (mlist[i].todecide)
-                                var eml = "</tr></thead><tbody><tr><td>"+mlist[i].time+"</td><td>"+"<div class='col-lg-12'><div class='input-group'><input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"H~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].hometeam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='H~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"H~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div></div>"+"</td><td>VS</td><td>"+"<div class='col-lg-12'><div class='input-group'><input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"A~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].awayteam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='A~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"A~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div></div>"+"</td></tr>";
+                            if (mlist[i].todecide) {
+                                var eml = "</tr></thead><tbody><tr><td>"+mlist[i].time+"</td><td>"+"<div class='col-lg-12'>";
+<?php
+                                if ($right > 1){
+?>
+                                eml += "<div class='input-group'><input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"H~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].hometeam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='H~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"H~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div>";
+<?php
+                                } else {
+?>
+                                eml += mlist[i].hometeam;
+<?php
+                                }
+?>
+                                eml += "</div>"+"</td><td>VS</td><td>"+"<div class='col-lg-12'>";
+<?php
+                                if ($right > 1){
+?>
+                                eml += "<div class='input-group'><input type='text' disabled='true' class='eliinput form-control input-sm' id='"+"A~"+mlist[i].matchid+"~INPUT'"+" value='"+mlist[i].awayteam+"'><span class='input-group-btn'><button class='eliok btn btn-default btn-sm' type='button' disabled='true' id='A~"+mlist[i].matchid+"~OK'"+"><span class='glyphicon glyphicon-ok'></span></button>"+"<button type='button' class='eliedit btn btn-default btn-sm' id='"+"A~"+mlist[i].matchid+"'><span class='glyphicon glyphicon-edit'></span></button>"+"</span></div>";
+<?php
+                                } else {
+?>
+                                eml += mlist[i].awayteam;
+<?php
+                                }
+?>
+                                eml += "</div>"+"</td></tr>";
+                            }
                             else
                                 var eml = "</tr></thead><tbody><tr><td>"+mlist[i].time+"</td><td>"+mlist[i].hometeam+"</td><td>VS</td><td>"+mlist[i].awayteam+"</td></tr>";
 
@@ -294,6 +376,9 @@ function Refresh(dbname,time) {
             }
             console.log(eliinfo[id]);
         }
+<?php
+        if ($right > 1){
+?>
         $('.eliedit').click(function() {
             var id = $(this).attr('id');
             var parseid = id.split("~");
@@ -328,6 +413,10 @@ function Refresh(dbname,time) {
                 var Hedit = document.getElementById(parseid[0] + '~' + parseid[1]);
                 Hedit.disabled = false;
             })
+<?php
+        }
+?>
+
     })
 }
 

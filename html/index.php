@@ -31,8 +31,14 @@ asort($tabs);
   </head>
   <body>
 <div class="container">
-<a class="btn btn-default btn-sm pull-right" href="matchmanage.php">比赛管理</a>
 <?php require "session.php";?>
+<?php
+if ($right > 1) {
+?>
+<a class="btn btn-default btn-sm pull-right" href="matchmanage.php">比赛管理</a>
+<?php
+}
+?>
 <ul id="navbar" class="nav nav-tabs">
 <?php 
 foreach ($tabs as $tab) {
@@ -52,7 +58,11 @@ foreach ($tabs as $tab) {
 <?php
 foreach ($tabs as $class => $tab) {
     foreach ($tab as $t) {
-        echo "<div class='tab-pane fade' id='".$t['dbname']."'> <h4>".$t['name']."</h4> <a href='teammanage.php?Match=".$t['dbname']."'>球队管理</a> <br><a href='sheet.php?Match=".$t['dbname']."'>执场单</a> <br> <a href='schedule.php?Match=".$t['dbname']."'>赛程</a> <br> <a href='ranktable.php?Match=".$t['dbname']."'>积分表</a> </div>";
+        echo "<div class='tab-pane fade' id='".$t['dbname']."'> <h4>".$t['name']."</h4> ";
+        if ($right > 1) {
+            echo "<a href='teammanage.php?Match=".$t['dbname']."'>球队管理</a> <br><a href='sheet.php?Match=".$t['dbname']."'>执场单</a> <br> ";
+        }
+        echo "<a href='schedule.php?Match=".$t['dbname']."'>赛程</a> <br> <a href='ranktable.php?Match=".$t['dbname']."'>积分表</a> </div>";
     }
 }
 ?>

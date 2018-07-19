@@ -19,6 +19,7 @@ $team = $_GET['team'];
   <body>
 <?php echo "<a href='./playermanage.php?Match=".$dbname."&team=".$team."'>返回</a>";
 require "session.php";
+if ($right > 1) {
 echo "<h3>".$team." 增加新球员</h3>"?>
 <div class="container">
 <form role="form" action="./addplayer.php?dbname=<?php echo $dbname;?>&team=<?php echo $team;?>" method="post" id="playerform" onsubmit="return false">
@@ -61,11 +62,18 @@ echo "<h3>".$team." 增加新球员</h3>"?>
   <button type="submit" class="btn btn-default" onclick="checkform()">提交</button>
 </form>
 </div>
-
+<?php
+} else {
+    echo "您没有权限查看这些内容！";
+}
+?>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<?php
+if ($right > 1) {
+?>
 <script>
 function checkform() {
     var kitnum = $("[name='kitnumber']").val();
@@ -97,5 +105,8 @@ function checkform() {
     
 }
 </script>
+<?php
+}
+?>
   </body>
 </html>

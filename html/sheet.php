@@ -30,6 +30,7 @@ $conn = dbconnect($dbname);
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <?php
+if ($right > 1) {
 $sql = "SELECT * FROM Info";
 $res = $conn->query($sql);
 while ($row = $res->fetch_assoc()) {
@@ -83,13 +84,16 @@ while ($row = $res->fetch_assoc()) {
                 })
             }
             </script>
-<?php
-$conn->close();
-?>
 
 <h3>下载:</h3>
 <p class='filename'></p>
 <a class="btn btn-default" id="download" href="" disabled="true">下载</a>
+<?php
+} else {
+    echo "您没有权限查看这些内容，请登录后查看！"; 
+}
+$conn->close();
+?>
   </body>
 </html>
 

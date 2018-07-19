@@ -26,7 +26,9 @@ $dbname = $_GET['Match'];
     <div class="container">
 
         <p class='list'></p>
-
+<?php
+if ($right > 1) {
+?>
 <script>
 var d = new Date();
 var dbname = "<?=$dbname ?>";
@@ -99,6 +101,9 @@ $.get("showteam.php", {
 })
 </script>
 <?php
+} else {
+    echo "您没有权限查看这些内容！";
+}
 $conn->close();
 ?>
 </div>
