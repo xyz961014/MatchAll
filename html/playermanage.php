@@ -18,6 +18,8 @@ $team = $_GET['team'];
   </head>
   <body>
     <?php echo "<a href='./teammanage.php?Match=".$dbname."'>返回</a>"; ?>
+    <?php require "session.php";?>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>

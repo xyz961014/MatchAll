@@ -17,6 +17,8 @@ $dbname = $_GET['Match'];
   </head>
   <body>
     <?php echo "<a href='index.php?tab=".$dbname."'>返回</a>"; ?>
+    <?php require "session.php";?>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>

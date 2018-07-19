@@ -1,16 +1,15 @@
 <?php
 session_start();
-$username = "";
-$state = false;
-$right = 0;
-if (!empty($_SESSION["username"]))
-    $username = $_SESSION["username"];
+if (!empty($_SESSION["name"]))
+    $name = $_SESSION["name"];
 if (!empty($_SESSION["state"]))
     $state = $_SESSION["state"];
 if (!empty($_SESSION["right"]))
     $right = $_SESSION["right"];
+$lasturl = $_SERVER['PHP_SELF']."?".$_SERVER["QUERY_STRING"];
+$_SESSION["lasturl"] = $lasturl;
 if ($state){
-    echo $username."<a class='pull-right'style='margin-right:20px' href='logout.php'>注销</a>";
+    echo "<div class='pull-right'style='margin-right:20px'>'<p>".$name."<a style='margin-left:20px' href='logout.php'>注销</a></p></div>";
 } else {
     echo "<a class='pull-right' style='margin-right:20px' href='login.php'>登录</a>";
 }

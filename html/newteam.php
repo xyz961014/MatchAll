@@ -17,6 +17,8 @@ $dbname = $_GET['dbname'];
   </head>
   <body>
 <?php echo "<a href='./teammanage.php?Match=".$dbname."'>返回</a>"; ?>
+<?php require "session.php";?>
+
 <h3>增加新球队</h3>
 <div class="container">
 <form role="form" action="./addteam.php?dbname=<?php echo $dbname;?>" method="post" id="teamform" onsubmit="return false">

@@ -84,7 +84,8 @@
     <script src="https://cdn.bootcss.com/jcanvas/21.0.0/min/jcanvas.min.js"></script>
     <script src="https://cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
     <div class="container">
-            <input id="validcheck" type="checkbox" onclick='onvalid()' />有效
+        <input id="validcheck" type="checkbox" onclick='onvalid()' />有效
+        <?php require "session.php"; ?>
 <br>
 <?php
 require 'TeamDict.php';

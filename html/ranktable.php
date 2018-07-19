@@ -25,6 +25,8 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <?php echo "<a href='index.php?tab=".$dbname."'>返回</a>"; ?>
+    <?php require "session.php";?>
+
     <!-- Optional JavaScript -->
     <div class="container">
         <ul class="nav nav-tabs">

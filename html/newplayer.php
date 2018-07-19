@@ -18,6 +18,7 @@ $team = $_GET['team'];
   </head>
   <body>
 <?php echo "<a href='./playermanage.php?Match=".$dbname."&team=".$team."'>返回</a>";
+require "session.php";
 echo "<h3>".$team." 增加新球员</h3>"?>
 <div class="container">
 <form role="form" action="./addplayer.php?dbname=<?php echo $dbname;?>&team=<?php echo $team;?>" method="post" id="playerform" onsubmit="return false">

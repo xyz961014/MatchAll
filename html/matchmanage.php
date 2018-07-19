@@ -14,6 +14,7 @@
   </head>
   <body>
     <?php echo "<a href='index.php'>返回</a>"; ?>
+    <?php require "session.php"; ?>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
@@ -30,7 +31,7 @@ $.get("showmatch.php", {
     var matchlist = JSON.parse(data);
     console.log(matchlist);
     if (matchlist.length > 0) {
-        var tableml = "<div>  <table class='table table-bordered table-hover table-condensed'> <caption>比赛列表<a class='btn btn-default btn-sm pull-right' href='newmatch.html'>增加新比赛</a></caption><thead><tr><th>比赛名称</th><th>比赛简称</th><th>最多上场人数</th><th>最少上场人数</th><th>球衣号码</th><th>比赛系列代码</th><th>点球大战</th><th>常规时间</th><th>加时赛时间</th><th>点球轮数</th><th>年份</th><th>编辑</th></tr></thead><tbody>";
+        var tableml = "<div>  <table class='table table-bordered table-hover table-condensed'> <caption>比赛列表<a class='btn btn-default btn-sm pull-right' href='newmatch.php'>增加新比赛</a></caption><thead><tr><th>比赛名称</th><th>比赛简称</th><th>最多上场人数</th><th>最少上场人数</th><th>球衣号码</th><th>比赛系列代码</th><th>点球大战</th><th>常规时间</th><th>加时赛时间</th><th>点球轮数</th><th>年份</th><th>编辑</th></tr></thead><tbody>";
         for (var i = 0;i < matchlist.length;i++) {
             var tablerow = "<tr class='"+ matchlist[i]['dbname'] + "'><td class='name'>" + matchlist[i]['name'] + "</td><td class='subname'>" + matchlist[i]['subname'] + "</td><td class='maxonfield'>" + matchlist[i]['maxonfield'] + "</td><td class='minonfield'>" + matchlist[i]['minonfield'] + "</td><td class='enablekitnum'>";
             if (matchlist[i]['enablekitnum'] == 1) {

@@ -22,6 +22,8 @@ $conn = dbconnect($dbname);
   </head>
   <body>
     <?php echo "<a href='index.php?tab=".$dbname."'>返回</a>"; ?>
+    <?php require "session.php";?>
+
     <!-- Optional JavaScript -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

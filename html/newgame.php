@@ -36,6 +36,7 @@ function printoption($teams) {
   </head>
   <body>
 <?php echo "<a href='./schedule.php?Match=".$dbname."'>返回</a>";
+require "session.php";
 echo "<h3>".$subname." 增加新比赛</h3>" ?>
 <div class="container">
 <form role="form" action="./addgame.php?dbname=<?php echo $dbname;?>" method="post">
