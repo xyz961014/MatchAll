@@ -32,6 +32,7 @@ asort($tabs);
   <body>
 <div class="container">
 <a class="btn btn-default btn-sm pull-right" href="matchmanage.php">比赛管理</a>
+<?php require "session.php";?>
 <ul id="navbar" class="nav nav-tabs">
 <?php 
 foreach ($tabs as $tab) {
