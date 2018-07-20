@@ -748,7 +748,9 @@ function getevents(info, dbname, homename, awayname) {
                 var ptn = /(校友|教工|足特)/;
                 var name = e.name.replace(/^\s+|\s+$/, '');
                 e.name = name;
-                if ("<?=$enablekitnum?>") {
+                var enablekitnum = "<?=$enablekitnum ?>";
+                console.log("kit",enablekitnum);
+                if (enablekitnum == "0") {
                     var txt = e.name;
                 } else {
                     if (ptn.test(e.extrainfo)) {
