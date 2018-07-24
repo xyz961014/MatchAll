@@ -132,7 +132,7 @@ Getrank(dbname,d.getTime(),'Players', 'CAST(Minutes/Goals as DECIMAL(12,2))', 'p
 Getrank(dbname,d.getTime(),'Players', 'YellowCards', 'pyc', '黄牌', null, false, ' DESC');
 Getrank(dbname,d.getTime(),'Players', 'RedCards', 'prc', '红牌', null, false, ' DESC');
 Getrank(dbname,d.getTime(),'Players', 'Penalties', 'ppen', '点球', null, false, ' DESC');
-Getrank(dbname,d.getTime(),'Players', 'Penaltymiss', 'ppenmiss', '点球罚失', null, false, ' DESC');
+Getrank(dbname,d.getTime(),'Players', 'Players.Penaltymiss', 'ppenmiss', '点球罚失', null, false, ' DESC');
 Getrank(dbname,d.getTime(),'Players', 'OwnGoals', 'pog', '乌龙球', null, false, ' DESC');
 Getrank(dbname,d.getTime(),'Teams', 'Goal', 'tgoal', '进球',asort='Penalty',isteam=true, ' DESC');
 Getrank(dbname,d.getTime(),'Teams', 'CAST(Goal/(Win+Draw+Lose) as DECIMAL(12,2))', 'tgam', '场均进球',null,isteam=true, ' DESC');
@@ -150,55 +150,76 @@ function Getrank(dbname,time,table,sort,divid,divname,asort=null,isteam=false,or
         time: time,
         dbname: dbname,
         order: order
-}, function(data,state) {
+    }, function(data,state) {
     var tableinfo = JSON.parse(data);
-    console.log(tableinfo);
-    var j = 1;
-    if (isteam) {
-        var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>"+divname+"</caption><thead><tr><th>#</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
-        for (var i = 0;i < tableinfo.length;i++) {
-            var t = tableinfo[i];
-            if (i > 0){
-                if (asort) {
-                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort]) || parseFloat(t[asort]) != parseFloat(tableinfo[i-1][asort])) 
-                        j = i + 1;
-                }
-                else {
-                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort])) 
-                        j = i + 1;
-                }
-            }
-            if (asort && t[asort] != "0") {
-                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"("+t[asort]+")</td></tr>";
-            }
-            else
-                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"</td></tr>";
-            tableml += tml;
-        }
-    } else {
-        var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>"+divname+"</caption><thead><tr><th>#</th><th>球员</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
-        for (var i = 0;i < tableinfo.length;i++) {
-            var t = tableinfo[i];
-            if (i > 0){
-                if (asort) {
-                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort]) || parseFloat(t[asort]) != parseFloat(tableinfo[i-1][asort])) 
-                        j = i + 1;
-                }
-                else {
-                    if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort])) 
-                        j = i + 1;
-                }
-            }
-            if (asort && t[asort] != "0")
-                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"("+t[asort]+")</td></tr>";
-            else
-                var tml = "<tr><td>"+j.toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"</td></tr>";
-
-            tableml += tml;
+    if (sort.match(table + ".")) {
+        sort = sort.substring(table.length + 1);
+    }
+    var tableonlevels = new Array();
+    for (var i = 0;i < tableinfo.length;i++) {
+        var t = tableinfo[i];
+        if (!tableonlevels[t["Level"]]) {
+            tableonlevels[t["Level"]] = [t];
+        } else {
+            tableonlevels[t["Level"]].push(t);
         }
     }
-    tableml += "</tbody></table></div>";
-    $('#'+divid).append(tableml);
+    var keys = Object.keys(tableonlevels).sort().reverse();
+    for(var n = 0; n < keys.length;n++) {
+        var key = keys[n];
+        var tableinfo = tableonlevels[key];
+        var j = 1;
+        var title = divname;
+        if (key != "null"){
+            title += "/" + key;
+        }
+        if (isteam) {
+            var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>" + title + "</caption><thead><tr><th>#</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
+            for (var i = 0;i < tableinfo.length;i++) {
+                var t = tableinfo[i];
+                if (i > 0){
+                    if (asort) {
+                        if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort]) || parseFloat(t[asort]) != parseFloat(tableinfo[i-1][asort])) 
+                            j = i + 1;
+                    }
+                    else {
+                        if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort])) 
+                            j = i + 1;
+                    }
+                }
+                if (asort && t[asort] != "0") {
+                    var tml = "<tr><td>"+j.toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"("+t[asort]+")</td></tr>";
+                }
+                else
+                    var tml = "<tr><td>"+j.toString()+"</td><td>"+t.TeamName+"</td><td>"+t[sort]+"</td></tr>";
+                tableml += tml;
+            }
+        } else {
+            var tableml = "<div class='col-md-6 col-lg-6'><table class='table table-hover table-bordered table-condensed'><caption>" + title + "</caption><thead><tr><th>#</th><th>球员</th><th>球队</th><th>"+divname+"</th></tr></thead><tbody>";
+            for (var i = 0;i < tableinfo.length;i++) {
+                var t = tableinfo[i];
+                if (i > 0){
+                    if (asort) {
+                        if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort]) || parseFloat(t[asort]) != parseFloat(tableinfo[i-1][asort])) 
+                            j = i + 1;
+                    }
+                    else {
+                        if (parseFloat(t[sort]) != parseFloat(tableinfo[i-1][sort])) 
+                            j = i + 1;
+                    }
+                }
+                if (asort && t[asort] != "0")
+                    var tml = "<tr><td>"+j.toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"("+t[asort]+")</td></tr>";
+                else
+                    var tml = "<tr><td>"+j.toString()+"</td><td>"+t.Name+"</td><td>"+t.Team+"</td><td>"+t[sort]+"</td></tr>";
+
+                tableml += tml;
+            }
+        }
+        tableml += "</tbody></table></div>";
+        $('#'+divid).append(tableml);
+    }
+
 })
 }
 <?php
@@ -257,7 +278,7 @@ function Refresh(dbname,time) {
             }
             tableml += "</tbody></table></div>";
             $("#grouprank").append(tableml);
-            console.log(grouprank[gn]);
+            //console.log(grouprank[gn]);
         }
 <?php
         if ($right > 1){
@@ -374,7 +395,7 @@ function Refresh(dbname,time) {
             else {
                 mlist.push(eliinfo[id]);
             }
-            console.log(eliinfo[id]);
+            //console.log(eliinfo[id]);
         }
 <?php
         if ($right > 1){

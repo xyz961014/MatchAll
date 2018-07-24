@@ -55,7 +55,15 @@ $.get('showlist.php',{
 <?php
         }
 ?>
-        tableml += "</caption><thead><tr><th>场序</th><th>主队</th><th>比分</th><th>客队</th><th>时间</th><th>场地</th><th>进入</th>";
+        tableml += "</caption><thead><tr><th>场序</th>";
+<?php 
+        if ($right > 1) {
+?>      
+        tableml += "<th>级别</th><th>阶段</th><th>小组</th><th>轮次</th>";
+<?php
+        }
+?> 
+        tableml += "<th>主队</th><th>比分</th><th>客队</th><th>时间</th><th>场地</th><th>进入</th>";
 <?php 
         if ($right > 1) {
 ?>
@@ -66,7 +74,18 @@ $.get('showlist.php',{
         tableml += "</tr></thead><tbody>";
         for (var i = 0;i < matchlist.length;i++) {
             if (matchlist[i]['Valid'] == "1") {
-                var tablerow = "<tr class='" + matchlist[i]['MatchID'] + "'><td class='matchid'>" + matchlist[i]['MatchID'] + "</td><td class='hometeam'>" + matchlist[i]['HomeTeam'] + "</td><td>" + matchlist[i]['HomeGoal'] + ":" + matchlist[i]['AwayGoal'] + "</td><td class='awayteam'>" + matchlist[i]['AwayTeam'] + "</td><td class='matchtime'>" + matchlist[i]['MatchTime'] + "</td><td class='matchfield'>" + matchlist[i]['MatchField'] + "</td><td><a href='match.php?Match=" + dbname + "&id=" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-new-window'></span></a></td>";
+                var tablerow = "<tr class='" + matchlist[i]['MatchID'] + "'><td class='matchid'>" + matchlist[i]['MatchID'] + "</td>";
+<?php 
+                if ($right > 1) {
+?>
+                var stage = matchlist[i]["Stage"];
+                if (stage == "Group")
+                    stage = "小组赛";
+                tablerow += "<td class='level'>" + matchlist[i]["Level"] + "</td><td class='stage'>" + stage + "</td><td class='groupname'>" + matchlist[i]["GroupName"] + "</td><td class='round'>" + matchlist[i]["Round"] + "</td>";
+<?php
+                }   
+?>
+                tablerow += "<td class='hometeam'>" + matchlist[i]['HomeTeam'] + "</td><td>" + matchlist[i]['HomeGoal'] + ":" + matchlist[i]['AwayGoal'] + "</td><td class='awayteam'>" + matchlist[i]['AwayTeam'] + "</td><td class='matchtime'>" + matchlist[i]['MatchTime'] + "</td><td class='matchfield'>" + matchlist[i]['MatchField'] + "</td><td><a href='match.php?Match=" + dbname + "&id=" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-new-window'></span></a></td>";
 <?php 
                 if ($right > 1) {
 ?>
@@ -75,7 +94,19 @@ $.get('showlist.php',{
                 }   
 ?>
             } else if (matchlist[i]['Valid'] == "0") {
-                var tablerow = "<tr class='" + matchlist[i]['MatchID'] + "'><td class='matchid'>" + matchlist[i]['MatchID'] + "</td><td class='hometeam'>" + matchlist[i]['HomeTeam'] + "</td><td>VS</td><td class='awayteam'>" + matchlist[i]['AwayTeam'] + "</td><td class='matchtime'>" + matchlist[i]['MatchTime'] + "</td><td class='matchfield'>" + matchlist[i]['MatchField'] + "</td><td><a href='match.php?Match=" + dbname + "&id=" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-new-window'></span></a></td>";
+                var tablerow = "<tr class='" + matchlist[i]['MatchID'] + "'><td class='matchid'>" + matchlist[i]['MatchID'] + "</td>";
+<?php 
+                if ($right > 1) {
+?>
+                var stage = matchlist[i]["Stage"];
+                if (stage == "Group")
+                    stage = "小组赛";
+                tablerow += "<td class='level'>" + matchlist[i]["Level"] + "</td><td class='stage'>" + stage + "</td><td class='groupname'>" + matchlist[i]["GroupName"] + "</td><td class='round'>" + matchlist[i]["Round"] + "</td>";
+<?php
+                }   
+?>
+
+                tablerow += "<td class='hometeam'>" + matchlist[i]['HomeTeam'] + "</td><td>VS</td><td class='awayteam'>" + matchlist[i]['AwayTeam'] + "</td><td class='matchtime'>" + matchlist[i]['MatchTime'] + "</td><td class='matchfield'>" + matchlist[i]['MatchField'] + "</td><td><a href='match.php?Match=" + dbname + "&id=" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-new-window'></span></a></td>";
 <?php 
                 if ($right > 1) {
 ?>
@@ -115,6 +146,10 @@ $.get('showlist.php',{
             editfield(pid[1], "matchfield", "text");
             editfield(pid[1], "hometeam", "text");
             editfield(pid[1], "awayteam", "text");
+            editfield(pid[1], "level", "text");
+            editfield(pid[1], "stage", "text");
+            editfield(pid[1], "groupname", "text");
+            editfield(pid[1], "round", "number");
             
             $(this).hide();
     
@@ -144,6 +179,10 @@ $.get('showlist.php',{
                 var matchfield = fieldok(pid[1], "matchfield");
                 var hometeam = fieldok(pid[1], "hometeam");
                 var awayteam = fieldok(pid[1], "awayteam");
+                var level = fieldok(pid[1], "level");
+                var stage = fieldok(pid[1], "stage");
+                var groupname = fieldok(pid[1], "groupname");
+                var round = fieldok(pid[1], "round");
                 console.log(hometeam, awayteam, matchtime, matchfield);
                 $.post("editgame.php", {
                     dbname: dbname,
@@ -151,7 +190,11 @@ $.get('showlist.php',{
                     hometeam: hometeam,
                     awayteam: awayteam,
                     matchtime: matchtime,
-                    matchfield: matchfield
+                    matchfield: matchfield,
+                    level: level,
+                    stage: stage,
+                    groupname: groupname,
+                    round: round
                 }, function(data, state) {
                     console.log(data, state);
                 })
