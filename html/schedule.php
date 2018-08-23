@@ -25,6 +25,31 @@ $conn = dbconnect($dbname);
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×            
+			    </button>
+                <h4 class="modal-title" id="deleteModalLabel">
+               删除            
+			    </h4>
+                <h6 class="modal-hidden" hidden></h6>
+            </div>
+            <div class="modal-body">
+                <p> 确定要删除吗？</p>
+		    </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消           
+			    </button>
+                <button type="button" class="btn btn-primary delbtnsubmit">
+                确定            
+			    </button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div class="container">
         <p class="list"></p>
 <?php
@@ -35,6 +60,11 @@ exec("PYTHONIOENCODING=utf-8 python3 /var/www/TUFA/Evolve.py ".$dbname." 2>&1",$
 //console.log('load');
 var d = new Date();
 var dbname = '<?=$dbname?>';
+$('#deleteModal').modal({
+    keyboard: false,
+	show: false
+});
+
 $.getJSON(dbname + ".json",{
     time:d.getTime()
 }, function(data,state) {
@@ -70,7 +100,13 @@ $.get('showlist.php',{
         tableml += "<th>编辑</th>";
 <?php
         }
+        if ($right > 2) {
 ?>
+        tableml += "<th>删除</th>";
+<?php
+        }
+?>
+
         tableml += "</tr></thead><tbody>";
         for (var i = 0;i < matchlist.length;i++) {
             if (matchlist[i]['Valid'] == "1") {
@@ -89,9 +125,14 @@ $.get('showlist.php',{
 <?php 
                 if ($right > 1) {
 ?>
-                tablerow += "<td class='edit'><button type='button' class='gameeditdanger btn btn-default btn-sm disabled' id='E~" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-edit'></span></button></td></tr>";
+                tablerow += "<td class='edit'><button type='button' class='gameeditdanger btn btn-default btn-sm disabled' id='E~" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-edit'></span></button></td>";
 <?php
                 }   
+                if ($right > 2) {
+?>
+                tablerow += "<td class='delete'><button type='button' class='gamedelete btn btn-default btn-sm' id='D~" + matchlist[i]["MatchID"] + "'><span class='glyphicon glyphicon-remove'></span></button></td>"
+<?php
+                }
 ?>
             } else if (matchlist[i]['Valid'] == "0") {
                 var tablerow = "<tr class='" + matchlist[i]['MatchID'] + "'><td class='matchid'>" + matchlist[i]['MatchID'] + "</td>";
@@ -110,12 +151,17 @@ $.get('showlist.php',{
 <?php 
                 if ($right > 1) {
 ?>
-                tablerow += "<td class='edit'><button type='button' class='gameedit btn btn-default btn-sm' id='E~" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-edit'></span></button></td></tr>";
+                tablerow += "<td class='edit'><button type='button' class='gameedit btn btn-default btn-sm' id='E~" + matchlist[i]['MatchID'] + "'><span class='glyphicon glyphicon-edit'></span></button></td>";
+<?php
+                }
+                if ($right > 2) {
+?>
+                tablerow += "<td class='delete'><button type='button' class='gamedelete btn btn-default btn-sm' id='D~" + matchlist[i]["MatchID"] + "'><span class='glyphicon glyphicon-remove'></span></button></td>"
 <?php
                 }
 ?>
             }
-            tableml += tablerow;
+            tableml += "</tr>" + tablerow;
         }
         tableml += "</tbody></table></div>";
         $(".list").append(tableml);
@@ -126,6 +172,32 @@ $.get('showlist.php',{
     $(".gameeditdanger").click(function() {
         alert("不能编辑已经生效的比赛！");
     })
+<?php
+    if ($right > 2) {
+?>
+    $(".gamedelete").click(function () {
+        var btndelete = $(this);
+        var id = $(this).attr("id");
+        var pid = id.split("~");
+        $(".modal-hidden").text(pid[1]);
+        $("#deleteModal").modal("show");
+       
+         
+    });
+    $(".delbtnsubmit").click(function() {
+        var id = $(".modal-hidden").text();
+        $.get("removeitem.php", {
+            db: dbname,
+            table: "Matches",
+            idkey: "MatchID",
+            idvalue: id
+        });
+        location.reload();
+    })
+<?php
+        }
+?>
+
     $(".gameedit").click(function() {
             var btnedit = $(this);
             var id = $(this).attr('id');

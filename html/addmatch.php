@@ -25,7 +25,7 @@ if ($right > 1) {
     echo $sql;
     $conn->query($sql);
     $conn->close();
-    $conn = dbconnect();
+    $conn = dbconnect(false);
     $sql = "CREATE DATABASE ".$dbname;
     $conn->query($sql);
     $conn->close();
@@ -50,7 +50,7 @@ if ($right > 1) {
         `Team` varchar(255) NOT NULL,
         `Name` varchar(255) NOT NULL,
         `Class` varchar(255) DEFAULT NULL,
-        `IDNumber` varchar(255) DEFAULT NULL,
+        `IDNumber` varchar(127) DEFAULT NULL,
         `PhoneNumber` varchar(255) DEFAULT NULL,
         `KitNumber` int(11) DEFAULT NULL,
         `ExtraInfo` varchar(255) DEFAULT NULL,

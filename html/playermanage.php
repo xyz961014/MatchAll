@@ -24,6 +24,30 @@ $team = $_GET['team'];
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×            
+			    </button>
+                <h4 class="modal-title" id="deleteModalLabel">
+               删除            
+			    </h4>
+                <h6 class="modal-hidden" hidden></h6>
+            </div>
+            <div class="modal-body">
+                <p> 确定要删除吗？</p>
+		    </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消           
+			    </button>
+                <button type="button" class="btn btn-primary delbtnsubmit">
+                确定            
+			    </button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div class="container">
 
@@ -34,6 +58,11 @@ if ($right > 1) {
 <script>
 
 var d = new Date();
+$('#deleteModal').modal({
+    keyboard: false,
+	show: false
+});
+
 var dbname = "<?=$dbname ?>";
 var team = "<?=$team ?>";
 $.get("showplayer.php", {
@@ -44,7 +73,15 @@ $.get("showplayer.php", {
     var playerlist= JSON.parse(data);
     console.log(playerlist);
     if (playerlist.length >= 0) {
-        var tableml = "<div>  <table class='table table-bordered table-hover table-condensed'> <caption>" + team + " 球员列表<a class='btn btn-default btn-sm pull-right' href='newplayer.php?dbname=" + dbname + "&team=" + team + "'>增加新球员</a></caption><thead><tr><th>姓名</th><th>班级</th><th>证件号码</th><th>电话号码</th><th>球衣号码</th><th>备注</th><th>出场次数</th><th>出场时间</th><th>进球</th><th>黄牌</th><th>红牌</th><th>是否报名</th><th>是否停赛</th><th>点球</th><th>点球罚失</th><th>乌龙球</th><th>编辑</th></tr></thead><tbody>";
+        var tableml = "<div>  <table class='table table-bordered table-hover table-condensed'> <caption>" + team + " 球员列表<a class='btn btn-default btn-sm pull-right' href='newplayer.php?dbname=" + dbname + "&team=" + team + "'>增加新球员</a></caption><thead><tr><th>姓名</th><th>班级</th><th>证件号码</th><th>电话号码</th><th>球衣号码</th><th>备注</th><th>出场次数</th><th>出场时间</th><th>进球</th><th>黄牌</th><th>红牌</th><th>是否报名</th><th>是否停赛</th><th>点球</th><th>点球罚失</th><th>乌龙球</th><th>编辑</th>";
+<?php
+    if ($right > 2) {
+?>
+        tableml += "<th>删除</th>";
+<?php
+    }
+?>
+        tableml += "</tr></thead><tbody>";
         for (var i = 0;i < playerlist.length;i++) {
             //var nametag = playerlist[i]['Name'].replace(/^\s+|\s+$/, '');
             //nametag = nametag.replace(/[^\u4e00-\u9fa5\w]/g, '');
@@ -53,12 +90,44 @@ $.get("showplayer.php", {
             else if (playerlist[i]['Valid'] == '0')
                 playerlist[i]['Valid'] = "否";
             var tablerow = "<tr class='"+ playerlist[i]['PlayerID'] + "'><td class='name'>" + playerlist[i]['Name'] + "</td><td class='class'>" + playerlist[i]['Class'] + "</td><td class='idnumber'>" + playerlist[i]['IDNumber'] + "</td><td class='phonenumber'>" + playerlist[i]['PhoneNumber'] + "</td><td class='kitnumber'>" + playerlist[i]['KitNumber'] + "</td><td class='extrainfo'>" + playerlist[i]['ExtraInfo'] + "</td><td class='appearances'>" + playerlist[i]['Appearances'] + "</td><td class='minutes'>" + playerlist[i]['Minutes'] + "</td><td class='goals'>" + playerlist[i]['Goals'] + "</td><td class='yellowcards'>" + playerlist[i]['YellowCards'] + "</td><td class='redcards'>" + playerlist[i]['RedCards'] + "</td><td class='valid'>" + playerlist[i]['Valid'] + "</td><td class='suspension'>" + playerlist[i]['Suspension'] + "</td><td class='penalties'>" + playerlist[i]['Penalties'] + "</td><td class='penaltymiss'>" + playerlist[i]['Penaltymiss'] + "</td><td class='owngoals'>" + playerlist[i]['OwnGoals'] + "</td>";
-            tablerow += "<td class='edit'><button type='button' class='playeredit btn btn-default btn-sm' id='E~" + playerlist[i]['PlayerID'] + "'><span class='glyphicon glyphicon-edit'></span></button></td></tr>";
-            tableml += tablerow;
+            tablerow += "<td class='edit'><button type='button' class='playeredit btn btn-default btn-sm' id='E~" + playerlist[i]['PlayerID'] + "'><span class='glyphicon glyphicon-edit'></span></button></td>";
+<?php
+    if ($right > 2) {
+?>
+            tablerow += "<td class='delete'><button type='button' class='playerdelete btn btn-default btn-sm' id='D~" + playerlist[i]["PlayerID"] + "'><span class='glyphicon glyphicon-remove'></span></button></td>"
+<?php
+    }
+?>
+            tableml += "</tr>" + tablerow;
         }
         tableml += "</tbody></table></div>";
         $(".list").append(tableml);
     }
+<?php
+        if ($right > 2) {
+?>
+    $(".playerdelete").click(function () {
+        var btndelete = $(this);
+        var id = $(this).attr("id");
+        var pid = id.split("~");
+        $(".modal-hidden").text(pid[1]);
+        $("#deleteModal").modal("show");
+       
+         
+    });
+    $(".delbtnsubmit").click(function() {
+        var id = $(".modal-hidden").text();
+        $.get("removeitem.php", {
+            db: dbname,
+            table: "Players",
+            idkey: "PlayerID",
+            idvalue: id
+        });
+        location.reload();
+    })
+<?php
+        }
+?>
     $(".playeredit").click(function() {
         var btnedit = $(this);
         var id = $(this).attr('id');

@@ -19,6 +19,31 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×            
+			    </button>
+                <h4 class="modal-title" id="deleteModalLabel">
+               删除            
+			    </h4>
+                <h6 class="modal-hidden" hidden></h6>
+            </div>
+            <div class="modal-body">
+                <p> 确定要删除吗？</p>
+		    </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消           
+			    </button>
+                <button type="button" class="btn btn-primary delbtnsubmit">
+                确定            
+			    </button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div class="container">
 
         <p class='list'></p>
@@ -27,6 +52,10 @@
 if ($right > 1) { //权限
 ?>
 <script>
+$('#deleteModal').modal({
+    keyboard: false,
+	show: false
+});
 var d = new Date();
 $.get("showmatch.php", {
     time: d.getTime()
@@ -34,7 +63,15 @@ $.get("showmatch.php", {
     var matchlist = JSON.parse(data);
     console.log(matchlist);
     if (matchlist.length > 0) {
-        var tableml = "<div>  <table class='table table-bordered table-hover table-condensed'> <caption>比赛列表<a class='btn btn-default btn-sm pull-right' href='newmatch.php'>增加新比赛</a></caption><thead><tr><th>比赛名称</th><th>比赛简称</th><th>最多上场人数</th><th>最少上场人数</th><th>球衣号码</th><th>比赛系列代码</th><th>点球大战</th><th>常规时间</th><th>加时赛时间</th><th>点球轮数</th><th>年份</th><th>编辑</th></tr></thead><tbody>";
+        var tableml = "<div>  <table class='table table-bordered table-hover table-condensed'> <caption>比赛列表<a class='btn btn-default btn-sm pull-right' href='newmatch.php'>增加新比赛</a></caption><thead><tr><th>比赛名称</th><th>比赛简称</th><th>最多上场人数</th><th>最少上场人数</th><th>球衣号码</th><th>比赛系列代码</th><th>点球大战</th><th>常规时间</th><th>加时赛时间</th><th>点球轮数</th><th>年份</th><th>编辑</th>";
+<?php
+    if ($right > 3) {
+?>
+        tableml += "<th>删除</th>";
+<?php
+    }
+?>
+        tableml += "</tr></thead><tbody>";
         for (var i = 0;i < matchlist.length;i++) {
             var tablerow = "<tr class='"+ matchlist[i]['dbname'] + "'><td class='name'>" + matchlist[i]['name'] + "</td><td class='subname'>" + matchlist[i]['subname'] + "</td><td class='maxonfield'>" + matchlist[i]['maxonfield'] + "</td><td class='minonfield'>" + matchlist[i]['minonfield'] + "</td><td class='enablekitnum'>";
             if (matchlist[i]['enablekitnum'] == 1) {
@@ -46,13 +83,45 @@ $.get("showmatch.php", {
             tablerow += "<td class='class'>" + matchlist[i]['class'] + "</td><td class='penalty'>";
             tablerow += matchlist[i]['penalty'] + "</td><td class='ordinarytime'>"; 
             tablerow += matchlist[i]['ordinarytime'] + "</td><td class='extratime'>" + matchlist[i]['extratime'] + "</td><td class='penaltyround'>" + matchlist[i]['penaltyround'] + "</td><td class='year'>" + matchlist[i]['year'] + "</td>"; 
-            tablerow += "<td class='edit'><button type='button' class='matchedit btn btn-default btn-sm' id='E~" + matchlist[i]["dbname"] + "'><span class='glyphicon glyphicon-edit'></span></button></td></tr>";
-            tableml += tablerow;
+            tablerow += "<td class='edit'><button type='button' class='matchedit btn btn-default btn-sm' id='E~" + matchlist[i]["dbname"] + "'><span class='glyphicon glyphicon-edit'></span></button></td>";
+<?php
+    if ($right > 3) {
+?>
+            tablerow += "<td class='delete'><button type='button' class='matchdelete btn btn-default btn-sm' id='D~" + matchlist[i]["dbname"] + "'><span class='glyphicon glyphicon-remove'></span></button></td>"
+<?php
+    }
+?>
+            tableml += "</tr>" + tablerow;
         }
         tableml += "</tbody></table></div>";
         $(".list").append(tableml);
     }
     $(".matchok").hide();
+<?php
+        if ($right > 3) {
+?>
+    $(".matchdelete").click(function () {
+        var btndelete = $(this);
+        var id = $(this).attr("id");
+        var pid = id.split("~");
+        $(".modal-hidden").text(pid[1]);
+        $("#deleteModal").modal("show");
+       
+         
+    });
+    $(".delbtnsubmit").click(function() {
+        var id = $(".modal-hidden").text();
+        $.get("removeitem.php", {
+            db: "MATCHES",
+            table: "matches",
+            idkey: "dbname",
+            idvalue: id
+        });
+        location.reload();
+    })
+<?php
+        }
+?>
     $(".matchedit").click(function() {
         var btnedit = $(this);
         var id = $(this).attr('id');
