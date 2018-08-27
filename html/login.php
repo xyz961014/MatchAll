@@ -42,6 +42,7 @@ if ($res) {
     $res = json_decode($res);
     $_SESSION["name"] = $res[5];
     $_SESSION["right"] = $res[2];
+    $_SESSION["id"] = $res[6];
     $_SESSION["state"] = true;
     header("location:".$lasturl);
 } else {

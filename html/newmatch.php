@@ -79,6 +79,17 @@ if ($right > 1) { //权限
       <label for="year">年份<span style="color:red">*</span>(一旦填写无法更改)</label>
       <input type="text" class="form-control" pattern="[0-9-]+" name="year" placeholder='请输入年份，跨年比赛年份之间用"-"连接，年份范围为1970-2069。例：2017-2018' required="">
     </div>
+<label for="visible">权限设定<span style="color:red">*</span></label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="visible" value="0"> 所有人可见
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+        <input type="radio" name="visible" value="<?php echo $id; ?>" checked> 仅自己可见
+        </label>
+    </div>
   <button type="submit" class="btn btn-default" onclick="checkform()">提交</button>
 </form>
 </div>

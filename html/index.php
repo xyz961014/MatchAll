@@ -3,7 +3,7 @@
 require "dbinfo.php";
 $dbname = "MATCHES";
 $conn = dbconnect($dbname);
-$sql = "SELECT * FROM matches";
+$sql = "SELECT * FROM matches where owner = 0";
 $result = $conn->query($sql);
 $tabs = array();
 while ($row = $result->fetch_assoc()) {
@@ -33,6 +33,19 @@ asort($tabs);
 <div class="container">
 <?php require "session.php";?>
 <?php
+if ($right > 0) {
+$sql = "SELECT * FROM matches WHERE owner = ".$id;
+$result = $conn->query($sql);
+while ($row = $result->fetch_assoc()) {
+    if (!array_key_exists($row['class'], $tabs)) {
+        $tabs[$row['class']] = array($row);
+    }
+    else {
+        array_push($tabs[$row['class']], $row);
+    }
+}
+asort($tabs);
+}
 if ($right > 1) {
 ?>
 <a class="btn btn-default btn-sm pull-right" href="matchmanage.php">比赛管理</a>

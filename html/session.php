@@ -6,6 +6,8 @@ if (!empty($_SESSION["state"]))
     $state = $_SESSION["state"];
 if (!empty($_SESSION["right"]))
     $right = $_SESSION["right"];
+if (!empty($_SESSION["id"]))
+    $id = $_SESSION["id"];
 $lasturl = $_SERVER['PHP_SELF'];
 if ($_SERVER["QUERY_STRING"]) {
     $lasturl .= "?".$_SERVER["QUERY_STRING"];

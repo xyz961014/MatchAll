@@ -1,6 +1,7 @@
 <?php
 session_start();
 $right = $_SESSION["right"];
+$id = $_SESSION["id"];
 if ($right > 1) {
 
     require "dbinfo.php";
@@ -15,13 +16,14 @@ if ($right > 1) {
     $extratime = $_POST['extratime'];
     $penaltyround = $_POST['penaltyround'];
     $year = $_POST['year'];
+    $visible = $_POST['visible'];
     $parseyear = explode("-", $year);
     if (count($parseyear) == 1)
         $dbname = $class."_".substr($year, 2);
     if (count($parseyear) == 2)
         $dbname = $class."_".substr($parseyear[0], 2).substr($parseyear[1], 2);
     $conn = dbconnect("MATCHES");
-    $sql = "INSERT INTO matches (dbname, name, subname, maxonfield, minonfield, enablekitnum, class, penalty, ordinarytime, extratime, penaltyround, year) VALUES ('".$dbname."','".$name."','".$subname."',".$maxonfield.",".$minonfield.",".$enablekitnum.",'".$class."','".$penalty."',".$ordinarytime.",".$extratime.",".$penaltyround.",'".$year."')";
+    $sql = "INSERT INTO matches (dbname, name, subname, maxonfield, minonfield, enablekitnum, class, penalty, ordinarytime, extratime, penaltyround, year, owner) VALUES ('".$dbname."','".$name."','".$subname."',".$maxonfield.",".$minonfield.",".$enablekitnum.",'".$class."','".$penalty."',".$ordinarytime.",".$extratime.",".$penaltyround.",'".$year."', ".$visible.")";
     echo $sql;
     $conn->query($sql);
     $conn->close();
