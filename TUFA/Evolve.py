@@ -104,7 +104,7 @@ def Evolve(matchname):
                 cursor.execute(sql)
                 matches = cursor.fetchall()
                 for m in matches:
-                    if not m['Stage'] == 'Group':
+                    if not m['Stage'] == 'Group' and not m['Stage'] == 'League':
                         resultstr = str(m['HomeGoal']) + ':' + str(m['AwayGoal'])
                         if m['PenaltyShootOut']:
                             resultstr += '(' + str(int(m['HomeGoal']) + int(m['HomePenalty'])) + ':' +str(int(m['AwayGoal']) + int(m['AwayPenalty'])) + ')'
@@ -154,7 +154,7 @@ def Evolve(matchname):
                     if m['PenaltyShootOut']:
                         resultstr += '(' + str(int(m['HomeGoal']) + int(m['HomePenalty'])) + ':' +str(int(m['AwayGoal']) + int(m['AwayPenalty'])) + ')'
                     M = Match(matchid = m['MatchID'], stage = m['Stage'], hometeam = m['HomeTeam'],awayteam = m['AwayTeam'], time = m['MatchTime'].strftime('%Y-%m-%d %H:%M'), homegoal = m['HomeGoal'], awaygoal = m['AwayGoal'], result = resultstr, valid = m['Valid'])
-                    if not m['Stage'] == 'Group':
+                    if not m['Stage'] == 'Group' and not m['Stage'] == 'League':
                         if m['Result'] == '3': #HOMEWIN
                             M.homewin = True
                         elif m['Result'] == '0': #AWAYWIN
@@ -240,7 +240,7 @@ def Evolve(matchname):
 
 def Tracestr(t):
     '''
-    Not permit Group WLR to exist, for WLR are used for Win and Lose and RunnerUp.
+    Do not permit Group WLR to exist, for WLR are used for Win and Lose and RunnerUp.
     '''
     group = None
     rank = None

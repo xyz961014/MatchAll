@@ -108,8 +108,8 @@ if ($right > 1) { //权限
 <script>
     function checkform() {
         var check = true;
-        var maxonfield = $("[name='maxonfield']").val();
-        var minonfield = $("[name='minonfield']").val();
+        var maxonfield = parseInt($("[name='maxonfield']").val());
+        var minonfield = parseInt($("[name='minonfield']").val());
         var classname = $("[name='class']").val();
         var year = $("[name='year']").val();
         console.log(maxonfield, minonfield, classname, year);

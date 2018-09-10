@@ -150,13 +150,14 @@ while ($row = $res->fetch_assoc()) {
      $round = $row['Round'];
      $mtime = $row['MatchTime'];
 }
-if ($stage != 'Group') {
-    //print_r($eliinfo->{$id});
+if ($stage == 'Group') {
+    $subtitle = "小组赛".$group."组第".$round."轮";
+} else if ($stage == "League"){
+    $subtitle = "第".$round."轮";
+} else {
     $hometeam = $eliinfo->{$id}->hometeam;
     $awayteam = $eliinfo->{$id}->awayteam;
     $subtitle = $stage;
-} else {
-    $subtitle = "小组赛".$group."组第".$round."轮";
 }
 if (preg_match('/^MA.+/', $dbname)) {
     $hometeam = $dict[$hometeam];
@@ -224,6 +225,11 @@ function test_input($data) {
 <script>
 var validbool = '<?=$valid?>';
 var stage = '<?=$stage ?>';
+if (stage == "Group" || stage == "League") {
+    stage = false;
+} else {
+    stage == true;
+}
 <?php
 if ($right > 1){
 ?>
@@ -875,7 +881,7 @@ function showreport() {
         awayfirst.hide();
         homeevent.append($("<h4 class='eventdisplay'></h4>").text(homename + "点球决胜："));
         awayevent.append($("<h4 class='eventdisplay'></h4>").text(awayname + "点球决胜："));
-        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag) {
+        if ((stage || '<?=$dbname?>'.match("MANYU")) && hg == ag) {
             $(".penalty").show();
         } else {
             $(".penalty").hide();
@@ -1255,14 +1261,14 @@ function showreport() {
         var hf = Math.max($('canvas').measureText('measurehfirst').height, $('canvas').measureText('measureafirst').height) / 2;
         hy += Math.max(hf, 70) + hf;
         hy += 70;
-        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
+        if ((stage || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
             hy += 80;
         $('canvas').attr("height", hy);
 
         drawtitle('homename', HomeName, 400, 50);
         drawtitle('awayname', AwayName, 1200, 50);
         curY += $('canvas').measureText('homename').height + 10; 
-        if ((stage != 'Group' || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
+        if ((stage || '<?=$dbname?>'.match("MANYU")) && hg == ag)  //点球决胜
             curY += 80;
         var subtitle = "<?=$subtitle ?>";
         drawcenter('simHei', 25, 'normal', 'subtitle', subtitle, curY);
@@ -1407,7 +1413,7 @@ function showreport() {
             }
             curY += halfh + 40;
         }
-        if (((stage != 'Group' && '<?=$penalty?>'.match("淘汰赛")) || '<?=$penalty?>'.match("总是")) && hg == ag) { //点球决胜
+        if (((stage && '<?=$penalty?>'.match("淘汰赛")) || '<?=$penalty?>'.match("总是")) && hg == ag) { //点球决胜
             var phg = hg;
             var pag = ag;
             for (var i = 0;i < revents.length;i++) {

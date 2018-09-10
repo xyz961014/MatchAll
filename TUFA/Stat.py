@@ -87,7 +87,7 @@ def Stat(matchname, matchid = None, add = True):
             for match in matches:
                 if match['Valid'] == 1:
                     #all valid matches
-                    if not match['Stage'] == 'Group':
+                    if not match['Stage'] == 'Group' and not match['Stage'] == 'League':
                         match['Hometeam'] = EliMatches[match['MatchID']].hometeam
                         match['Awayteam'] = EliMatches[match['MatchID']].awayteam
 
@@ -102,7 +102,7 @@ def Stat(matchname, matchid = None, add = True):
                 sql = 'SELECT * FROM Match' + str(m.matchid) + ' ORDER BY EventTime,StoppageTime,EventType'
                 cursor.execute(sql)
                 groupbool = False
-                if m.stage == 'Group':
+                if m.stage == 'Group' or m.stage == 'League':
                     groupbool = True
                 Infos = cursor.fetchall() #all events
                 if (matchinfo['penalty'] == "elimination" and not groupbool) or (matchinfo['penalty'] == "always"):
