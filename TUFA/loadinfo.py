@@ -2,8 +2,26 @@
 from docx import Document
 import pymysql.cursors
 import re
+import argparse
 
-def loadteamandleaderinfomanan(filename):
+def parseargs(arg=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dir", '-d', help="file directory")
+    parser.add_argument("--function", '-f', help="function ID \n MANANL\tmanan leader\nMANANP\tmanan player")
+    parser.add_argument("--database", '-b', help="database")
+    return parser.parse_args(arg)
+
+def main(args):
+    direc = args.dir
+    func = args.function
+    db = args.database
+    if func == 'MANANL':
+        loadteamandleaderinfomanan(direc, db)
+    elif func == 'MANANP':
+        loadplayerinfomanan(direc, db)
+
+
+def loadteamandleaderinfomanan(filename, db = "MANAN_1819"):
   if not re.search('\.docx$',filename):
     return
   document = Document(filename)
@@ -28,7 +46,7 @@ def loadteamandleaderinfomanan(filename):
   connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANAN_1718',
+                               db=db,
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
 
@@ -40,6 +58,7 @@ def loadteamandleaderinfomanan(filename):
           job = p.cells[1].text
           phonenumber = p.cells[2].text
           email = p.cells[3].text
+          print(teamname, name, job, phonenumber, email)
           with connection.cursor() as cursor:
           # Create a new record
             sql = "INSERT INTO `Leaders` (`Team`, `Name`,`Job`,`PhoneNumber`,`Email`) VALUES (%s, %s, %s, %s, %s)"
@@ -56,14 +75,14 @@ def loadteamandleaderinfomanan(filename):
     connection.close()
 
 
-def loadplayerinfomanan(filename):
+def loadplayerinfomanan(filename, db="MANAN_1819"):
   if not re.search('\.docx$',filename):
     return
   document = Document(filename)
   ps = document.paragraphs
-  print(len(ps))
+  #print(len(ps))
   teaminfo = ps[2].text.split()
-  print(teaminfo)
+  #print(teaminfo)
   tnObj = re.match(r'院系：\S',teaminfo[0])
   col = 0
   if tnObj:
@@ -82,11 +101,12 @@ def loadplayerinfomanan(filename):
   connection = pymysql.connect(host='localhost',
                                user='root',
                                password='961014',
-                               db='MANAN_1718',
+                               db=db,
                                charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
 
   try:
+    nums = []
     for p in tb[0].rows[1:]:
       name = p.cells[1].text
       class1 = p.cells[2].text
@@ -98,8 +118,15 @@ def loadplayerinfomanan(filename):
         name = re.sub(r'^\s+', '', name)
         name = re.sub(r'\s+$', '', name)
         kitnumber = int(kitnumber)
+        if kitnumber in nums:
+            print("号码重复：", teamname, kitnumber)
+        else:
+            nums.append(kitnumber)
+        if kitnumber > 99 or kitnumber < 0:
+            print("号码超限：", teamname, kitnumber)
         if re.match('^\s+$',idnumber) or idnumber == '无' or idnumber == '':
           idnumber = None
+        print(teamname, name, class1, idnumber, phonenumber, kitnumber, extrainfo)
         with connection.cursor() as cursor:
           # Create a new record
           sql = "INSERT INTO `Players` (`Team`, `Name`,`Class`,`IDNumber`,`PhoneNumber`,`KitNumber`,`ExtraInfo`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -388,3 +415,8 @@ def loadinfomawu(filename):
 #loadinfomanyu('./女足报名18/template.docx')
 #loadinfomawu('./马五2018/化学系马杯五人制报名材料.docx')
 #loadinfomawu('./马五2018/土木院（系）马杯五人制报名材料.docx')
+
+
+if __name__ == "__main__":
+    args = parseargs()
+    main(args)

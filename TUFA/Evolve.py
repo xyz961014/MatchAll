@@ -223,6 +223,8 @@ def Evolve(matchname):
                                     Groups[i].teams[ti].win -= 1
                                 elif em.homegoal == em.awaygoal:
                                     Groups[i].teams[ti].draw -= 1
+            for i,g in Groups.items():
+                print(g.name)
             jsonstr = json.dumps([Groups, EliMatches], default = lambda g:g.__dict__, sort_keys = True)
             #print(groupstr,elistr)
             with open('../html/' + matchname + '.json', 'w') as rankfile:

@@ -17,6 +17,9 @@ def main(argv):
         elif re.match('FRESH', matchdb):
             subtitle = '新生杯比赛执场单'
             fname = createsheet.create4subsheet(argv[0], argv[1], matchdb=matchdb, subtitle=subtitle)
+        elif re.match('NYUQI', matchdb):
+            subtitle = '女子七人制联赛比赛执场单'
+            fname = createsheet.create5subsheet(argv[0], argv[1], matchdb=matchdb, subtitle=subtitle)
         elif re.match('NANQI', matchdb):
             subtitle = '小世界杯比赛执场单'
             fname = createsheet.create4subsheet(argv[0], argv[1], matchdb=matchdb, subtitle=subtitle)

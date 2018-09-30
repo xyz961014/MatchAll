@@ -44,7 +44,7 @@ while ($row = $result->fetch_assoc()) {
         array_push($tabs[$row['class']], $row);
     }
 }
-asort($tabs);
+//asort($tabs);
 }
 if ($right > 1) {
 ?>
@@ -107,14 +107,18 @@ foreach($tabs as $tab) {
 $conn->close();
 ?>
 <script>
-$('#navbar li:eq(0) a').tab('show');
+$("[href='#MANAN_1819']").tab('show');
 var taba = '<?=$taba ?>';
 var tabb = '<?=$tabb ?>';
-console.log(taba, tabb);
-if (tabb == -1)
-    $('#navbar li:eq('+ taba.toString() +') a').tab('show');
-else
-    $('#navbar li:eq('+ taba.toString() +') li:eq('+ tabb.toString() +') a').tab('show');
+var tab = "";
+<?php 
+if ($tabname) {
+?>
+    var tab = '<?=$tabname ?>';
+    $("[href='#" + tab + "']").tab('show');
+<?php
+}
+?>
 
 </script>
   </body>

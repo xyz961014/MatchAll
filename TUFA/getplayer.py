@@ -57,14 +57,18 @@ def main(args):
                 idnum = None
             else:
                 idnum = player["idnum"]
+            if player['num'] is None:
+                kitnum = 0
+            else:
+                kitnum = player['num']
             with connection.cursor() as cursor:
                 if player['sex'] == sex and int(player["level"]) > 0 and int(player["level"]) < 3:
                     if player['id'] in ids:
                         sql = "UPDATE Players SET Team = %s, Name = %s, IDNumber = %s, PhoneNumber = %s, KitNumber = %s, ExtraInfo = %s WHERE Class = %s" 
-                        cursor.execute(sql, (teamname, player['name'], idnum, player['mobile'], player["num"], remark, player['id']))
+                        cursor.execute(sql, (teamname, player['name'], idnum, player['mobile'], kitnum, remark, player['id']))
                     else:
                         sql = "INSERT INTO Players (Team, Name, Class, IDNumber, PhoneNumber, KitNumber, ExtraInfo) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                        cursor.execute(sql, (teamname, player['name'], player['id'], idnum, player['mobile'], player["num"], remark))
+                        cursor.execute(sql, (teamname, player['name'], player['id'], idnum, player['mobile'], kitnum, remark))
         connection.commit()
 
     finally:

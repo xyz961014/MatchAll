@@ -3,6 +3,15 @@ import xlrd
 import pymysql.cursors
 import re
 import datetime
+import argparse
+
+def parseargs(arg=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dir", '-d', help="file directory")
+    parser.add_argument("--num", '-n', help="sheet number")
+    parser.add_argument("--database", '-b', help="database")
+    parser.add_argument("--level", '-l', help="match level")
+    return parser.parse_args(arg)
 
 class CMatch:
     def __init__(self,level=None,stage=None,group=None,roundnum=None,time=None,field=None,hometeam=None,awayteam=None):
@@ -100,6 +109,18 @@ def inputschedule(matches,matchname):
 #    m.append(i)
 #m.sort(key = lambda x:x[1] + x[5])
 #inputschedule(m)
-mT = createschedule('nanqischedule.xlsx',0)
-mT.sort(key = lambda x:x[1] + x[5])
-inputschedule(mT,'NANQI_18')
+#mT = createschedule('nanqischedule.xlsx',0)
+#mT.sort(key = lambda x:x[1] + x[5])
+#inputschedule(mT,'NANQI_18')
+def main(args):
+    direc = args.dir
+    db = args.database
+    num = int(args.num)
+    level = args.level
+    mT = createschedule(direc, num, level)
+    print(mT)
+    mT.sort(key=lambda x:x[1] + x[5])
+    inputschedule(mT, db)
+if __name__ == "__main__":
+    args = parseargs()
+    main(args)

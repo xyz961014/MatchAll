@@ -1,7 +1,7 @@
 import os  
 import os.path  
 import loadinfo
-  
+import argparse  
 # this folder is custom  
 #rootdir="男足报名表17-18"  
 #fname = ''
@@ -39,13 +39,23 @@ import loadinfo
 #        loadinfo.loadinfobubaoming(fname)
 #        print('complete') 
 
-rootdir="新生杯报名表2018"  
-fname = ''
-for parent,dirnames,filenames in os.walk(rootdir):  
-    for filename in filenames:    
-        fname = os.path.join(parent, filename)
-        print('loading:',fname)
-        loadinfo.loadinfofreshman(fname)
-        print('complete') 
+def parseargs(arg=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rootdir", '-r', help="root direction of tables")
+    return parser.parse_args(arg)
 
+def main(args):
+    rootdir = args.rootdir
+    fname = ''
+    for parent,dirnames,filenames in os.walk(rootdir):  
+        for filename in filenames:    
+            fname = os.path.join(parent, filename)
+            print('loading:',fname)
+            loadinfo.loadteamandleaderinfomanan(fname)
+            loadinfo.loadplayerinfomanan(fname)
+            print('complete') 
+
+if __name__ == "__main__":
+    args = parseargs()
+    main(args)
 
