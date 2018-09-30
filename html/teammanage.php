@@ -22,7 +22,7 @@ $dbname = $_GET['Match'];
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="static/jquery.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/bootstrap.min.js"></script>
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
