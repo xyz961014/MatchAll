@@ -95,8 +95,8 @@ def inputschedule(matches,matchname):
         for info in infos:
             #print(info.level, info.stage, info.group,info.round, info.time,info.field, info.hometeam,info.awayteam)
             with connection.cursor() as cursor:
-                sql = "INSERT INTO `Matches` (`Level`, `Stage`, `GroupName`, `Round`, `MatchTime`, `MatchField`, `HomeTeam`, `AwayTeam`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                cursor.execute(sql,(info.level, info.stage, info.group, info.round, info.time, info.field, info.hometeam, info.awayteam))
+                sql = "INSERT INTO `Matches` (`Level`, `Stage`, `GroupName`, `Round`, `MatchTime`, `MatchField`, `HomeTeam`, `AwayTeam`, `Valid`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql,(info.level, info.stage, info.group, info.round, info.time, info.field, info.hometeam, info.awayteam, 0))
         connection.commit()
     finally:
         connection.close()
