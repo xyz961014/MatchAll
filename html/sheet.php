@@ -11,12 +11,12 @@ $conn = dbconnect($dbname);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="static/bootstrap.min.css" rel="stylesheet">
+    <link href="static/bootstrap-theme.min.css" rel="stylesheet">
 
-    <link href="https://cdn.bootcss.com/Ladda/1.0.6/ladda-themeless.min.css" rel="stylesheet">
-    <script src="https://cdn.bootcss.com/Ladda/1.0.6/spin.min.js"></script>
-    <script src="https://cdn.bootcss.com/Ladda/1.0.6/ladda.min.js"></script>
+    <link href="static/ladda-themeless.min.css" rel="stylesheet">
+    <script src="static/spin.min.js"></script>
+    <script src="static/ladda.min.js"></script>
     
     <title>TUFA</title>
   </head>
@@ -27,8 +27,8 @@ $conn = dbconnect($dbname);
     <!-- Optional JavaScript -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="static/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
 <?php
 if ($right > 1) {
 $sql = "SELECT * FROM Info";
