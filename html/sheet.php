@@ -28,7 +28,7 @@ $conn = dbconnect($dbname);
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="static/jquery.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/bootstrap.min.js"></script>
 <?php
 if ($right > 1) {
 $sql = "SELECT * FROM Info";
