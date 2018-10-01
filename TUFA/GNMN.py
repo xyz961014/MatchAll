@@ -15,9 +15,9 @@ try:
         matches = cursor.fetchall()
         for m in matches:
             if m['Stage'] == 'Group':
-                sql = 'UPDATE Teams SET GroupName = %s WHERE TeamName = %s'
-                cursor.execute(sql,(m['GroupName'], TeamDict.getfull(m['HomeTeam'])))
-                cursor.execute(sql,(m['GroupName'], TeamDict.getfull(m['AwayTeam'])))
+                sql = 'UPDATE Teams SET GroupName = %s, Level = %s WHERE TeamName = %s'
+                cursor.execute(sql,(m['GroupName'], m['Level'], TeamDict.getfull(m['HomeTeam'])))
+                cursor.execute(sql,(m['GroupName'], m['Level'], TeamDict.getfull(m['AwayTeam'])))
         connection.commit()
 finally:
     connection.close()
