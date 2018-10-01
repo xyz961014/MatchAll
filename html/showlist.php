@@ -9,7 +9,7 @@ $eliinfo = json_decode(fgets($elifile));
 $eliinfo = $eliinfo[1];
 fclose($elifile);
 $conn = dbconnect($dbname);
-$sql = "SELECT * FROM Matches";
+$sql = "SELECT * FROM Matches ORDER BY MatchTime";
 $result = $conn->query($sql);
 $matches = array();
 while ($row = $result->fetch_assoc()) {

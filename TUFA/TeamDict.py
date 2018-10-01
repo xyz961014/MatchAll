@@ -88,6 +88,7 @@ Teamfull['电机工程与应用电子技术系'] = ['电机系', '电机工程�
 Teamfull['医学'] = ['医学院', '医学院']
 Teamfull['医学院'] = ['医学院', '医学院']
 Teamfull['医药'] = ['医学院-药学院', '医学院-药学院']
+Teamfull['医学院-药学院'] = ['医学院-药学院', '医学院-药学院']
 Teamfull['公管'] = ['公共管理学院', '公共管理学院']
 Teamfull['公管学院'] = ['公共管理学院', '公共管理学院']
 Teamfull['公共管理学院'] = ['公共管理学院', '公共管理学院']
@@ -199,12 +200,12 @@ def getfull(teamabbr,full=False):
             return teamabbr
 def getnanqifull(num):
     return Nanqiteams[num]
-#fp = open('TeamDict.php','w')
-#fp.write('<?php\n$dict = array(\n')
-#for key,value in Teamfull.items():
-#    fp.write('\"' + str(key) + '\" => '+'\"'+str(value[0])+'\",\n')
-#fp.write(');\n$dict2 = array(\n')
-#for key,value in Teamfull.items():
-#    fp.write('\"' + str(key) + '\" => '+'\"'+str(value[1])+'\",\n')
-#fp.write(');\n?>')
-#fp.close()
+fp = open('../html/TeamDict.php','w')
+fp.write('<?php\n$dict = array(\n')
+for key,value in Teamfull.items():
+    fp.write('\"' + str(key) + '\" => '+'\"'+str(value[0])+'\",\n')
+fp.write(');\n$dict2 = array(\n')
+for key,value in Teamfull.items():
+    fp.write('\"' + str(key) + '\" => '+'\"'+str(value[1])+'\",\n')
+fp.write(');\n?>')
+fp.close()
