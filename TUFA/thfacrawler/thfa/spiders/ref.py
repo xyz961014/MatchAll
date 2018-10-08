@@ -33,7 +33,7 @@ class RefSpider(scrapy.Spider):
                 }
         yield scrapy.FormRequest.from_response(response, formdata=formdata, callback=self.parse_login)
     def parse_login(self, response):
-        urls = ['http://www.tafa.org.cn/member/ref_app.php']
+        urls = ['http://www.tafa.org.cn/member/ref_app_less.php']
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
