@@ -117,6 +117,8 @@ $.get('showlist.php',{
                 var stage = matchlist[i]["Stage"];
                 if (stage == "Group")
                     stage = "小组赛";
+                if (stage == "League")
+                    stage = "联赛";
                 tablerow += "<td class='level'>" + matchlist[i]["Level"] + "</td><td class='stage'>" + stage + "</td><td class='groupname'>" + matchlist[i]["GroupName"] + "</td><td class='round'>" + matchlist[i]["Round"] + "</td>";
 <?php
                 }   
@@ -142,6 +144,8 @@ $.get('showlist.php',{
                 var stage = matchlist[i]["Stage"];
                 if (stage == "Group")
                     stage = "小组赛";
+                if (stage == "League")
+                    stage = "联赛";
                 tablerow += "<td class='level'>" + matchlist[i]["Level"] + "</td><td class='stage'>" + stage + "</td><td class='groupname'>" + matchlist[i]["GroupName"] + "</td><td class='round'>" + matchlist[i]["Round"] + "</td>";
 <?php
                 }   
@@ -255,6 +259,10 @@ $.get('showlist.php',{
                 var stage = fieldok(pid[1], "stage");
                 var groupname = fieldok(pid[1], "groupname");
                 var round = fieldok(pid[1], "round");
+                if (stage == "小组赛")
+                    stage = "Group";
+                if (stage == "联赛")
+                    stage = "League";
                 console.log(hometeam, awayteam, matchtime, matchfield);
                 $.post("editgame.php", {
                     dbname: dbname,

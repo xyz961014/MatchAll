@@ -12,24 +12,28 @@ def createmanansheet(hometeam='',awayteam='',title='2018—2019年度清华大�
     tables = doc.tables
     styles = doc.styles
     #renew the title
+    #for i,p in enumerate(paras):
+    #    if len(p.runs):
+    #        r = p.runs[0]
+    #        print(i, r.text.encode('utf-8'))
     paras[0].runs[0].text = title
     for rest in paras[0].runs[1:]:
         rest.text = ''
-    paras[13].runs[0].text = title
-    for rest in paras[13].runs[1:]:
+    paras[12].runs[0].text = title
+    for rest in paras[12].runs[1:]:
         rest.text = ''
-    paras[26].runs[0].text = title
-    for rest in paras[26].runs[1:]:
+    paras[25].runs[0].text = title
+    for rest in paras[25].runs[1:]:
         rest.text = ''
 
     paras[1].runs[0].text =subtitle
     for rest in paras[1].runs[1:]:
         rest.text = ''
-    paras[14].runs[0].text = subtitle
-    for rest in paras[14].runs[1:]:
+    paras[13].runs[0].text = subtitle
+    for rest in paras[13].runs[1:]:
         rest.text = ''
-    paras[27].runs[0].text = subtitle
-    for rest in paras[27].runs[1:]:
+    paras[26].runs[0].text = subtitle
+    for rest in paras[26].runs[1:]:
         rest.text = ''
     
     homeplayers = []

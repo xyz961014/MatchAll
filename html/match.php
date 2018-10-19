@@ -760,7 +760,15 @@ function getevents(info, dbname, homename, awayname) {
                     var txt = e.name;
                 } else {
                     if (ptn.test(e.extrainfo)) {
-                        var txt = e.kitnum + "-" + e.name + "(" + e.extrainfo + ")";
+                        if (/校友/.test(e.extrainfo)) {
+                            var txt = e.kitnum + "-" + e.name + "(校友)";
+                        }
+                        else if (/教工/.test(e.extrainfo)) {
+                            var txt = e.kitnum + "-" + e.name + "(教工)";
+                        }
+                        else if (/足特/.test(e.extrainfo)) {
+                            var txt = e.kitnum + "-" + e.name + "(足特)";
+                        }
                     }
                     else {
                         var txt = e.kitnum + "-" + e.name;
