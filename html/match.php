@@ -1114,6 +1114,9 @@ function showreport() {
                 halfh = -20;
             hy += 2 * halfh + 40;
         }
+        console.log(hflist);
+        hflist.sort(function(a,b) {return a.kitnum - b.kitnum;} );
+        aflist.sort(function(a,b) {return a.kitnum - b.kitnum;} );
         var hfstr = '';
         var afstr = '';
         for (var i = 0;i < hflist.length;i++) {
@@ -1415,7 +1418,7 @@ function showreport() {
                     } else if (aside[k].type == "红牌") {
                         drawicon('aRC' + i.toString() + k.toString(), 'RC', 920 + 20, ey);
                     }
-                    drawplayer(aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + i.toString() + "~" + k.toString(), aside[k].namestr, 920 + 70, ey);
+                    drawplayer(aside[k].team + "~" + aside[k].kitnum + "~" + aside[k].name + "~" + aside[k].type + "~" + aside[k].time + "~" + aside[k].stptime + "~" + aside[k].eventid, aside[k].namestr, 920 + 70, ey);
                     ey += 50;
                 }
             }
