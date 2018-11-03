@@ -149,9 +149,10 @@ while ($row = $res->fetch_assoc()) {
      $group = $row['GroupName'];
      $round = $row['Round'];
      $mtime = $row['MatchTime'];
+     $level = $row['Level'];
 }
 if ($stage == 'Group') {
-    $subtitle = "小组赛".$group."组第".$round."轮";
+    $subtitle = $level."小组赛".$group."组第".$round."轮";
 } else if ($stage == "League"){
     $subtitle = "第".$round."轮";
 } else {
