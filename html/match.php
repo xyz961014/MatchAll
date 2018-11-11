@@ -753,12 +753,26 @@ function getevents(info, dbname, homename, awayname) {
             var e = JSON.parse(info[i]);
             if (e.type != "弃赛") {
                 var ptn = /(校友|教工|足特)/;
+                var nyuqiptn = /(校友|大一)/;
                 var name = e.name.replace(/^\s+|\s+$/, '');
                 e.name = name;
                 var enablekitnum = "<?=$enablekitnum ?>";
                 console.log("kit",enablekitnum);
                 if (enablekitnum == "0") {
-                    var txt = e.name;
+                    if (/NYUQI/.test(dbname)) {
+                        if (nyuqiptn.test(e.extrainfo)) {
+                            if (/校友/.test(e.extrainfo)) {
+                                var txt = e.name + "(校友)";
+                            }
+                            else if (/大一/.test(e.extrainfo)) {
+                                var txt = e.name + "(大一)";
+                            }
+                        } else {
+                            var txt = e.name;
+                        }
+                    } else {
+                        var txt = e.name;
+                    }
                 } else {
                     if (ptn.test(e.extrainfo)) {
                         if (/校友/.test(e.extrainfo)) {
