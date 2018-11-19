@@ -16,6 +16,12 @@ if ($right > 1) {
     $matchtime = $matchtime.":00";
     if (!$round)
         $round = "NULL";
+    if ($stage == "联赛") {
+        $stage = "League";
+    }
+    else if ($stage == "小组赛") {
+        $stage = "Group";
+    }
     $conn = dbconnect($dbname);
     $sql = "INSERT INTO Matches (Level, Stage, GroupName, Round, MatchTime, MatchField, HomeTeam, AwayTeam, Valid) VALUES ('".$level."','".$stage."','".$groupname."',".$round.", '".$matchtime."', '".$matchfield."', '".$hometeam."', '".$awayteam."',0)";
     echo $sql;

@@ -62,7 +62,7 @@ echo "<h3>".$subname." 增加新比赛</h3>" ?>
     </div>
     <div class="form-group">
       <label for="stage">比赛阶段<span style="color:red">*</span></label>
-      <input type="text" class="form-control" name="stage" placeholder='请输入比赛阶段，小组赛请输入"小组赛"' required="">
+      <input type="text" class="form-control" name="stage" placeholder='请输入比赛阶段，小组赛请输入"小组赛",联赛请输入"联赛"' required="">
     </div>
     <div class="form-group">
       <label for="groupname">所属小组</label>
